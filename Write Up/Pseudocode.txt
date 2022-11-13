@@ -1,0 +1,618 @@
+# Classes
+	1.1 Window Class
+	1.2 Text Class
+	1.3 Btn Class
+	1.4 Settings Class
+
+# Solo Files
+	2.1 Main
+	2.2 Home
+	2.3 Instructions
+	2.4 Settings
+	2.5 game
+
+# Utilities
+	3.1 ClrTerminal
+
+1. Classes
+
+	1.1 Window Class
+		1.1.1 CLASS Window IS {TUPLE screen_size, STRING window_title, TUPLE bg_color}:
+		1.1.2 	
+		1.1.3	METHODS
+		1.1.4
+		1.1.5		CONSTRUCTOR(TUPLE screen_size, STRING window_title, TUPLE bg_color)
+		1.1.6 			# Initialisation for the Window Class
+		1.1.7			DECLARE THIS.screen_size INITIALLY screen_size
+		1.1.8 			DECLARE THIS.window_title INITIALLY window_title
+		1.1.9			DECLARE THIS.bg_color INITIALLY bg_color
+		1.1.10		END CONSTRUCTOR
+		1.1.11
+		1.1.12		PROCEDURE CreateNewWindow(THIS) RETURNS NONE
+		1.1.13			DECLARE THIS.win = pygame.display.set_mode(size=self.window_size) # Set Window Size
+		1.1.14			THIS.win.fill(THIS.bg_color) # Set Background Color
+		1.1.15				pygame.display.set_caption(self.window_title) # Set Window Title
+		1.1.16				pygame.display.flip() # Used to Show Background Color
+		1.1.17			END PROCEDURE
+		1.1.18
+		1.1.19		# Used to get Window Title
+		1.1.20		FUNCTION ReturnWindowSurface(THIS): RETURNS STRING
+		1.1.21			THIS.win
+		1.1.22		END FUNCTION
+		1.1.23
+		1.1.24		# Exit Game & Window
+		1.1.25		PROCEDURE ExitWindow(THIS) RETURNS NONE
+		1.1.26			pygame.display.quit()
+		1.1.27			quit(0)
+		1.1.28		END PROCEDURE
+		1.1.29
+		1.1.20		FUNCTION __repr__(THIS) RETURNS STRING
+		1.1.21			RETURN __qualname__
+		1.1.22		END FUNCTION
+		1.1.23 END CLASS
+
+	1.2 Text Class
+		1.2.1 CLASS Text INHERITS pygame.sprite.Sprite WITH {ARRAY OF INTEGER pos, STRING text, INTEGER fontsize, TUPLE color}
+		1.2.2	
+		1.2.3	METHODS
+		1.2.4
+		1.2.5		CONSTRUCTOR(ARRAY OF INTEGER pos, STRING text, INTEGER fontsize, TUPLE color)
+		1.2.6			# Initialisation of the Text Class
+		1.2.7			IF NOT pygame.font.get_init THEN pygame.font.init() END IF # Initialise font
+		1.2.7			DECLARE THIS.surface INIITALLY pygame.display.get_surface() # Get Window Surface
+		1.2.8			DECLARE THIS.givenPos INIITIALLY TUPLE (pos[0], pos[1]) # Give Position of Text
+		1.2.9			DECLARE THIS.color INITIALLY color
+		1.2.10			DECLARE THIS.fontsize INITIALLY fontsize
+		1.2.11			DECLARE THIS.text INITIALLY pygame.font.Font('src/resources/fonts/font.ttf', THIS.fontsize).render(text, FALSE, THIS.color) # Creates Font
+		1.2.12			DECLARE THIS.caption INITIALLY text
+		1.2.13		END CONSTRUCTOR
+		1.2.14	
+		1.2.15		PROCEDURE RenderText(THIS) RETURNS NONE
+		1.2.16			pygame.display.flip()
+		1.2.17			pygame.display.get_surface().blit(THIS.text, THIS.pos)
+		1.2.18		END PROCEDURE
+		1.2.19
+		1.2.20		PROCEDURE ChangeText(THIS, STRING text, PROCEDURE draw) RETURNS NONE
+		1.2.21			SET THIS.text AS pygame.font.Font('src/resources/fonts/font.ttf', THIS.fontsize).render(text, FALSE, THIS.COLOR) # Sets New Text
+		1.2.22			SET THIS.pos AS ARRAY [THIS.givenPos[0] - (THIS.text.get_width() // 2), THIS.givenPos[1] - (THIS.text.get_height() // 2)]
+		1.2.23			draw()
+		1.2.24		END PROCEDURE
+		1.2.25
+		1.2.26		PROCEDURE ChangeColor(THIS, TUPLE color) RETURNS NONE
+		1.2.27			SET THIS.color AS color
+		1.2.28			SET THIS.text AS pygame.font.Font('src/resources/fonts/font.ttf', THIS.fontsize).render(THIS.caption, FALSE, color)
+		1.2.29			THIS.RenderText()
+		1.2.30		END PROCEDURE
+		1.2.31
+		1.2.32		FUNCTION __str__(THIS) RETURNS STRING
+		1.2.33			RETURN 'Text'
+		1.2.34		END FUNCTION
+		1.2.35
+		1.2.36		FUNCTION __name__(THIS) RETURNS STRING
+		1.2.37			RETURN 'Text'
+		1.2.38		END FUNCTION
+		1.2.39 END CLASS
+
+	1.3 Btn Class
+		1.3.1 CLASS Btn INHERITS pygame.sprite.Sprite WITH {STRING text, ARRAY OF INTEGER pos, INTEGER width, INTEGER height, INTEGER fontsize}
+		1.3.2
+		1.3.3 	METHODS
+		1.3.4
+		1.3.5		CONSTRUCTOR(STRING text, ARRAY OF INTEGER pos, INTEGER width, INTEGER height, INTEGER fontsize)
+		1.3.6			DECLARE THIS.pos INITIALLY [0, 0] OR pos
+		1.3.7			DECLARE THIS.surf INITIALLY pygame.display.get_surface() # Get Window Surface
+		1.3.8			DECLARE THIS.face = pygame.Rect(THIS.pos, (width, height)) # Create Rect
+		1.3.9			DECLARE THIS.face.center INITIALLY THIS.pos
+		1.3.10			DECLARE THIS.hovering INITIALLY FALSE # Checks if button is being hovered
+		1.3.11			DECLARE THIS.fontsize INITIALLY fontsize
+		1.3.12			DECLARE THIS.textColor INITIALLY TUPLE (255, 255, 255)
+		1.3.13			DECLARE THIS.text INITIALLY Text(THIS.pos, text, THIS.fontsize, THIS.textColor)
+		1.3.14			DECLARE THIS.caption INITIALLY text
+		1.3.15			DECLARE THIS.state INITIALLY FALSE
+		1.3.16			DECLARE THIS.hoverSound INITIALLY 'src/resources/sounds/hoverSound.wav'
+		1.3.17			DECLARE THIS.selectSound INITIALLY 'src/resources/sounds/selectSound.wav'
+		1.3.18		END CONSTRUCTOR
+		1.3.19
+		1.3.20
+		1.3.21		PROCEDURE ChangeState(THIS, STRING txt, BOOLEAN bool, PROCEDURE draw) RETURNS NONE
+		1.3.22			SET THIS.state AS bool
+		1.3.23			THIS.text.ChangeText(txt, draw)
+		1.3.24		END PROCEDURE
+		1.3.25
+		1.3.26		PROCEDURE isHovering(THIS, PROCEDURE draw, PROCEDURE click, BOOLEAN effectState) RETURNS NONE # If mouse is hovering
+		1.3.27			# Checks to see if the mouse is hovering over a button
+		1.3.28			IF THIS.face.collidepoint(pygame.mouse.get_pos()) THEN # If the button is not already being hovered
+		1.3.29				IF NOT THIS.hovering # Sets button being hovered to true
+		1.3.30					SET THIS.hovering AS TRUE
+		1.3.31					THIS.text.ChangeColor((255, 0, 0))
+		1.3.32					pygame.mixer.Channel(0).set_volume(.3) IF effectState ELSE pygame.mixer.Channel(0).set_volume(0) END IF
+		1.3.33					draw()
+		1.3.34				
+		1.3.35				ELSE # If the button is already being hovered
+		1.3.36					THIS.HasClicked(click) # Check if the button has been clicked
+		1.3.37				END IF
+		1.3.38
+		1.3.39			# If mouse is not over the button but the button is still being hovered    
+		1.3.40			ELSE IF NOT THIS.face.collidepoint(pygame.mouse.get_pos()) AND THIS.hovering THEN
+		1.3.41				SET THIS.hovering AS FALSE
+		1.3.42				SET THIS.text.ChangeColor((255, 255, 255))
+		1.3.43				draw()
+		1.3.44			END IF
+		1.3.45		
+		1.3.46		PROCEDURE HasClicked(THIS, PROCEDURE click) RETURNS NONE
+		1.3.47			# Check if a button has been clicked
+		1.3.48			IF pygame.mouse.get_pressed()[0] THEN
+		1.3.49				pygame.mixer.Channel(0).play(pygame.mixer.Sound(THIS.selectSound))
+		1.3.50				click()
+		1.3.51				time.sleep(.1) # Stop multiple clicks being allowed
+		1.3.52			END IF
+		1.3.53			
+		1.3.54		PROCEDURE RenderBtn(THIS) RETURNS NONE
+		1.3.55			pygame.draw.rect(pygame.display.get_surface(), (0, 0, 0), THIS.face)
+		1.3.56			THIS.text.RenderText()
+		1.3.57		END PROCEDURE
+		1.3.58
+		1.3.59		FUNCTION __str__(THIS) RETURNS STRING
+		1.3.60			RETURN 'Btn' # Returns only when str() function called
+		1.3.61		END FUNCTION
+		1.3.62
+		1.3.63		FUNCTION __name__(THIS) RETURNS STRING
+		1.3.64			RETURN 'Btn' # Returns name of class (Button)
+		1.3.65		END FUNCTION
+
+	1.4 Settings Class
+		1.4.1 CLASS Settings IS {}
+		1.4.2	# Class for Game Settings
+		1.4.3	METHODS
+		1.4.4	
+		1.4.5		CONSTRUCTOR(THIS, BOOLEAN musicState INITIALLY TRUE, BOOLEAN effectState INITIALLY TRUE)
+		1.4.6			DECLARE THIS.musicState INITIALLY musicState
+		1.4.7			DECLARE THIS.effectState INITIALLY effectState
+		1.4.8		END CONSTRUCTOR
+		1.4.9
+		1.4.10		PROCEDURE init(THIS) RETURNS NONE
+		1.4.11			# Gets Settings from File
+		1.4.12			IF NOT path.isfile('settings.txt) DO self.WriteSettings(False) # If there is no settings file, make one
+		1.4.13			
+		1.4.14			ELSE # Otherwise
+		1.4.15				<with open('settings.txt') as f> # Open the file
+		1.4.16					DECLARE settings INITIALLY ARRAY OF STRING f.read().split(',') # Split values by comma
+		1.4.17					f.close() # Close file
+		1.4.18			
+		1.4.19				SET THIS.musicState AS TRUE IF settings[0] == 'True' ELSE FALSE END IF
+		1.4.20				SET THIS.effectState AS TRUE IF settings[0] == 'True' ELSE FALSE END IF
+		1.4.21				# game.mixer.Channel(0).pause() IF NOT THIS.effectState ELSE game.mixer.Channel(0).unpause() END IF
+		1.4.22				# game.mixer.Channel(1).pause() IF NOT THIS.musicState ELSE game.mixer.Channel(1).unpause() END IF
+		1.4.23		END PROCEDURE
+		1.4.24
+		1.4.25		PROCEDURE WriteSettings(THIS, BOOLEAN rem) RETURNS NONE
+		1.4.26			IF rem DO remove('settings.txt')
+		1.4.27			
+		1.4.28			<with open('settings.txt', 'w') as f>
+		1.4.29				f.write(f'{str(THIS.musicState)}')
+		1.4.30				f.write(f'{str(THIS>effectState)}')
+		1.4.31				f.close()
+		1.4.32			THIS.init()
+		1.4.33		END PROCEDURE
+		1.4.34
+		1.4.35		PROCEDURE ChangeSettings(THIS, BOOLEAN musicBool INITIALLY NONE, BOOLEAN effectsBool INITIALLY NONE) RETURNS NONE
+		1.4.36			SET THIS.musicState AS musicBool IF musicBool != NONE ELSE THIS.musicState END IF
+		1.4.37			SET THIS.effectState AS effectsBool IF effectsBool != NONE ELSE THIS.effectState
+		1.4.38			THIS.WriteSettings(True)
+		1.4.39		END PROCEDURE
+		1.4.40
+		1.4.41		FUNCTION ReturnStates(THIS) RETURNS STRING
+		1.4.42			RETURN f'Music: {THIS.musicState}\nEffects: {THIS.effectState}'
+		1.4.43		END FUNCTION
+		1.4.44	END CLASS
+
+2. Solo Files
+
+	2.1 Main
+		2.1.1 IF __name__ == '__main__' THEN
+		2.1.2	Color.ClrPrint('orange', 'Loading Tetris...')
+		2.1.3	run() # Run Game Using Main Window Surface for GUI Drawing
+
+	2.2 Home
+		2.2.1 pygame.init() # Initialise Pygame
+		2.2.2 DECLARE clock INITIALLY pygame.time.Clock() # Games Clock (Frames Per Second)
+		2.2.3 DECLARE settings INITIALLY Settings() # Initialise Settings for Sound
+		2.2.4
+		2.2.5 DECLARE width, height INITIALLY AS INTEGER (960, 720) # Window Width & Height
+		2.2.6 DECLARE centerScreen INITIALLY INTEGER (width // 2) # The Centre of the Screen (Floor Division)
+		2.2.7
+		2.2.8 # GUI Instantiation
+		2.2.9 DECLARE Title INITIALLY Text([centerScreen, (height // 8), 'Tetris', 106]) # Title Text
+		2.2.10
+		2.2.11 # List of GUI Objects
+		2.2.12 DECLARE GUIObjects INITIALLY AS ARRAY of Btn [Btn('New Game', [centerScreen, (height // 2 - 50)], 230, 41, 32), # New Game Btn
+		2.2.13												 Btn('Instructions', [centerScreen, (height // 2)], 300, 41, 32), # Instructions Btn
+		2.2.14												 Btn('Settings', [centerScreen, (height // 2 + 50)], 200, 41, 32), # Settings Btn
+		2.2.15												 Btn('Exit Game', [centerScreen, (height // 2 + 100)], 235, 41, 32)] # Exit Btn
+		2.2.16
+		2.2.17 PROCEDURE drawGUI() RETURNS NONE
+		2.2.18		# Draws GUI Objects to the Screen
+		2.2.19		Title.RenderText()
+		2.2.20
+		2.2.21		FOR EACH GUIObj FROM GUIObjects DO # Check if the object in the list is a render-able object
+		2.2.22			<match str(GUIObj)>
+		2.2.23				<case Text.__name__> # If Object in list is text, render text
+		2.2.24					GUIObj.RenderText()
+		2.2.25				<end case>
+		2.2.26	
+		2.2.27				<case Btn.__name__> # If Object in list is a button, render button
+		2.2.28					GUIObj.RenderBtn()
+		2.2.29				<end case>
+		2.2.30
+		2.2.31				<case _> # Defaults to this if all other cases = False
+		2.2.32					PASS
+		2.2.33				<end case>
+		2.2.34
+		2.2.35			<end match>
+		2.2.36		END FOR EACH
+		2.2.37
+		2.2.38		pygame.display.flip()
+		2.2.39	END PROCEDURE
+		2.2.40
+		2.2.41 PROCEDURE run() RETURNS NONE
+		2.2.42
+		2.2.43		settings.init()
+
+		2.2.40		Window((width, height), 'Tetris', (0, 0, 0)).CreateNewWindow() # Instantiate Window Object & Create New Window 
+		2.2.41		
+		2.2.42		time.sleep(0.1)  # Wait for 0.1s until the main window loads (Used because calling the draw func does not work unless the surface is initialised)
+		2.2.43		drawGUI() # Draw the GUI
+		2.2.44
+		2.2.45 		# While the game is running
+		2.2.46		WHILE TRUE DO
+		2.2.47			GUIObjects[0].isHovering(drawGUI, GameRun, settings.effectState) # Used to navigate to a New Game Page
+		2.2.48			GUIObjects[1].isHovering(drawGUI, InstructionsRun, settings.effectState) # Used to navigate to Instructions Page
+		2.2.49			GUIObjects[2].isHovering(drawGUI, SettingsRun, settings.effectState) # Used to navigate to Settings Page
+		2.2.50			GUIObjects[3].isHovering(drawGUI, quit, settings.effectState) # Used to Exit the game
+		2.2.50
+		2.2.51			# Check for Keyboard Input
+		2.2.52			FOR EACH event FROM pygame.event.get() DO
+		2.2.53
+		2.2.54				# If exit button is clicked (top right of window), exit
+		2.2.55				IF event.type == pygame.QUIT
+		2.2.56					pygame.quit()
+		2.2.57					quit(0)
+		2.2.58				END IF
+		2.2.59
+		2.2.60				# If Escape key is pressed, Exit
+		2.2.61				if event.type == pygame.ESCAPE
+		2.2.62
+		2.2.63					<match event.key>
+		2.2.64						<case pygame.K_ESCAPE>
+		2.2.65							pygame.quit()
+		2.2.66							print('Exiting Program...')
+		2.2.67							quit(0)
+		2.2.68						<end case>
+		2.2.69					
+		2.2.70						<case _>
+		2.2.71							PASS
+		2.2.72						<end case>
+		2.2.78					<end match>
+		2.2.79				END IF
+		2.2.80			END FOR EACH
+		2.2.81		
+		2.2.82			pygame.display.update()
+		2.2.83			clock.tick(30)
+		2.2.84		END WHILE
+
+	2.3 Instructions
+		2.3.1 pygame.init()
+		2.3.2 DECLARE click INITIALLY pygame.time.Clock()
+		2.3.3 
+		2.3.4 DECLARE width, height INITIALLY INTEGER (960, 720)
+		2.3.5 DECLARE centerScreen INITIALLY INTEGER (width // 2)
+		2.3.6
+		2.3.7 # List of GUI Objects
+		2.3.8 DECLARE GUIObjects INITIALLY ARRAY OF Text [Text([centerScreen, (height // 2 - 300)], 'Instructions', 69),
+        2.3.9  											  Text([centerScreen, (height // 2 - 240)], 'You need to stack blocks to create a full ', 20),
+		2.3.10											  Text([centerScreen, (height // 2 - 200)], 'horizontal line, clearing them to earn points.', 20),
+		2.3.11											  Text([centerScreen, (height // 2 - 160)], 'If the blocks reach the top of the', 20),
+		2.3.12											  Text([centerScreen, (height // 2 - 120)], 'screen, you lose!', 20),
+		2.3.13											
+		2.3.14											  Text([centerScreen, (height // 2 - 50)], 'How to Play', 32),
+		2.3.15											  Text([centerScreen, (height // 2 + 10)], '- Use the up arrow key to rotate the block ', 20),
+		2.3.16											  Text([centerScreen, (height // 2 + 50)], '90 degrees', 20),
+		2.3.17											  Text([centerScreen, (height // 2 + 90)], '- Use the left & right arrow keys to move the', 20),
+		2.3.18											  Text([centerScreen, (height // 2 + 130)], 'block', 20),
+		2.3.19											  Text([(width // 2.08), (height // 2 + 170)], '- Use the down arrow to move the block down faster', 20),
+		2.3.20											  Text([centerScreen, (height // 2 + 210)], 'Have Fun Playing!', 20),
+		2.3.21		    								  Btn('Main Menu', [centerScreen, (height // 2 + 260)], 300, 48, 32)]
+		2.3.22
+		2.3.23	METHODS
+		2.3.24		PROCEDURE Leave() RETURNS NONE
+		2.3.25			run()
+		2.3.26		
+		2.2.27 		PROCEDURE drawGUI() RETURNS NONE
+		2.2.28			# Draws GUI Objects to the Screen
+		2.2.29
+		2.2.30			FOR EACH GUIObj FROM GUIObjects DO # Check if the object in the list is a render-able object
+		2.2.31				<match str(GUIObj)>
+		2.2.32					<case Text.__name__> # If Object in list is text, render text
+		2.2.33						GUIObj.RenderText()
+		2.2.34					<end case>
+		2.2.35	
+		2.2.36					<case Btn.__name__> # If Object in list is a button, render button
+		2.2.37						GUIObj.RenderBtn()
+		2.2.38					<end case>
+		2.2.39	
+		2.2.40					<case _> # Defaults to this if all other cases = False
+		2.2.41						PASS
+		2.2.42					<end case>
+		2.2.43	
+		2.2.45				<end match>
+		2.2.46			END FOR EACH
+		2.2.47
+		2.2.48			pygame.display.flip()
+		2.2.49		END PROCEDURE
+		2.3.50
+		2.3.51		PROCEDURE InstructionsRun() RETURNS NONE
+		2.3.52			Window((width, height), 'Tetris - Instructions', (0, 0, 0)).CreateNewWindow() # Instantiate Window Object & Create New Window
+		2.3.53			
+		2.3.54			sleep(0.1) # Wait for 0.1s until the main window loads (Used because calling the draw func does not work unless the surface is initialised)
+		2.3.55			drawGUI() # Draw the GUI
+		2.3.56			settings.init() # Initialise Settings
+		2.3.57			
+		2.3.58			# While the game is running
+		2.3.59			WHILE TRUE DO
+		2.3.60				GUIObjects[-1].isHovering(drawGUI, Leave) # Used to navigate back to the main menu
+		2.3.61				
+		2.3.62				# Check for keyboard input
+		2.3.63				FOR EACH event FROM pygame.event.get() DO
+		2.2.64
+		2.2.65					# If exit button is clicked (top right of window), exit
+		2.2.66					IF event.type == pygame.QUIT
+		2.2.67						pygame.quit()
+		2.2.68						quit(0)
+		2.2.69					END IF
+		2.2.70
+		2.2.71					# If Escape key is pressed, Exit
+		2.2.72					IF event.type == pygame.ESCAPE DO
+		2.2.73
+		2.2.74						<match event.key>
+		2.2.75							<case pygame.K_ESCAPE>
+		2.2.76								pygame.quit()
+		2.2.77								print('Exiting Program...')
+		2.2.78								quit(0)
+		2.2.79							<end case>
+		2.2.80					
+		2.2.81							<case _>
+		2.2.82								PASS
+		2.2.83							<end case>
+		2.2.84						<end match>
+		2.2.85					END IF
+		2.2.86				END FOR EACH
+		2.2.87		
+		2.2.88				pygame.display.update()
+		2.2.89				clock.tick(30)
+		2.2.90			END WHILE
+
+	2.4 Settings
+		2.4.1 game.init()
+		2.4.2 DECLARE clock INIITIALLY game.time.Clock()
+		2.4.3
+		2.4.4 DECLARE width, height INITIALLY INTEGER (960, 720)
+		2.4.5 DECLARE centerScreen INITIALLY INTEGER (width // 2)
+		2.4.6 
+		2.4.7 # GUI Instantiation
+		2.4.8 DECLARE title INITIALLY Text([centerScreen, (height // 8)], 'Settings', 69)
+		2.4.9
+		2.4.10 # List of GUI Objects
+		2.4.11 DECLARE GUIObjects INITIALLY ARRAY OF OBJECT [Text([centerScreen, (height // 8)], 'Settings', 69),
+        2.4.12  											 Btn('Music: Off', [centerScreen, (height // 2 - 100)], 330, 48, 32),
+        2.4.13                                               Btn('Sound Effects: Off', [centerScreen, (height // 2)], 580, 48, 32),
+        2.4.14												 Btn('Main Menu', [centerScreen, (height // 2 + 100)], 225, 48, 32)]
+		2.4.15 
+		2.4.16 DECLARE settings INITIALLY Settings()
+		2.4.17
+		2.4.18 METHODS
+		2.4.19
+		2.4.20		PROCEDURE Leave() RETURNS NONE
+		2.4.21			run()
+		2.4.22		END PROCEDURE
+		2.4.23
+		2.4.24		PROCEDURE ChangeMusicState() RETURNS NONE
+		2.4.25			pygame.mixer.Channel(1).set_volume(0) IF NOT settings.musicState ELSE pygame.mixer.Channel(.2).set_volume(1) END IF
+		2.4.26			GUIObjects[1].ChangeState('Music: On', True, drawGUI) IF NOT settings.musicState ELSE GUIObjects[1].ChangeState('Music: Off', False, drawGUI) END IF
+		2.4.27			settings.ChangeSettings(True) IF NOT settings.musicState ELSE settings.ChangeSettings(False) END IF
+		2.4.28		END PROCEDURE
+		2.4.29
+		2.4.30		PROCEDURE ChangeEffectsState() RETURNS NONE
+		2.4.31			game.mixer.Channel(0).set_volume(0) IF NOT settings.effectState ELSE game.mixer.Channel(0).set_volume(.3) END IF
+    	2.4.32			GUIObjects[2].ChangeState('Sound Effects: On', True, drawGUI) IF NOT settings.effectState ELSE GUIObjects[2].ChangeState('Sound Effects: Off', False, drawGUI) END IF
+    	2.4.33			settings.ChangeSettings(None, True) if not settings.effectState ELSE settings.ChangeSettings(None, False) END IF
+		2.4.34		END PROCEDURE
+		2.4.35
+		2.4.36 		PROCEDURE OnRun() RETURNS NONE
+		2.4.37			settings.init()
+		2.4.38			GUIObjects[1].ChangeState('Music: On', True, drawGUI) IF settings.musicState ELSE GUIObjects[1].ChangeState('Music: Off', False, drawGUI) END IF
+    	2.4.39			GUIObjects[2].ChangeState('Sound Effects: On', True, drawGUI) IF settings.effectState ELSE GUIObjects[2].ChangeState('Sound Effects: Off', False, drawGUI) END IF
+		2.4.40		END PROCEDURE
+		2.4.41
+		2.4.42 		PROCEDURE drawGUI() RETURNS NONE
+		2.4.43			# Draws GUI Objects to the Screen
+		2.4.44
+		2.4.45			FOR EACH GUIObj FROM GUIObjects DO # Check if the object in the list is a render-able object
+		2.4.46				<match str(GUIObj)>
+		2.4.47					<case Text.__name__> # If Object in list is text, render text
+		2.4.48						GUIObj.RenderText()
+		2.4.49					<end case>
+		2.4.50	
+		2.4.51					<case Btn.__name__> # If Object in list is a button, render button
+		2.4.52						GUIObj.RenderBtn()
+		2.4.53					<end case>
+		2.4.54	
+		2.4.55					<case _> # Defaults to this if all other cases = False
+		2.4.56						PASS
+		2.4.57					<end case>
+		2.4.58	
+		2.4.59				<end match>
+		2.4.60			END FOR EACH
+		2.4.61
+		2.4.62			pygame.display.flip()
+		2.4.63		END PROCEDURE
+		2.4.64
+		2.4.65		PROCEDURE SettingsRun RETURNS NONE
+		2.4.66			Window((width, height), 'Tetris - Settings', (0, 0, 0)).CreateNewWindow() # Instantiate Window Object & Create New Window
+		2.4.67
+    	2.4.68			sleep(0.1) # Wait for 0.1s until the main window loads (Used because calling the draw func does not work unless the surface is initialised)
+		2.4.69 			drawGUI() # Draw the GUI
+    	2.4.70			OnRun() # Get Settings & Change Button States Accordingly
+		2.4.71
+		2.4.72			WHILE TRUE DO
+		2.4.73				
+		2.4.74				GUIObjects[1].isHovering(drawGUI, ChangeMusicState, settings.effectState)
+		2.4.75				GUIObjects[2].isHovering(drawGUI, ChangeEffectState, settings.effectState)
+		2.4.76				GUIObjects[-1].isHovering(drawGUI, Leave, settings.effectState)
+		2.4.77			
+		2.4.78				pygame.mixer.Channel(0).set_volume(.2) IF settings.effectState ELSE game.mixer.Channel(0).set_volume(0) END IF
+		2.4.79				pygame.mixer.Channel(1).set_volume(1) IF settings.musicState ELSE pygame.mixer.Channel(1).set_volume(0) END IF
+		2.4.80
+		2.4.81				# Check for keyboard input
+		2.4.82				FOR EACH event FROM pygame.event.get() DO
+		2.4.83
+		2.4.84					# If exit button is clicked (top right of window), exit
+		2.4.85					IF event.type == pygame.QUIT
+		2.4.86						pygame.quit()
+		2.4.87						quit(0)
+		2.4.88					END IF
+		2.4.89
+		2.4.90					# If Escape key is pressed, Exit
+		2.4.91					IF event.type == pygame.ESCAPE DO
+		2.4.92
+		2.4.93						<match event.key>
+		2.4.94							<case pygame.K_ESCAPE>
+		2.4.95								pygame.quit()
+		2.4.96								print('Exiting Program...')
+		2.4.97								quit(0)
+		2.4.98							<end case>
+		2.4.99					
+		2.4.100							<case _>
+		2.4.101								PASS
+		2.4.102							<end case>
+		2.4.103						<end match>
+		2.4.104					END IF
+		2.4.105				END FOR EACH
+		2.4.106		
+		2.4.107				pygame.display.update()
+		2.4.108				clock.tick(30)
+		2.4.109			END WHILE
+
+3. Utilities
+
+	3.1 ClrTerminal
+		3.1.1 CLASS Color IS {}
+		3.1.2	
+		3.1.3	# Foreground Colors
+		3.1.4	DECLARE FORE_BLACK INITIALLY STRING '\x1b[30m'
+		3.1.5	DECLARE FORE_RED INITIALLY STRING '\x1b[31m'
+		3.1.6	DECLARE FORE_GREEN INITIALLY STRING '\x1b[32m'
+		3.1.7	DECLARE FORE_YELLOW INITIALLY STRING '\x1b[33m'
+		3.1.8	DECLARE FORE_BLUE INITIALLY STRING '\x1b[34m'
+		3.1.9	DECLARE FORE_MAGENTA INITIALLY STRING '\x1b[35m'
+		3.1.10	DECLARE FORE_CYAN INITIALLY STRING '\x1b[36m'
+		3.1.11	DECLARE FORE_WHITE INITIALLY STRING '\x1b[37m'
+		3.1.12	DECLARE FORE_ORANGE INITIALLY STRING '\x1b[38;5;208m'
+		3.1.13
+		3.1.14	# Background Colors
+		3.1.15	DECLARE BACK_BLACK INITIALLY '\x1b[40m'
+		3.1.16	DECLARE BACK_RED INITIALLY '\x1b[41m'
+		3.1.17	DECLARE BACK_GREEN INITIALLY '\x1b[42m'
+		3.1.18	DECLARE BACK_YELLOW INITIALLY '\x1b[43m'
+		3.1.19	DECLARE BACK_BLUE INITIALLY '\x1b[44m'
+		3.1.20	DECLARE BACK_MAGENTA INITIALLY '\x1b[45m'
+		3.1.21	DECLARE BACK_CYAN INITIALLY '\x1b[46m'
+		3.1.22	DECLARE BACK_WHITE INITIALLY '\x1b[47m'
+		3.1.23
+		3.1.24
+		3.1.25	DECLARE RESET INITIALLY '\003[0m'
+		3.1.26
+		3.1.27	METHODS
+		3.1.28
+		3.1.29		PROCEDURE ClrPrint(STRING clr, STRING txt, BOOLEAN isBack, BOOLEAN reset) RETURNS NONE
+		3.1.30			# Prints Colored Text to the Terminal
+		3.1.31
+		3.1.32				<match clr> # Checks for the color name
+		3.1.33					<case 'white'> print(f'{DO Color.BACK_WHITE IF isBack ELSE Color.FORE_WHITE END IF}{txt}{DO Color.RESET IF reset ELSE "" END IF}')
+		3.1.34					<case 'black'> print(f'{DO Color.BACK_BLACK IF isBack ELSE Color.FORE_BLACK END IF}{txt}{DO Color.RESET IF reset ELSE "" END IF}')
+		3.1.35					<case 'red'> print(f'{DO Color.BACK_RED IF isBack ELSE Color.FORE_RED END IF}{txt}{DO Color.RESET IF reset ELSE "" END IF}')
+		3.1.36					<case 'green'> print(f'{DO Color.BACK_GREEN IF isBack ELSE Color.FORE_GREEN}{txt}{DO Color.RESET IF reset ELSE "" END IF}')
+		3.1.37					<case 'yellow'> print(f'{DO Color.BACK_YELLOW IF isBack ELSE Color.FORE_YELLOW END IF}{txt}{DO Color.RESET IF reset ELSE "" END IF}')
+		3.1.38					<case 'blue'> print(f'{DO Color.BACK_BLUE IF isBack ELSE Color.FORE_BLUE}{txt}{DO Color.RESET IF reset ELSE "" END IF}')
+		3.1.39					<case 'magenta'> print(f'{DO Color.BACK_MAGENTA IF isBack ELSE Color.FORE_MAGENTA}{txt}{DO Color.RESET IF reset ELSE "" END IF}')
+		3.1.40					<case 'cyan'> print(f'{DO Color.BACK_CYAN IF isBack ELSE Color.FORE_CYAN}{txt}{DO Color.RESET IF reset ELSE "" END IF}')
+		3.1.41					<case 'orange'> print(f'{DO "" IF isBack ELSE Color.FORE_CYAN}{txt}{DO Color.RESET IF reset ELSE "" END IF}')
+		3.1.42					<case _> print(txt)
+		3.1.43				<end match>
+		3.1.44			END IF
+		3.1.45		END PROCEDURE
+		3.1.46	END CLASS
+
+REMOVED
+	1.2 Block Class
+		1.2.1 CLASS BLOCK INHERITS FROM pygame.sprite.Sprite
+		1.2.2	CONSTRUCTOR()
+		1.2.3		CALL super().__init__()
+		1.2.4		DECLARE self.color AS TUPLE INITIALLY ((200, 200, 200), (215, 133, 133), (30, 145, 255), (0, 170, 0), (180, 0, 140), (200, 200, 0))
+		1.2.5		DECLARE self.current AS BOOLEAN INITIALLY TRUE
+		1.2.6		DECLARE self.struct INITIALLY CALL np.array(self.struct)
+		1.2.7		IF randint(0, 1):
+		1.2.8			DECLARE self.struct AS CALL np.rot90(self.struct)
+		1.2.9		END IF
+		1.2.10
+		1.2.11	END CONSTRUCTOR
+		1.2.12
+		1.2.13	METHODS
+		1.2.14	doesCollide()
+
+		1.2.14 doesCollide()
+			1.2.14.1 FUNCTION doesCollide() RETURNS BOOLEAN
+			1.2.14.2	FOR otherBlock IN group:
+			1.2.14.3		IF block IS EQUAL TO otherBlock: CONTINUE
+			1.2.14.4		END IF
+			1.2.14.5		IF pygame.sprite.collide_mask(block, otherBlock) IS NOT NONE: RETURN TRUE
+			1.2.14.6		END IF
+			1.2.14.7	END FOR
+			1.2.14.8
+			1.2.14.9	RETURN FALSE
+			1.2.14.10
+			1.2.14.11 END FUNCTION
+
+	1.3 Different Block Classes
+
+		1.3.1 Classes
+		1.3.2 Square
+		1.3.3 T
+		1.3.4 Line
+		1.3.5 L
+		1.3.6 Z
+
+
+		1.3.2 Square Class
+			1.3.2.1 CLASS Square INHERITS FROM Block:
+			1.3.2.2		DECLARE struct AS TUPLE INITIALLY ((1, 1), (1, 1),)
+			1.3.2.3 END CLASS
+
+		1.3.3 T Class
+			1.3.3.1 CLASS T INHERITS FROM Block:
+			1.3.3.2		DECLARE struct AS TUPLE INITIALLY ((1, 1, 1), (0, 1, 0),)
+			1.3.3.3 END CLASS
+
+		1.3.4 Line Class
+			1.3.4.1 CLASS Line INHERITS FROM Block:
+			1.3.4.2 	DECLARE struct AS TUPLE INITIALLY ((1, 0), (1, 0), (1, 0), (1, 0),)
+			1.3.4.3 END CLASS
+
+		1.3.5 L Class
+			1.3.5.1 CLASS L INHERITS FROM Block:
+			1.3.5.2 	DECLARE struct AS TUPLE INITIALLY ((1, 1), (1, 0), (1, 0),)
+			1.3.5.3 END CLASS
+
+		1.3.6 Z Class
+			1.3.6.1 CLASS Z INHERITS FROM Block:
+			1.3.6.2 	DECLARE struct AS TUPLE INITIALLY ((0, 1), (1, 1), (1, 0),)
+			1.3.6.3 END CLASS

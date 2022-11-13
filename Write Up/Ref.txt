@@ -1,0 +1,8 @@
+https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2F08%2Ff3%2F81%2F08f38144079b1401972808d3850a703c.png&f=1&nofb=1&ipt=305746fe0a0b6928c80ef35ef95358f233f97e7bd907d7b95eacad86d49b9b04&ipo=images
+https://pythonassets.com/posts/tetris-with-pygame/
+https://www.pygame.org/docs/
+
+
+----------------------------------------------------------
+End User Survey: https://forms.gle/w9zqpxh9pgRnh9YNA
+SQL Connection: https://github.com/mkleehammer/pyodbc/wiki/Getting-started
