@@ -1,23 +1,15 @@
 from src.classes import Text, Btn, Window, Settings
-from time import sleep
+from src.utils.ClrTerminal import Color
 import pygame as game
 
-game.init()
-clock = game.time.Clock()
-
-width, height = (960, 720)
-centerScreen = (width // 2)
-
-# GUI Instantiation
-Title = Text([centerScreen, (height // 8)], 'Settings', 69)
+game.init() # initialise pygame library
+clock, settings = (game.time.Clock(), Settings()) # initialise settings & game clock
 
 # List of GUI Objects
-GUIObjects = [Text([centerScreen, (height // 8)], 'Settings', 69),
-              Btn('Music: Off', [centerScreen, (height // 2 - 100)], 330, 48, 32),
-              Btn('Sound Effects: Off', [centerScreen, (height // 2)], 580, 48, 32),
-              Btn('Main Menu', [centerScreen, (height // 2 + 100)], 225, 48, 32)]
-
-settings = Settings()
+GUIObjects = [Text([480, 90], 'Settings', 69),
+              Btn('Music: Off', [480, 260], 330, 48, 32),
+              Btn('Sound Effects: Off', [480, 360], 580, 48, 32),
+              Btn('Main Menu', [480, 490], 300, 48, 32)]
 
 def Leave():
     from .home import run
@@ -25,49 +17,35 @@ def Leave():
 
 def ChangeMusicState():
     game.mixer.Channel(1).set_volume(0) if not settings.musicState else game.mixer.Channel(1).set_volume(.2)
-    GUIObjects[1].ChangeState('Music: On', True, drawGUI) if not settings.musicState else GUIObjects[1].ChangeState('Music: Off', False, drawGUI)
+    GUIObjects[1].ChangeState('Music: On', True) if not settings.musicState else GUIObjects[1].ChangeState('Music: Off', False)
     settings.ChangeSettings(True) if not settings.musicState else settings.ChangeSettings(False)
+    Color.prints(f'Toggled Music ({settings.musicState})')
 
 def ChangeEffectsState():
     game.mixer.Channel(0).set_volume(0) if not settings.effectState else game.mixer.Channel(0).set_volume(.3)
-    GUIObjects[2].ChangeState('Sound Effects: On', True, drawGUI) if not settings.effectState else GUIObjects[2].ChangeState('Sound Effects: Off', False, drawGUI)
-    settings.ChangeSettings(None, True) if not settings.effectState else settings.ChangeSettings(None, False)
+    GUIObjects[2].ChangeState('Sound Effects: On', True) if not settings.effectState else GUIObjects[2].ChangeState('Sound Effects: Off', False)
+    settings.ChangeSettings(None, True) if not settings.effectState else settings.ChangeSettings(None, False) 
+    Color.prints(f'Toggled SE ({settings.effectState})')
 
 def OnRun():
-    settings.init()
-    GUIObjects[1].ChangeState('Music: On', True, drawGUI) if settings.musicState else GUIObjects[1].ChangeState('Music: Off', False, drawGUI)
-    GUIObjects[2].ChangeState('Sound Effects: On', True, drawGUI) if settings.effectState else GUIObjects[2].ChangeState('Sound Effects: Off', False, drawGUI)
-
-def drawGUI():
-    
-    for GUIObj in GUIObjects:
-
-        match str(GUIObj): # Check if the object in the list is a render-able object
-            case  Text.__name__: # If Object in list is text, render text
-                GUIObj.RenderText()
-                
-            case Btn.__name__: # If Object in list is a button, render button
-                GUIObj.RenderBtn()
-                
-            case _: pass # Defaults to this if all other cases = False
-    
-    game.display.flip()
+    settings.init() # Initialise Settings
+    GUIObjects[1].ChangeState('Music: On', True) if settings.musicState else GUIObjects[1].ChangeState('Music: Off', False) # Change text depending on setting state (Music)
+    GUIObjects[2].ChangeState('Sound Effects: On', True) if settings.effectState else GUIObjects[2].ChangeState('Sound Effects: Off', False) # Change text depending on setting state (SE)
 
 def SettingsRun():
 
-    Window((width, height), 'Tetris - Settings', (0, 0, 0)).CreateNewWindow() # Instantiate Window Object & Create New Window
-
-    sleep(0.1) # Wait for 0.1s until the main window loads (Used because calling the draw func does not work unless the surface is initialised)
+    win = Window('Netris - Settings', (0, 0, 0)) # Instantiate Window Object & Create New Window
+    win.CreateNewWindow()
     
-    drawGUI() # Draw the GUI
+    win.drawGUIObjs(GUIObjects) # Draw the GUI
     OnRun() # Get Settings & Change Button States Accordingly
 
     # While the game is running
     while True:
 
-        GUIObjects[1].isHovering(drawGUI, ChangeMusicState, settings.effectState)
-        GUIObjects[2].isHovering(drawGUI, ChangeEffectsState, settings.effectState)
-        GUIObjects[-1].isHovering(drawGUI, Leave, settings.effectState)
+        GUIObjects[1].isHovering(ChangeMusicState, settings.effectState)
+        GUIObjects[2].isHovering(ChangeEffectsState, settings.effectState)
+        GUIObjects[-1].isHovering(Leave, settings.effectState)
         
         game.mixer.Channel(0).set_volume(.2) if settings.effectState else game.mixer.Channel(0).set_volume(0)
         game.mixer.Channel(1).set_volume(.2) if settings.musicState else game.mixer.Channel(1).set_volume(0)

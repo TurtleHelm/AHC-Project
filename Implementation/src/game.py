@@ -1,55 +1,66 @@
-from .classes import Text, Btn, Window, Settings, Game
-from time import sleep
+from .classes import Text, Window, Settings, Game, Grid
+from src.utils.ClrTerminal import Color
 import pygame as game
 
 game.init() # Initialise Pygame
-clock = game.time.Clock() # Games Clock (Frames Per Second)
+clock, settings = (game.time.Clock(), Settings()) # Games Clock (Frames Per Second) & Initialise Settings Object
 
-width, height = (960, 720) # Window Width & Height
-centerScreen = (width // 2) # The Centre of the Screen (Floor Division)
-
-playWidth, playHeight = ((960 // 2), (720 // 4))
-
-GUIObjects = [Text([centerScreen, (height // 12)], 'Tetris', 40)] # Title Text
-
-settings = Settings() # Initialise Settings
+# GUI Objects
+GUIObjects = [Text([495, 60], 'Netris', 40),  # Title Text
+              Text([173, 144], 'Controls', 32), # Controls Header
+              Text([135, 180], '↑ Rotate', 20),
+              Text([164, 212], '← Move Left', 20),
+              Text([175, 240], '→ Move Right', 20),
+              Text([165, 272], '↓ Move Down', 20),
+              Text([165, 300], '[Esc] Exit Game', 20),
+              Text([800, 144], 'Score', 40), # Score Header
+              Text([800, 200], '0', 36)
+]
 
 # Sound Effects
-rotateBlockSound = game.mixer.Sound('src/resources/sounds/rotateBlock.wav')
-lineClearSound = game.mixer.Sound('src/resources/sounds/lineClear.wav')
-moveBlockSound = game.mixer.Sound('src/resources/sounds/moveBlock.wav')
+rotateBlockSound, lineClearSound, moveBlockSound, scoreSound, failSound = (
+    game.mixer.Sound('src/resources/sounds/rotateBlock.wav'), 
+    game.mixer.Sound('src/resources/sounds/lineClear.wav'), 
+    game.mixer.Sound('src/resources/sounds/moveBlock.wav'),
+    game.mixer.Sound('src/resources/sounds/scoreSound.wav'),
+    game.mixer.Sound('src/resources/sounds/failSound.wav')
+)
 
-def drawGUI() -> None:
-    '''Draws GUI Objects to the Screen'''
-    
-    for GUIObj in GUIObjects:
-
-        match str(GUIObj): # Check if the object in the list is a render-able object
-            case  Text.__name__: GUIObj.RenderText() # If Object in list is text, render text
-            case Btn.__name__: GUIObj.RenderBtn() # If Object in list is a button, render button
-            case _: pass # Defaults to this if all other cases = False
-
-    game.display.flip()
-
+# if esc pressed, return to home menu
 def Leave():
+    Color.printd('Leaving Game...')
     from .home import run
     game.mixer.Channel(1).stop()
     run()
 
 def GameRun():
-
-    Window((width, height), 'Tetris - Game', (0, 0, 0)).CreateNewWindow() # Instantiate Window Object & Create New Window
-
-    sleep(0.1) # Wait for 0.1s until the main window loads (Used because calling the draw func does not work unless the surface is initialised)
-    drawGUI() # Draw the GUI
+    
+    Color.printd('Entering Game...')
+    
+    win = Window('Netris - Game', (0, 0, 0)) # Instantiate Window Object
+    win.CreateNewWindow() # Create New Window
 
     settings.init() # Initialise Settings with settings from settings file
 
-    game.mixer.Channel(1).play(game.mixer.Sound('src/resources/sounds/tetris.wav'), -1) # Play music
+    game.mixer.Channel(1).play(game.mixer.Sound('src/resources/sounds/tetris.wav'), -1) # Play music in infinite loop
     game.mixer.Channel(1).set_volume(.2) if settings.musicState else game.mixer.Channel(1).set_volume(0) # if music settings off, then turn off the music otherwise play the music 
+    
+    block = Game.Block.GetRandBlock() # create initial random block
+    block.draw(win.ReturnWindowSurface()) # draw block to screen
+
+    speed, mult, score, limit = [0, 1, 0, 0] # initialise speed value
+    bottomBlocks = game.sprite.Group() # initialise block group
+
+    # Initialise New Game Grid
+    grid = Grid(((720 // 2), 100))
+    grid.DrawGrid(win.win) # draw grid
+    
+    win.drawGUIObjs(GUIObjects) # Draw the GUI
 
     # While the game is running
     while True:
+
+        grid.DrawGrid(win.win) # continually draw grid to screen (stops screen flickering)
 
         # Check for keyboard input
         for event in game.event.get():
@@ -67,11 +78,56 @@ def GameRun():
 
                     # If Esc key
                     case game.K_ESCAPE: Leave()
-                    case game.K_UP: game.mixer.Channel(0).play(rotateBlockSound) if settings.effectState else game.mixer.Channel(0).set_volume(0)
-                    case game.K_DOWN: pass
-                    case game.K_RIGHT: game.mixer.Channel(0).play(moveBlockSound) if settings.effectState else game.mixer.Channel(0).set_volume(0)
-                    case game.K_LEFT: game.mixer.Channel(0).play(moveBlockSound) if settings.effectState else game.mixer.Channel(0).set_volume(0)
-                    case _: pass
+                    
+                    case game.K_UP: 
+                        block.Rotate(win.win, settings.effectState, rotateBlockSound)
+                        
+                    case game.K_DOWN: 
+                        block.Move(win.win, (0, 30), 'down')
+                        if settings.effectState: game.mixer.Channel(0).play(moveBlockSound)
+                    
+                    case game.K_RIGHT: 
+                        if block.CheckMovable('right'):
+                            block.Move(win.win, (-30, 0), 'right')
+                            if settings.effectState: game.mixer.Channel(0).play(moveBlockSound)
 
-        game.display.update()
+                    case game.K_LEFT:
+                        if block.CheckMovable('left'):
+                            block.Move(win.win, (30, 0), 'left')
+                            if settings.effectState: game.mixer.Channel(0).play(moveBlockSound)
+                    
+                    case _: pass
+        
+        if speed*mult >= 30: # if 1s has passed (30 ticks per second)
+            block.Move(win.win, (0, 30), 'down') # Move the block down by 1 space on the screen
+            speed = 0 # reset timer
+
+        if block.CheckCollision(bottomBlocks) or block.realPos[1] == 630: # if block collision has been detected or the block has reached the bottom of the grid
+            bottomBlocks.add(block) # add current block to block group
+            if settings.effectState: game.mixer.Channel(2).play(scoreSound)
+            
+            score += 50 # add to score value
+            if score >= limit: # if score is over a specific value, change the value and increase multiplier
+                mult += 1
+                limit += 500
+           
+            GUIObjects[-1].ChangeColor((0, 0, 0))
+            GUIObjects[-1].ChangeText(str(score)) # add to score counter
+            GUIObjects[-1].ChangeColor((255, 255, 255))
+            
+            if block.reachedTop(bottomBlocks): # check if the block group is at the top of the screen
+                Color.prints('Reached Top of Screen')
+                from .highscores import RunHighscore 
+                if settings.effectState: game.mixer.Channel(0).play(failSound) # play fail sound
+                game.mixer.Channel(1).stop() # stop music
+                RunHighscore(score) # exit game into highscore menu
+                
+            else:
+                block = Game.Block.GetRandBlock()
+                block.draw(win.win)
+
+        game.display.update()            
         clock.tick(30)
+        speed += 1
+          
+    # Alongside checking for grid bottom collison, check all bottomBlock rects for collisions with new block & stop movement if block hits one
