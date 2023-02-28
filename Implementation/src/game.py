@@ -3,6 +3,7 @@ from src.utils.ClrTerminal import Color
 import pygame as game
 
 game.init() # Initialise Pygame
+game.event.set_allowed([game.QUIT, game.KEYDOWN, game.KEYUP])
 clock, settings = (game.time.Clock(), Settings()) # Games Clock (Frames Per Second) & Initialise Settings Object
 
 # GUI Objects
@@ -19,11 +20,11 @@ GUIObjects = [Text([495, 60], 'Netris', 40),  # Title Text
 
 # Sound Effects
 rotateBlockSound, lineClearSound, moveBlockSound, scoreSound, failSound = (
-    game.mixer.Sound('src/resources/sounds/rotateBlock.wav'), 
-    game.mixer.Sound('src/resources/sounds/lineClear.wav'), 
-    game.mixer.Sound('src/resources/sounds/moveBlock.wav'),
-    game.mixer.Sound('src/resources/sounds/scoreSound.wav'),
-    game.mixer.Sound('src/resources/sounds/failSound.wav')
+    game.mixer.Sound('Implementation/src/resources/sounds/rotateBlock.wav'), 
+    game.mixer.Sound('Implementation/src/resources/sounds/lineClear.wav'), 
+    game.mixer.Sound('Implementation/src/resources/sounds/moveBlock.wav'),
+    game.mixer.Sound('Implementation/src/resources/sounds/scoreSound.wav'),
+    game.mixer.Sound('Implementation/src/resources/sounds/failSound.wav')
 )
 
 # if esc pressed, return to home menu
@@ -42,7 +43,7 @@ def GameRun():
 
     settings.init() # Initialise Settings with settings from settings file
 
-    game.mixer.Channel(1).play(game.mixer.Sound('src/resources/sounds/tetris.wav'), -1) # Play music in infinite loop
+    game.mixer.Channel(1).play(game.mixer.Sound('Implementation/src/resources/sounds/tetris.wav'), -1) # Play music in infinite loop
     game.mixer.Channel(1).set_volume(.2) if settings.musicState else game.mixer.Channel(1).set_volume(0) # if music settings off, then turn off the music otherwise play the music 
     
     block = Game.Block.GetRandBlock() # create initial random block
@@ -58,7 +59,7 @@ def GameRun():
     win.drawGUIObjs(GUIObjects) # Draw the GUI
 
     # While the game is running
-    while True:
+    while 1: # 1 & not True due to weirdness with True taking up another operation unlike 1
 
         grid.DrawGrid(win.win) # continually draw grid to screen (stops screen flickering)
 
@@ -111,9 +112,10 @@ def GameRun():
                 mult += 1
                 limit += 500
            
-            GUIObjects[-1].ChangeColor((0, 0, 0))
+            # prevents overlap of text
+            GUIObjects[-1].ChangeColor((0, 0, 0)) # change color to black to hide text
             GUIObjects[-1].ChangeText(str(score)) # add to score counter
-            GUIObjects[-1].ChangeColor((255, 255, 255))
+            GUIObjects[-1].ChangeColor((255, 255, 255)) # change color back to white
             
             if block.reachedTop(bottomBlocks): # check if the block group is at the top of the screen
                 Color.prints('Reached Top of Screen')

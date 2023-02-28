@@ -1,6 +1,4 @@
-from os import path, remove
-import pygame as game, numpy as np
-from random import choice
+import pygame as game
 
 class Window:
     
@@ -83,7 +81,7 @@ class Text(game.sprite.Sprite):
         self.color = color # Color of Text
         
         self.fontsize = fontsize
-        self.text = game.font.Font('src/resources/fonts/font.ttf', self.fontsize).render(text, False, self.color) # Creates Font
+        self.text = game.font.Font('Implementation/src/resources/fonts/font.ttf', self.fontsize).render(text, False, self.color) # Creates Font
         
         self.pos = [self.givenPos[0] - (self.text.get_width() // 2), self.givenPos[1] - (self.text.get_height() // 2)] # Set Position of Text
         self.caption = text # Raw text
@@ -94,13 +92,13 @@ class Text(game.sprite.Sprite):
     
     def ChangeText(self, text, draw=None) -> None:
         self.caption = text
-        self.text = game.font.Font('src/resources/fonts/font.ttf', self.fontsize).render(self.caption, False, self.color) # Sets new Text
+        self.text = game.font.Font('Implementation/src/resources/fonts/font.ttf', self.fontsize).render(self.caption, False, self.color) # Sets new Text
         self.pos = [self.givenPos[0] - (self.text.get_width() // 2), self.givenPos[1] - (self.text.get_height() // 2)]
         draw() if draw is not None else self.RenderText()
 
     def ChangeColor(self, color) -> None:
         self.color = color # update color
-        self.text = game.font.Font('src/resources/fonts/font.ttf', self.fontsize).render(self.caption, False, color) # update text
+        self.text = game.font.Font('Implementation/src/resources/fonts/font.ttf', self.fontsize).render(self.caption, False, color) # update text
         self.pos = [self.givenPos[0] - (self.text.get_width() // 2), self.givenPos[1] - (self.text.get_height() // 2)] # update position
         self.RenderText() # Rerender text
 
@@ -134,8 +132,8 @@ class Btn(game.sprite.Sprite):
         self.text = Text(self.pos, text, self.fontsize, self.textColor) # text object
         self.caption = text # raw text
         self.state = False # has been clicked or not
-        self.hoverSound = 'src/resources/sounds/hoverSound.wav' # sound for hovering
-        self.selectSound = 'src/resources/sounds/selectSound.wav' # sound for selecting (clicking)
+        self.hoverSound = 'Implementation/src/resources/sounds/hoverSound.wav' # sound for hovering
+        self.selectSound = 'Implementation/src/resources/sounds/selectSound.wav' # sound for selecting (clicking)
 
     def ChangeState(self, txt:str, bool:bool) -> None:
         self.state = bool # Change Clicked State
@@ -198,9 +196,11 @@ class Game:
         
     class Block(game.sprite.Sprite):
         '''Class for Blocks'''
-        
+          
         @staticmethod
-        def GetRandBlock(): return choice((Game.LBlock, Game.SquareBlock, Game.TBlock, Game.SBlock, Game.ZBlock, Game.LineBlock))() # Returns Random Block
+        def GetRandBlock(): 
+            from random import choice
+            return choice((Game.LBlock, Game.SquareBlock, Game.TBlock, Game.SBlock, Game.ZBlock, Game.LineBlock))() # Returns Random Block
 
         def __init__(self, struct, color): # Initialise Values
             super().__init__()
@@ -276,7 +276,9 @@ class Game:
                 if self.CheckMovable('right') and self.CheckMovable('left'): # temp fix for bugging through grid walls
                     if effectState: game.mixer.Channel(0).play(sound)
                     self.UpdateColor((0, 0, 0), screen) # update color of previous block
-                    self.struct = np.rot90(self.struct) # rotate array 90 degrees clockwise
+                    
+                    from numpy import rot90
+                    self.struct = rot90(self.struct) # rotate array 90 degrees clockwise
                     self.draw(screen) # redraw new block positions
 
         @staticmethod
@@ -357,6 +359,7 @@ class Settings():
     def init(self) -> None:
         '''Gets Settings From File'''
         
+        from os import path
         if not path.isfile('settings.txt'): self.WriteSettings(False) # If there is no settings file, Make one
 
         else: # Otherwise
@@ -368,6 +371,8 @@ class Settings():
             self.effectState = True if settings[1] == 'True' else False # Set the sound effects state to true if the settings value is true            
 
     def WriteSettings(self, rem) -> None:
+        
+        from os import remove
         if rem: remove('settings.txt') # if we set rem to True, remove settings file
             
         with open('settings.txt', 'w') as f: # open settings file as write

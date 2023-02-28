@@ -2,12 +2,13 @@ from src.classes import Text, Btn, Window, Settings
 import pygame as game
 
 game.init() # initialise pygame library
+game.event.set_allowed([game.QUIT, game.KEYDOWN]) # reduces lag
 clock, settings = (game.time.Clock(), Settings()) # initialise settings & game clock
 
 # List of GUI Objects
 GUIObjects = [Text([480, 40], 'Instructions', 48),
               Text([480, 100], 'Stack blocks to create a full horizontal line', 20),
-              Text([320, 140], 'clearing them to earn points.', 20),
+              Text([320, 140], 'clearing them to earn points', 20),
               Text([447, 220], 'If the blocks reach the top of the screen,', 20),
               Text([119, 260], 'you lose!', 20),
               
@@ -31,7 +32,7 @@ def InstructionsRun():
     settings.init()
 
     # While game is running
-    while True:
+    while 1:
 
         GUIObjects[-1].isHovering(Leave, settings.effectState) # Used to navigate to a New Game Page
 

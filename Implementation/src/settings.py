@@ -3,6 +3,7 @@ from src.utils.ClrTerminal import Color
 import pygame as game
 
 game.init() # initialise pygame library
+game.event.set_allowed([game.QUIT, game.KEYDOWN])
 clock, settings = (game.time.Clock(), Settings()) # initialise settings & game clock
 
 # List of GUI Objects
@@ -41,7 +42,7 @@ def SettingsRun():
     OnRun() # Get Settings & Change Button States Accordingly
 
     # While the game is running
-    while True:
+    while 1:
 
         GUIObjects[1].isHovering(ChangeMusicState, settings.effectState)
         GUIObjects[2].isHovering(ChangeEffectsState, settings.effectState)

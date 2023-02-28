@@ -8,6 +8,7 @@ import pygame as game
 
 # Initialize Pygame
 game.init()
+game.event.set_allowed([game.QUIT, game.KEYDOWN])
 
 # Create the games clock and settings objects
 clock, settings = (game.time.Clock(), Settings())
@@ -34,9 +35,9 @@ def run():
     win.drawGUIObjs(GUIObjects)
 
     # While the game is running
-    while True:
+    while 1:
         
-        GUIObjects[1].isHovering(RunHighscore, settings.effectState) # Check if the new game button is clicked & navigate to the new game page
+        GUIObjects[1].isHovering(GameRun, settings.effectState) # Check if the new game button is clicked & navigate to the new game page
         GUIObjects[2].isHovering(InstructionsRun, settings.effectState) # Check if the instructions button is clicked & navigate to the instructions page
         GUIObjects[3].isHovering(SettingsRun, settings.effectState) # Check if the settings button is clicked & navigate to the settings page
         GUIObjects[4].isHovering(quit, settings.effectState) # Check if the exit game button is clicked & exit the game
