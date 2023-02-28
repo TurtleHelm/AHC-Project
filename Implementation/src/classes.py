@@ -200,7 +200,7 @@ class Game:
         @staticmethod
         def GetRandBlock(): 
             from random import choice
-            return choice((Game.LBlock, Game.SquareBlock, Game.TBlock, Game.SBlock, Game.ZBlock, Game.LineBlock))() # Returns Random Block
+            return choice((Game.LBlock, Game.SquareBlock, Game.TBlock, Game.SBlock, Game.ZBlock, Game.LineBlock, Game.JBlock))() # Returns Random Block
 
         def __init__(self, struct, color): # Initialise Values
             super().__init__()
@@ -238,6 +238,7 @@ class Game:
                 case 'left': self.realPos[0] -= 30
                 case 'right': self.realPos[0] += 30
                 case 'down': self.realPos[1] += 30
+                case 'up': self.realPos[1] -= 30
                 
             Game.Block.draw(self, screen) # draw new block to screen
 
@@ -245,13 +246,25 @@ class Game:
             for i in range(len(blockGroup.sprites())):
                 if self == blockGroup.sprites()[i]: continue
                 else: 
-                    for j in range(len(self.group.sprites())):
-                        collide = game.sprite.spritecollideany(self.group.sprites()[j], blockGroup.sprites()[i].group) # still causes issues with collision but it doesn't crash now
-                        if collide is not None: return True
-            
+                    for j in range(len(self.group.sprites())):                        
+                        if Game.Block.WillCollide(self.group.sprites()[j], blockGroup.sprites()[i].group): # still causes issues with collision but it doesn't crash now
+                                return True
+
             for i in range(len(self.group.sprites())): 
                 if self.group.sprites()[i].posY == 670: return True
 
+            return False
+
+        @staticmethod
+        def WillCollide(sprite, group):
+            import copy
+            spriteRect = copy.copy(sprite.rect)
+            spriteRect.move_ip((0, 30))
+            
+            for i in range(len(group)):
+                if spriteRect.colliderect(group.sprites()[i].rect):
+                    return True
+                
             return False
 
         def CheckMovable(self, dir):
@@ -315,9 +328,12 @@ class Game:
     
     class ZBlock(Block):
         def __init__(self): super().__init__(((0, 0, 0), (1, 1, 0), (0, 1, 1)), (128, 0, 0)) # initialise values for class
-    
+
     class LineBlock(Block):
         def __init__(self): super().__init__(((0, 0, 0, 0), (1, 1, 1, 1), (0, 0, 0, 0)), (0, 255, 255)) # initialise values for class
+
+    class JBlock(Block):
+        def __init__(self): super().__init__(((0, 0, 0), (0, 0, 1), (1, 1, 1)), (0, 0, 255)) # initialise values for class
 
 class GridRect(game.sprite.Sprite):
     def __init__(self, pos, size): # initialise values
@@ -331,9 +347,8 @@ class GridRect(game.sprite.Sprite):
     def drawRect(self, screen):
         game.draw.rect(screen, self.color, self.rect, 1) # draw grid rect with appropriate values
 
-class Grid(Game):
+class Grid:
     def __init__(self, gridSize): # initialise values 
-        super().__init__() # initialise values from inherited class
         self.sizeX = gridSize[0] # grid horizontal size
         self.sizeY = gridSize[1] # grid vertical size
         self.blockSize = 30 # grid block size
@@ -349,7 +364,7 @@ class Grid(Game):
                 self.gridGroup.add(gridBlock) # add the new GridRect object to the grid sprite group
                 gridBlock.drawRect(screen) # draw new gridRect object to the screen
 
-class Settings():
+class Settings:
     '''Class for Game Settings'''
     
     def __init__(self, musicState:bool=True, effectState:bool=True):
@@ -386,3 +401,102 @@ class Settings():
         self.musicState = musicBool if musicBool != None else self.musicState # set musicState to musicBool if musicBool has a value otherwise just set it back to musicState
         self.effectState = effectsBool if effectsBool != None else self.effectState # set effectState to effectBool if effectBool has a value otherwise just set it back to effectSte
         self.WriteSettings(True) # Write new changes to settings file
+        
+class Highscore:
+    def __init__(self, name='PLA', score=0):
+        self.name = name
+        self.score = score
+
+    def BubbleSortScores(self, scoreList:list) -> list[list]:
+        arr = []
+                       
+        if self.name != 'PLA' and self.score != 0:
+            scoreList.append(Highscore(self.name, self.score))
+        
+        for i in range(len(scoreList)):
+            for j in range (len(scoreList)-i-1):
+                if scoreList[j+1].score > scoreList[j].score:
+                    temp = scoreList[j]
+                    scoreList[j] = scoreList[j+1]
+                    scoreList[j+1] = temp
+            
+        for i in range(len(scoreList)): arr.append([scoreList[i].name, scoreList[i].score])
+    
+        return arr
+
+    @staticmethod
+    def GetScoresFromFile(file:str, arr:list) -> list:
+        tempNames = []
+        tempScores = []
+        
+        with open(file) as f:
+            tempArr = f.read().split(',')
+            f.close()
+           
+        for data in tempArr:
+            try: 
+                tempScores.append(int(data))
+            except ValueError:
+                tempNames.append(data)
+            
+        for i in range(len(tempNames)): arr.append(Highscore(tempNames[i], tempScores[i]))
+
+        return arr
+
+    @staticmethod
+    def WriteScoresToFile(file:str, arr:list) -> bool:
+        """Writes Scores to File Passed in, returns True if successful, else False"""
+
+        try:
+            with open(file, 'w') as f:
+                for i in range(len(arr)):
+                    f.write(f'{arr[i].name},{arr[i].score},')
+                f.close()
+
+        except Exception: return False
+
+    @staticmethod
+    def CommitToDb(scores) -> None:
+        import pyodbc as dbc
+        from .utils.ClrTerminal import Color
+        
+        topScores = []
+        
+        try:
+            conn_str = f"""
+            DRIVER=SQL SERVER;
+            SERVER=HelmsRig;
+            DATABASE=highscores;
+            Trust_Connection=yes;
+            """
+
+            conn = dbc.connect(conn_str)
+            cursor = conn.cursor()
+            
+            cursor.execute("TRUNCATE TABLE highscore;")
+            
+            ins_query = f"""INSERT INTO highscore (name, score) VALUES (?, ?);"""
+            
+            for row in scores:
+                vals = (row[0], row[1])
+                cursor.execute(ins_query, vals)
+                
+            conn.commit()
+            Color.prints('Commited Data to Database Successfully')
+            
+            try: 
+                data = cursor.execute('SELECT TOP (5) name, score FROM highscore;')
+            
+                for row in data: topScores.append(row)
+                
+                Color.prints('Successfully retrieved score data from database')
+                
+            except Exception: Color.printe('Error whilst trying to retrieve score data')
+            
+            conn.close() # closes connection to db
+            
+            return topScores
+        
+        except Exception: Color.printe('Error: There was an unexpected error whilst trying to commit data to the sql database')
+
+    def __repr__(self) -> str: return f'Highscore({self.name}, {self.score})'

@@ -50,6 +50,11 @@ def GameRun():
     block.draw(win.ReturnWindowSurface()) # draw block to screen
 
     speed, mult, score, limit = [0, 1, 0, 0] # initialise speed value
+    # prevents overlap of text
+    GUIObjects[-1].ChangeColor((0, 0, 0)) # change color to black to hide text
+    GUIObjects[-1].ChangeText(str(score)) # add to score counter
+    GUIObjects[-1].ChangeColor((255, 255, 255)) # change color back to white
+    
     bottomBlocks = game.sprite.Group() # initialise block group
 
     # Initialise New Game Grid
@@ -103,7 +108,7 @@ def GameRun():
             block.Move(win.win, (0, 30), 'down') # Move the block down by 1 space on the screen
             speed = 0 # reset timer
 
-        if block.CheckCollision(bottomBlocks) or block.realPos[1] == 630: # if block collision has been detected or the block has reached the bottom of the grid
+        if block.CheckCollision(bottomBlocks): # if block collision has been detected or the block has reached the bottom of the grid
             bottomBlocks.add(block) # add current block to block group
             if settings.effectState: game.mixer.Channel(2).play(scoreSound)
             
@@ -111,19 +116,19 @@ def GameRun():
             if score >= limit: # if score is over a specific value, change the value and increase multiplier
                 mult += 1
                 limit += 500
-           
+
             # prevents overlap of text
             GUIObjects[-1].ChangeColor((0, 0, 0)) # change color to black to hide text
             GUIObjects[-1].ChangeText(str(score)) # add to score counter
             GUIObjects[-1].ChangeColor((255, 255, 255)) # change color back to white
-            
+                
             if block.reachedTop(bottomBlocks): # check if the block group is at the top of the screen
                 Color.prints('Reached Top of Screen')
                 from .highscores import RunHighscore 
                 if settings.effectState: game.mixer.Channel(0).play(failSound) # play fail sound
                 game.mixer.Channel(1).stop() # stop music
                 RunHighscore(score) # exit game into highscore menu
-                
+                    
             else:
                 block = Game.Block.GetRandBlock()
                 block.draw(win.win)

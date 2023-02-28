@@ -1,7 +1,8 @@
-from .classes import Window, Text
+from .classes import Window, Text, Highscore
 import pygame as game
 
 game.init()
+game.event.set_allowed([game.QUIT, game.KEYDOWN])
 
 clock = game.time.Clock() # Games Clock (Frames Per Second)
 
@@ -10,10 +11,16 @@ def Leave():
     run()
 
 def RunHighscore(score=0):
+    scores, topScores = [], []
     
     GUIObjects = [Text([480, 90], 'Netris', 106),
                   Text([480, 200], f'Score: {score}', 48)
 ]
+    
+    userScore = Highscore('AAA', 9000)
+    scores = userScore.BubbleSortScores(userScore.GetScoresFromFile('scores.txt', scores))
+    # topScores = userScore.CommitToDb(scores)
+    # print(topScores)
 
     win = Window('Netris - Highscores', (0, 0, 0))
     win.CreateNewWindow()
