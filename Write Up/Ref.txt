@@ -1,8 +1,0 @@
-https://pythonassets.com/posts/tetris-with-pygame/
-https://www.pygame.org/docs/
-https://github.com/yanniknelson/AH-Computing-Project
-https://github.com/cosmobobak/AH-project-battleship
-
-----------------------------------------------------------
-End User Survey: https://forms.gle/w9zqpxh9pgRnh9YNA
-SQL Connection: https://github.com/mkleehammer/pyodbc/wiki/Getting-started

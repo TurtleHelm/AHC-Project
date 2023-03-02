@@ -1,3 +1,4 @@
+# Import necessary classes and modules
 from .classes import Text, Window, Settings, Game, Grid
 from src.utils.ClrTerminal import Color
 import pygame as game
@@ -27,13 +28,6 @@ rotateBlockSound, lineClearSound, moveBlockSound, scoreSound, failSound = (
     game.mixer.Sound('Implementation/src/resources/sounds/failSound.wav')
 )
 
-# if esc pressed, return to home menu
-def Leave():
-    Color.printd('Leaving Game...')
-    from .home import run
-    game.mixer.Channel(1).stop()
-    run()
-
 def GameRun():
     
     Color.printd('Entering Game...')
@@ -47,13 +41,11 @@ def GameRun():
     game.mixer.Channel(1).set_volume(.2) if settings.musicState else game.mixer.Channel(1).set_volume(0) # if music settings off, then turn off the music otherwise play the music 
     
     block = Game.Block.GetRandBlock() # create initial random block
-    block.draw(win.ReturnWindowSurface()) # draw block to screen
+    block.draw(win.win) # draw block to screen
 
     speed, mult, score, limit = [0, 1, 0, 0] # initialise speed value
     # prevents overlap of text
-    GUIObjects[-1].ChangeColor((0, 0, 0)) # change color to black to hide text
-    GUIObjects[-1].ChangeText(str(score)) # add to score counter
-    GUIObjects[-1].ChangeColor((255, 255, 255)) # change color back to white
+    GUIObjects[-1].UpdateText((0, 0, 0), str(score)) # Update Score Count
     
     bottomBlocks = game.sprite.Group() # initialise block group
 
@@ -72,37 +64,40 @@ def GameRun():
         for event in game.event.get():
             
             # If exit button is clicked (top right of window), exit
-            if event.type == game.QUIT:
-                game.quit()
-                quit(0)
+            if event.type == game.QUIT: win.ExitWindow()
             
-            # if escape key pressed, exit
+            # all keydown events
             if event.type == game.KEYDOWN:
                 
                 # Check for any matches in the key down events
                 match event.key:
 
-                    # If Esc key
-                    case game.K_ESCAPE: Leave()
+                    case game.K_ESCAPE: # if esc key, return home
+                        game.mixer.Channel(1).stop()
+                        win.Leave()
                     
-                    case game.K_UP: 
+                    case game.K_UP: # if up arrow, rotate
                         block.Rotate(win.win, settings.effectState, rotateBlockSound)
                         
-                    case game.K_DOWN: 
+                    case game.K_DOWN:  # if down arrow, move down
                         block.Move(win.win, (0, 30), 'down')
                         if settings.effectState: game.mixer.Channel(0).play(moveBlockSound)
                     
-                    case game.K_RIGHT: 
+                    case game.K_RIGHT: # if right arrow, move right
                         if block.CheckMovable('right'):
-                            block.Move(win.win, (-30, 0), 'right')
-                            if settings.effectState: game.mixer.Channel(0).play(moveBlockSound)
+                            # if not block.WillCollide(block, bottomBlocks, 'right'):
+                                block.Move(win.win, (-30, 0), 'right')
+                                if settings.effectState: game.mixer.Channel(0).play(moveBlockSound)
 
-                    case game.K_LEFT:
+                    case game.K_LEFT: # if left arrow, move left
                         if block.CheckMovable('left'):
-                            block.Move(win.win, (30, 0), 'left')
-                            if settings.effectState: game.mixer.Channel(0).play(moveBlockSound)
+                            # if not block.WillCollide(block, bottomBlocks, 'left'):
+                                block.Move(win.win, (30, 0), 'left')
+                                if settings.effectState: game.mixer.Channel(0).play(moveBlockSound)
                     
-                    case _: pass
+                    case _: pass # default case
+        
+        # print(game.key.get_pressed()[81]) Looking for down arrow key press
         
         if speed*mult >= 30: # if 1s has passed (30 ticks per second)
             block.Move(win.win, (0, 30), 'down') # Move the block down by 1 space on the screen
@@ -124,17 +119,17 @@ def GameRun():
                 
             if block.reachedTop(bottomBlocks): # check if the block group is at the top of the screen
                 Color.prints('Reached Top of Screen')
-                from .highscores import RunHighscore 
+                from .scoreInput import InputRun
                 if settings.effectState: game.mixer.Channel(0).play(failSound) # play fail sound
                 game.mixer.Channel(1).stop() # stop music
-                RunHighscore(score) # exit game into highscore menu
-                    
+                InputRun(score) # exit game into highscore menu
+
             else:
                 block = Game.Block.GetRandBlock()
                 block.draw(win.win)
 
-        game.display.update()            
+        game.display.update()
         clock.tick(30)
         speed += 1
           
-    # Alongside checking for grid bottom collison, check all bottomBlock rects for collisions with new block & stop movement if block hits one
+    # check all bottomBlock rectangles for collisions in the x axis with new block & prevent movement if collided

@@ -1,8 +1,9 @@
+# Import necessary classes and modules
 from src.classes import Text, Btn, Window, Settings
 import pygame as game
 
 game.init() # initialise pygame library
-game.event.set_allowed([game.QUIT, game.KEYDOWN]) # reduces lag
+game.event.set_allowed([game.QUIT]) # reduces lag
 clock, settings = (game.time.Clock(), Settings()) # initialise settings & game clock
 
 # List of GUI Objects
@@ -19,11 +20,8 @@ GUIObjects = [Text([480, 40], 'Instructions', 48),
               Text([480, 535], 'Have Fun Playing!', 20),
               Btn('Main Menu', [480, 620], 300, 48, 32)]
 
-def Leave():
-    from .home import run
-    run()
-
 def InstructionsRun():
+    """Change to Instructions Window"""
 
     win = Window('Netris - Instructions', (0, 0, 0)) # Instantiate Window Object & Create New Window
     win.CreateNewWindow()
@@ -34,29 +32,13 @@ def InstructionsRun():
     # While game is running
     while 1:
 
-        GUIObjects[-1].isHovering(Leave, settings.effectState) # Used to navigate to a New Game Page
+        GUIObjects[-1].isHovering(win.Leave, settings.effectState) # Used to navigate to a New Game Page
 
         # Check keyboard input
         for event in game.event.get():
             
             # If exit button clicked (top right of window), exit
-            if event.type == game.QUIT:
-                game.quit()
-                quit(0)
-            
-            # if escape key pressed, exit
-            if event.type == game.KEYDOWN:
-                
-                # Check for any matches in key down events
-                match event.key:
-
-                    # If Esc key
-                    case game.K_ESCAPE:
-                        game.quit()
-                        print('Exiting Program...')
-                        quit(0)
-                    
-                    case _: pass
+            if event.type == game.QUIT: win.Leave()
 
         game.display.update()
         clock.tick(30)

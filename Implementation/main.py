@@ -1,3 +1,4 @@
+# Import necessary classes and modules
 from src.utils.ClrTerminal import Color
 from src.home import run
 
@@ -5,4 +6,4 @@ from src.home import run
 if __name__ == '__main__':
 
     Color.printd('Loading Netris...')
-    run() # Run Game Using Main Window Surface for GUI Drawing
+    run() # Open New Home Window

@@ -1,26 +1,45 @@
-from .classes import Window, Text, Highscore
+# Import necessary classes and modules
+from .classes import Window, Text, Highscore, Btn, Settings
+from .game import GameRun
 import pygame as game
 
 game.init()
-game.event.set_allowed([game.QUIT, game.KEYDOWN])
+game.event.set_allowed([game.QUIT])
 
-clock = game.time.Clock() # Games Clock (Frames Per Second)
+clock, settings = (game.time.Clock(), Settings()) # Games Clock (Frames Per Second)
 
-def Leave():
-    from .home import run
-    run()
-
-def RunHighscore(score=0):
-    scores, topScores = [], []
+def InitialiseGUI(name, score) -> list:
+    scores = []
     
     GUIObjects = [Text([480, 90], 'Netris', 106),
-                  Text([480, 200], f'Score: {score}', 48)
-]
+                  Btn('Main Menu', [720, 600], 300, 48, 32),
+                  Btn('New Game', [240, 600], 300, 48, 32)]
     
-    userScore = Highscore('AAA', 9000)
-    scores = userScore.BubbleSortScores(userScore.GetScoresFromFile('scores.txt', scores))
-    # topScores = userScore.CommitToDb(scores)
-    # print(topScores)
+    userScore = Highscore(name, score)
+    scores = userScore.BubbleSortScores(userScore.GetScoresFromFile('Implementation/scores.txt'))
+    
+    height = 140
+    
+    for i in range(len(scores)):
+        height+=60
+        GUIObjects.append(Text([480, height], f'{scores[i][0]}: {scores[i][1]}', 36))
+    
+    GUIObjects.append(Text([480, height+80], 'HIGHSCORE!' if score >= scores[0][1] else '', 36))
+
+    return GUIObjects
+
+def RunHighscore(user=('PLA', 0)):
+    """Change to the Highscore Page
+
+    Args:
+    - name (str, optional): name of user. Defaults to 'BBB'.
+    - score (int, optional): score of user. Defaults to 0.
+    """
+        
+    name, score = user
+        
+    settings.init()
+    GUIObjects = InitialiseGUI(name, score)
 
     win = Window('Netris - Highscores', (0, 0, 0))
     win.CreateNewWindow()
@@ -28,22 +47,15 @@ def RunHighscore(score=0):
     win.drawGUIObjs(GUIObjects)
 
     while True:
+        
+        GUIObjects[1].isHovering(win.Leave, settings.effectState) # Check if the exit game button is clicked & exit the game
+        GUIObjects[2].isHovering(GameRun, settings.effectState) # Check if the exit game button is clicked & exit the game
+        
         # Check for keyboard input
         for event in game.event.get():
             
             # If exit button is clicked (top right of window), exit
-            if event.type == game.QUIT:
-                game.quit()
-                quit(0)
-            
-            # if escape key pressed, exit
-            if event.type == game.KEYDOWN:
-                
-                # Check for any matches in the key down events
-                match event.key:
-                    # If Esc key
-                    case game.K_ESCAPE: Leave()
-                    case _: pass
+            if event.type == game.QUIT: win.ExitWindow()
                     
         game.display.update() # Update the display
         clock.tick(30) # Set the game's frame rate to 30 FPS
