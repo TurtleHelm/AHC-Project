@@ -574,77 +574,65 @@
 2. Solo Files
 
 	2.1 Main
+
+		<imports>
+		<from src.utils.ClrTerminal import Color>
+		<from src.run import run>
+
 		2.1.1 IF __name__ == '__main__' THEN
 		2.1.2	Color.printd('Loading Netris...')
 		2.1.3	run() # Run Game Using Main Window Surface for GUI Drawing
+		2.1.4 END iF
 
 	2.2 Home
 
 		<imports>
-		<from src.classes import Text, Btn, Window, Settings>
-		<from .instructions import InstructionsRun>
-		<from .settings import SettingsRun>
-		<from .game import GameRun>
-		<import pygame as game>
+		<from src.classes import necessary classes>
+		<from pages import necessary run functions>
+		<import pygame library>
 
-		2.2.1 pygame.init() # Initialise Pygame
-		2.2.2 DECLARE clock, settings INITIALLY pygame.time.Clock() AND Settings() # Games Clock (FPS) & Initialises Settings for Sound
+		2.2.1 pygame.init()
+		2.2.2 pygame.event.set_allowed([pygame.QUIT])
 		2.2.3
-		2.2.4 # GUI Instantiation
-		2.2.5 DECLARE Title INITIALLY  # Title Text
+		2.2.4 pygame.init() # Initialise Pygame
+		2.2.5 DECLARE clock, settings INITIALLY pygame.time.Clock() AND Settings() # Games Clock (FPS) & Initialises Settings for Sound
 		2.2.6
-		2.2.7 # List of GUI Objects
-		2.2.8 DECLARE GUIObjects INITIALLY AS ARRAY of Btn [Text([centerScreen, (height // 8), 'Netris', 106]),
-		2.2.9												 Btn('New Game', [centerScreen, (height // 2 - 50)], 230, 41, 32), # New Game Btn
-		2.2.10												 Btn('Instructions', [centerScreen, (height // 2)], 300, 41, 32), # Instructions Btn
-		2.2.11												 Btn('Settings', [centerScreen, (height // 2 + 50)], 200, 41, 32), # Settings Btn
-		2.2.12												 Btn('Exit Game', [centerScreen, (height // 2 + 100)], 235, 41, 32)] # Exit Btn
-		2.2.13
-		2.2.14 PROCEDURE run() RETURNS NONE
-		2.2.15
-		2.2.16		settings.init()
-		2.2.17		DECLARE win INITIALLY Window((width, height), 'Netris', (0, 0, 0)) # Instantiate Window Object
-		2.2.18		win.CreateNewWindow() # Create New Window 
-		2.2.19		
-		2.2.20		win.drawGUIObjs(GUIObjects) # Draw the GUI
-		2.2.21
-		2.2.22 		# While the game is running
-		2.2.23		WHILE TRUE DO
-		2.2.24			GUIObjects[0].isHovering(GameRun, settings.effectState) # Used to navigate to a New Game Page
-		2.2.25			GUIObjects[1].isHovering(InstructionsRun, settings.effectState) # Used to navigate to Instructions Page
-		2.2.26			GUIObjects[2].isHovering(SettingsRun, settings.effectState) # Used to navigate to Settings Page
-		2.2.27			GUIObjects[3].isHovering(quit, settings.effectState) # Used to Exit the game
-		2.2.28
-		2.2.29			# Check for Keyboard Input
-		2.2.30			FOR EACH event FROM pygame.event.get() DO
-		2.2.31
-		2.2.32				# If exit button is clicked (top right of window), exit
-		2.2.33				IF event.type == pygame.QUIT
-		2.2.34					pygame.quit()
-		2.2.35					quit(0)
-		2.2.36				END IF
-		2.2.37
-		2.2.38				# If Escape key is pressed, Exit
-		2.2.39				if event.type == pygame.ESCAPE
-		2.2.40
-		2.2.41					<match event.key>
-		2.2.42						<case pygame.K_ESCAPE>
-		2.2.43							pygame.quit()
-		2.2.44							print('Exiting Program...')
-		2.2.45							quit(0)
-		2.2.46						<end case>
-		2.2.47					
-		2.2.48						<case _>
-		2.2.49							PASS
-		2.2.50						<end case>
-		2.2.51					<end match>
-		2.2.52				END IF
-		2.2.53			END FOR EACH
-		2.2.54		
-		2.2.55			pygame.display.update()
-		2.2.56			clock.tick(30)
-		2.2.57		END WHILE
-		2.2.58	END PROCEDURE
+		2.2.7
+		2.2.8 # List of GUI Objects
+		2.2.9 DECLARE GUIObjects INITIALLY AS ARRAY of Btn [
+		2.2.11												Text([480, 90], 'Netris', 106),
+		2.2.12												Btn('New Game', [480, 310], 230, 41, 32), # New Game Btn
+		2.2.13												Btn('Instructions', [480, 360], 300, 41, 32), # Instructions Btn
+		2.2.14												Btn('Settings', [480, 410], 200, 41, 32), # Settings Btn
+		2.2.15												Btn('Developer Mode', [480, 600], 210, 41, 16),
+		2.2.16												Btn('Exit Game', [480, 460], 235, 41, 32) # Exit Btn
+		2.2.17 ]
+		2.2.18 PROCEDURE run() RETURNS NONE
+		2.2.19
+		2.2.20		settings.init()
+		2.2.21		DECLARE win INITIALLY Window('Netris - Main Menu', (0, 0, 0)) # Instantiate Window Object
+		2.2.22		win.CreateNewWindow() # Create New Window 
+		2.2.23		
+		2.2.24		win.drawGUIObjs(GUIObjects) # Draw the GUI
+		2.2.25
+		2.2.26 		# While the game is running
+		2.2.27		WHILE 1 DO
+		2.2.28			GUIObjects[1].isHovering(GameRun, settings.effectState) # Used to navigate to a New Game Page
+		2.2.29			GUIObjects[2].isHovering(InstructionsRun, settings.effectState) # Used to navigate to Instructions Page
+		2.2.30			GUIObjects[3].isHovering(SettingsRun, settings.effectState) # Used to navigate to Settings Page
+		2.2.31			GUIObjects[4].isHovering(quit, settings.effectState) # Used to Exit the game
+		2.2.32			GUIObjects[-1].isHovering(win.ExitWindow, settings.effectState)
+		2.2.33
+		2.2.34			# Check for Keyboard Input
+		2.2.35			FOR EACH event FROM pygame.event.get() DO
+		2.2.36				IF event.type == game.QUIT THEN win.ExitWindow() END IF
+		2.2.37				IF event.type == game.KEYDOWN AND event.key == game.K_ESCAPE THEN win.ExitWindow() END IF
+		2.2.38			END FOR EACH
+		2.2.39		
+		2.2.40			pygame.display.update()
+		2.2.41			clock.tick(30)
+		2.2.42		END WHILE
+		2.2.43	END PROCEDURE
 
 	2.3 Instructions
 
@@ -653,103 +641,82 @@
 		<import pygame library>
 
 		2.3.1 pygame.init()
-		2.3.2 DECLARE clock, settings INITIALLY pygame.time.Clock() AND Settings()
-		2.3.3 
-		2.3.4 DECLARE width, height INITIALLY INTEGER (960, 720)
-		2.3.5 DECLARE centerScreen INITIALLY INTEGER (width // 2)
-		2.3.6
-		2.3.7 # List of GUI Objects
-		2.3.8 DECLARE GUIObjects INITIALLY ARRAY OF Text [Text([(Window.getScreenSize()[0] // 2), (Window.getScreenSize()[1] // 2 - 300)], 'Instructions', 48),
-        2.3.9  											  Text([(Window.getScreenSize()[0] // 2), (Window.getScreenSize()[1] // 2 - 260)], 'Stack blocks to create a full horizontal line', 20),
-		2.3.10											  Text([(Window.getScreenSize()[0] // 3), (Window.getScreenSize()[1] // 2 - 220)], 'clearing them to earn points.', 20),
-		2.3.11											  Text([(Window.getScreenSize()[0] // 2), (Window.getScreenSize()[1] // 2 - 180)], '---------------------', 20),
-		2.3.12											  Text([(Window.getScreenSize()[0] // 2.15), (Window.getScreenSize()[1] // 2 - 140)], 'If the blocks reach the top of the screen,', 20),
-		2.3.13											  Text([(Window.getScreenSize()[0] // 8.1), (Window.getScreenSize()[1] // 2 - 100)], 'you lose!', 20),
-		2.3.14
-		2.3.15											
-		2.3.16											  Text([(Window.getScreenSize()[0] // 2), (Window.getScreenSize()[1] // 2 - 40)], 'How to Play', 32),
-		2.3.17											  Text([(Window.getScreenSize()[0] // 2.52), (Window.getScreenSize()[1] // 2 + 20)], '- Use the ↑ key to rotate the block', 20),
-		2.3.18											  Text([(Window.getScreenSize()[0] // 2.34), (Window.getScreenSize()[1] // 2 + 70)], '- Use the ← & → keys to move the block', 20),
-		2.3.19											  Text([(Window.getScreenSize()[0] // 2), (Window.getScreenSize()[1] // 2 + 110)], '- Use the ↓ key to move the block down faster', 20),
-		2.3.20											  Text([(Window.getScreenSize()[0] // 2), (Window.getScreenSize()[1] // 2 + 175)], 'Have Fun Playing!', 20),
-		2.3.21											  Btn('Main Menu', [(Window.getScreenSize()[0] // 2), (Window.getScreenSize()[1] // 2 + 260)], 300, 48, 32)]
-		2.3.22
-		2.3.23	METHODS
-		2.3.24		PROCEDURE Leave() RETURNS NONE
-		2.3.25			run()
-		2.3.26
-		2.3.27		PROCEDURE InstructionsRun() RETURNS NONE
-		2.3.28			DECLARE win INITIALLY Window((width, height), 'Netris - Instructions', (0, 0, 0)) # Instantiate Window Object
-		2.3.29			win.CreateNewWindow() # Create New Window
-		2.3.30
-		2.3.31			win.drawGUIObjs(GUIObjects) # Draw the GUI
-		2.3.32			settings.init() # Initialise Settings
-		2.3.33			
-		2.3.34			# While the game is running
-		2.3.35			WHILE TRUE DO
-		2.3.36				GUIObjects[-1].isHovering(Leave, settings.effectState) # Used to navigate back to the main menu
-		2.3.37				
-		2.3.38				# Check for keyboard input
-		2.3.39				FOR EACH event FROM pygame.event.get() DO
-		2.2.40
-		2.2.41					# If exit button is clicked (top right of window), exit
-		2.2.42					IF event.type == pygame.QUIT
-		2.2.43						pygame.quit()
-		2.2.44						quit(0)
-		2.2.45					END IF
-		2.2.46
-		2.2.47					# If Escape key is pressed, Exit
-		2.2.48					IF event.type == pygame.ESCAPE DO
-		2.2.49
-		2.2.50						<match event.key>
-		2.2.51							<case pygame.K_ESCAPE>
-		2.2.52								pygame.quit()
-		2.2.53								print('Exiting Program...')
-		2.2.54								quit(0)
-		2.2.55							<end case>
-		2.2.56					
-		2.2.57							<case _>
-		2.2.58								PASS
-		2.2.59							<end case>
-		2.2.60						<end match>
-		2.2.61					END IF
-		2.2.62				END FOR EACH
-		2.2.63		
-		2.2.64				pygame.display.update()
-		2.2.65				clock.tick(30)
-		2.2.66			END WHILE
-		2.2.67 		END PROCEDURE
+		2.3.2 pygame.event.set_allowed([pygame.QUIT])
+		2.3.3 DECLARE clock, settings INITIALLY pygame.time.Clock() AND Settings()
+		2.3.4
+		2.3.5 # List of GUI Objects
+		2.3.6 DECLARE GUIObjects INITIALLY [
+		2.3.7								Text([480, 40], 'Instructions', 48),
+        2.3.8  								Text([480, 100], 'Stack blocks to create a full horizontal line', 20),
+        2.3.9								Text([320, 140], 'clearing them to earn points', 20),
+        2.3.10								Text([447, 220], 'If the blocks reach the top of the screen,', 20),
+        2.3.11								Text([119, 260], 'you lose!', 20),
+        2.3.12
+        2.3.13								Text([480, 320], 'How to Play', 32),
+        2.3.13								Text([381, 380], '- Use the ↑ key to rotate the block', 20),
+        2.3.14 								Text([410, 430], '- Use the ← & → keys to move the block', 20),
+        2.3.15								Text([480, 470], '- Use the ↓ key to move the block down faster', 20),
+        2.3.16								Text([480, 535], 'Have Fun Playing!', 20),
+        2.3.17								Btn('Main Menu', [480, 620], 300, 48, 32)
+		2.3.18 ]
+		2.3.19
+		2.3.20	METHODS
+		2.3.21
+		2.3.22		PROCEDURE InstructionsRun() RETURNS NONE
+		2.3.23			DECLARE win INITIALLY Window('Netris - Instructions', (0, 0, 0)) # Instantiate Window Object
+		2.3.24			win.CreateNewWindow() # Create New Window
+		2.3.25
+		2.3.26			win.drawGUIObjs(GUIObjects) # Draw the GUI
+		2.3.27			settings.init() # Initialise Settings
+		2.3.28			
+		2.3.29			# While the game is running
+		2.3.30			WHILE 1 DO
+		2.3.31				GUIObjects[-1].isHovering(win.Leave, settings.effectState) # Used to navigate back to the main menu
+		2.3.32				
+		2.3.33				# Check for keyboard input
+		2.3.34				FOR EACH event FROM pygame.event.get() DO
+		2.2.35
+		2.2.36					# If exit button is clicked (top right of window), exit
+		2.2.37					IF event.type == pygame.QUIT THEN win.ExitWindow() END IF
+		2.2.38				END FOR
+		2.2.39		
+		2.2.40				pygame.display.update()
+		2.2.41				clock.tick(30)
+		2.2.42			END WHILE
+		2.2.43		END PROCEDURE
+		2.2.44 END FILE
 
 	2.4 Settings
 
 		<imports>
-		<from src.classes import Text, Btn, Window, Settings>
-		<import pygame as game>
+		<from src.classes import necessary classes>
+		<from utils import necessary classes>
+		<import pygame library>
 	
-		2.4.1 game.init()
-		2.4.2 DECLARE clock, settings INIITIALLY game.time.Clock() AND Settings() # Initialise Game Clock & Settings
+		2.4.1 pygame.init()
+		2.4.2 pygame.event.set_allowed([pygame.QUIT])
 		2.4.3
-		2.4.4 # List of GUI Objects
-		2.4.5 DECLARE GUIObjects INITIALLY ARRAY OF OBJECT [Text([centerScreen, (height // 8)], 'Settings', 69),
-        2.4.6  											 	Btn('Music: Off', [centerScreen, (height // 2 - 100)], 330, 48, 32),
-        2.4.7                                               Btn('Sound Effects: Off', [centerScreen, (height // 2)], 580, 48, 32),
-        2.4.8												Btn('Main Menu', [centerScreen, (height // 2 + 100)], 225, 48, 32)]
-		2.4.9
-		2.4.10 METHODS
-		2.4.11
-		2.4.12		PROCEDURE Leave() RETURNS NONE
-		2.4.13			run()
-		2.4.14		END PROCEDURE
-		2.4.15
-		2.4.16		PROCEDURE ChangeMusicState() RETURNS NONE
-		2.4.17			pygame.mixer.Channel(1).set_volume(0) IF NOT settings.musicState ELSE pygame.mixer.Channel(.2).set_volume(1) END IF
-		2.4.18			GUIObjects[1].ChangeState('Music: On', True, drawGUI) IF NOT settings.musicState ELSE GUIObjects[1].ChangeState('Music: Off', False, drawGUI) END IF
-		2.4.19			settings.ChangeSettings(True) IF NOT settings.musicState ELSE settings.ChangeSettings(False) END IF
-		2.4.20		END PROCEDURE
+		2.4.4 DECLARE clock, settings INIITIALLY pygame.time.Clock() AND Settings() # Initialise Game Clock & Settings
+		2.4.5
+		2.4.6 # List of GUI Objects
+		2.4.7 DECLARE GUIObjects INITIALLY ARRAY OF OBJECT [Text([480, 90], 'Settings', 69),
+        2.4.8  											 	Btn('Music: Off', [480, 260], 330, 48, 32),
+        2.4.9                                               Btn('Sound Effects: Off', [480, 360], 580, 48, 32),
+        2.4.10												Btn('Main Menu', [480, 490], 225, 48, 32)
+		2.4.11 ]
+		2.4.12
+		2.4.13 METHODS
+		2.4.14
+		2.4.15		PROCEDURE ChangeMusicState() RETURNS NONE
+		2.4.16			pygame.mixer.Channel(1).set_volume(0) IF NOT settings.musicState ELSE pygame.mixer.Channel(.2).set_volume(1) END IF
+		2.4.17			GUIObjects[1].ChangeState('Music: On', True) IF NOT settings.musicState ELSE GUIObjects[1].ChangeState('Music: Off', False) END IF
+		2.4.18			settings.ChangeSettings(True) IF NOT settings.musicState ELSE settings.ChangeSettings(False) END IF
+		2.4.19			Color.prints(f'Toggled Music ({settings.musicState})')
+		2.4.20	 	END PROCEDURE
 		2.4.21
 		2.4.22		PROCEDURE ChangeEffectsState() RETURNS NONE
 		2.4.23			game.mixer.Channel(0).set_volume(0) IF NOT settings.effectState ELSE game.mixer.Channel(0).set_volume(.3) END IF
-    	2.4.24			GUIObjects[2].ChangeState('Sound Effects: On', True, drawGUI) IF NOT settings.effectState ELSE GUIObjects[2].ChangeState('Sound Effects: Off', False, drawGUI) END IF
+    	2.4.24			GUIObjects[2].ChangeState('Sound Effects: On', True) IF NOT settings.effectState ELSE GUIObjects[2].ChangeState('Sound Effects: Off', False) END IF
     	2.4.25			settings.ChangeSettings(None, True) if not settings.effectState ELSE settings.ChangeSettings(None, False) END IF
 		2.4.26		END PROCEDURE
 		2.4.27
@@ -760,7 +727,7 @@
 		2.4.32		END PROCEDURE
 		2.4.33
 		2.4.34		PROCEDURE SettingsRun RETURNS NONE
-		2.4.35			DECLARE win INITIALLY Window((width, height), 'Netris - Settings', (0, 0, 0)) # Instantiate Window Object
+		2.4.35			DECLARE win INITIALLY Window('Netris - Settings', (0, 0, 0)) # Instantiate Window Object
 		2.4.36			win.CreateNewWindow() # Create New Window
 		2.4.37
 		2.4.38 			win.drawGUIObjs(GUIObjects) # Draw the GUI
@@ -770,7 +737,7 @@
 		2.4.42				
 		2.4.43				GUIObjects[1].isHovering(ChangeMusicState, settings.effectState)
 		2.4.44				GUIObjects[2].isHovering(ChangeEffectState, settings.effectState)
-		2.4.45				GUIObjects[-1].isHovering(Leave, settings.effectState)
+		2.4.45				GUIObjects[-1].isHovering(win.Leave, settings.effectState)
 		2.4.46			
 		2.4.47				pygame.mixer.Channel(0).set_volume(.2) IF settings.effectState ELSE game.mixer.Channel(0).set_volume(0) END IF
 		2.4.48				pygame.mixer.Channel(1).set_volume(1) IF settings.musicState ELSE pygame.mixer.Channel(1).set_volume(0) END IF
@@ -779,116 +746,136 @@
 		2.4.51				FOR EACH event FROM pygame.event.get() DO
 		2.4.52
 		2.4.53					# If exit button is clicked (top right of window), exit
-		2.4.54					IF event.type == pygame.QUIT
-		2.4.55						pygame.quit()
-		2.4.56						quit(0)
-		2.4.57					END IF
-		2.4.58
-		2.4.59					# If Escape key is pressed, Exit
-		2.4.60					IF event.type == pygame.ESCAPE DO
-		2.4.61
-		2.4.62						<match event.key>
-		2.4.63							<case pygame.K_ESCAPE>
-		2.4.64								pygame.quit()
-		2.4.65								print('Exiting Program...')
-		2.4.66								quit(0)
-		2.4.67							<end case>
-		2.4.68					
-		2.4.69							<case _>
-		2.4.70								PASS
-		2.4.71							<end case>
-		2.4.72						<end match>
-		2.4.73					END IF
-		2.4.74				END FOR EACH
-		2.4.75		
-		2.4.76				pygame.display.update()
-		2.4.77				clock.tick(30)
-		2.4.78			END WHILE
-		2.4.79		END PROCEDURE
+		2.4.54					IF event.type == pygame.QUIT THEN win.ExitWindow() END IF
+		2.4.55				END FOR EACH
+		2.4.56		
+		2.4.57				pygame.display.update()
+		2.4.58				clock.tick(30)
+		2.4.59			END WHILE
+		2.4.60		END PROCEDURE
 
 	2.5 Game
 		
 		<imports>
-		<from .classes import Text, Window, Settings, Game, Grid>
-		<import pygame as game>
+		<from .classes import necessary classes>
+		<from utils import necessary classes>
+		<import pygame library>
 
 		2.5.1 game.init()
-		2.5.2 DECLARE clock, settings INITIALLY (game.time.Clock(), Settings()) # Games Clock (Frames Per Second) & Initialise Settings
-		2.5.3
-		2.5.4 DECLARE GUIObjects INITIALLY [Text([(Window.getScreenSize()[0] // 2), (Window.getScreenSize()[1] // 12)], 'Netris', 40)] # Title Text
-		2.5.5
-		2.5.6 DECLARE rotateBlockSound, lineClearSound, moveBlockSound INITIALLY (game.mixer.Sound('src/resources/sounds/rotateBlock.wav'), 
-		2.5.7                                       							  game.mixer.Sound('src/resources/sounds/lineClear.wav'), 
-		2.5.8                                     								  game.mixer.Sound('src/resources/sounds/moveBlock.wav'))
-		2.5.9
-		2.5.10 PROCEDURE Leave() RETURNS NONE
-		2.5.11 		game.mixer.Channel(1).stop()
-		2.5.12		run()
-		2.5.13 END PROCEDURE
-		2.5.14
-		2.5.15 PROCEDURE GameRun() RETURNS NONE
-		2.5.16		DECLARE win INITIALLY Window('Netris - Game', (0, 0, 0)) # Instantiate Window Object
-		2.5.17 		win.CreateNewWindow()
-		2.5.18
-		2.5.19		settings.init() # Initialise Settings with settings from settings file
-		2.5.20
-		2.5.21		game.mixer.Channel(1).play(game.mixer.Sound('src/resources/sounds/tetris.wav'), -1) # Play music
-    	2.5.22 		game.mixer.Channel(1).set_volume(.2) if settings.musicState else game.mixer.Channel(1).set_volume(0) # if music settings off, then turn off the music otherwise play the music 
-		2.5.23
-		2.5.24		DECLARE block INITIALLY Game.TestBlock()
-		2.5.25		block.DrawBlock(win.ReturnWindowSurface())
-		2.5.26
-		2.5.27		DECLARE speed INITIALLY 0
-		2.5.28
-		2.5.29		DECLARE grid INITIALLY Grid(((720 // 2), 100)) # Initialise New Game Grid
-		2.5.30			
-		2.5.31		WHILE TRUE DO # while the game is running
-		2.5.32			win.drawGUIObjs(GUIObjects)
-		2.5.33			grid.DrawGrid(win.ReturnWindowSurface())
+		2.5.2 pygame.event.set_allowed([pygame.QUIT, pygame.KEYDOWN, pygame.KEYUP])
+		2.5.3 DECLARE clock, settings INITIALLY (game.time.Clock(), Settings()) # Games Clock (Frames Per Second) & Initialise Settings
+		2.5.4
+		2.5.5 DECLARE GUIObjects INITIALLY [
+		2.5.6								Text([495, 60], 'Netris', 40) # Title Text
+		2.5.7				              	Text([173, 144], 'Controls', 32), # Controls Header
+        2.5.8  								Text([135, 180], '↑ Rotate', 20),
+    	2.5.9 								Text([164, 212], '← Move Left', 20),
+		2.5.10								Text([175, 240], '→ Move Right', 20),
+		2.5.11								Text([165, 272], '↓ Move Down', 20),
+		2.5.12								Text([165, 300], '[Esc] Exit Game', 20),
+		2.5.13								Text([800, 144], 'Score', 40), # Score Header
+		2.5.14								Text([800, 200], '0', 36)
+		2.5.15 ]
+		2.5.16
+		2.5.17 DECLARE rotateBlockSound, lineClearSound, moveBlockSound, scoreSound, failSound INITIALLY (
+    	2.5.18																							  pygame.mixer.Sound('Implementation/src/resources/sounds/rotateBlock.wav'), 
+    	2.5.19																							  pygame.mixer.Sound('Implementation/src/resources/sounds/lineClear.wav'), 
+    	2.5.20																							  pygame.mixer.Sound('Implementation/src/resources/sounds/moveBlock.wav'),
+    	2.5.21																							  pygame.mixer.Sound('Implementation/src/resources/sounds/scoreSound.wav'),
+    	2.5.22																							  pygame.mixer.Sound('Implementation/src/resources/sounds/failSound.wav')
+		2.5.23 )
+		2.5.24
+		2.5.25 PROCEDURE GameRun() RETURNS NONE
+		2.5.26		Color.printd('Entering Game...')
+		2.5.27		DECLARE win INITIALLY Window('Netris - Game', (0, 0, 0)) # Instantiate Window Object
+		2.5.28 		win.CreateNewWindow()
+		2.5.29
+		2.5.30		settings.init() # Initialise Settings with settings from settings file
+		2.5.31
+		2.5.32		pygame.mixer.Channel(1).play(pygame.mixer.Sound('Implementation/src/resources/sounds/tetris.wav'), -1) # Play music
+    	2.5.33 		pygame.mixer.Channel(1).set_volume(.2) IF settings.musicState ELSE pygame.mixer.Channel(1).set_volume(0) END IF # if music settings off, then turn off the music otherwise play the music 
 		2.5.34
-		2.5.35			FOR EACH event IN game.event.get(): # Check for keyboard input
-		2.5.36				IF event.type == game.QUIT THEN 
-		2.5.37					game.quit()
-		2.5.38					quit(0)
-		2.5.39				END IF
+		2.5.35		DECLARE block INITIALLY Game.Block.GetRandBlock()
+		2.5.36		block.DrawBlock(win.win)
+		2.5.37
+		2.5.38		DECLARE speed, mult, score, limit INITIALLY [0, 1, 0, 0]
+		2.5.39		GUIObjects[-1].UpdateText((0, 0, 0), str(score)) # Update Score Count
 		2.5.40
-		2.5.41				IF event.type == game.KEYDOWN THEN
-		2.5.42					<match event.key>
-		2.5.43						<key is esc> Leave()
-		2.5.44						<key is up arr> 
-		2.5.45							block.Rotate(win)
-		2.5.46							if settings.effectState THEN game.mixer.Channel(0).play(rotateBlockSound) END IF
-		2.5.47
-		2.5.48						<key is down arr> 
-    	2.5.49            				block.Move(win, (0, 30), 'down')
-		2.5.50	        				IF settings.effectState THEN game.mixer.Channel(0).play(moveBlockSound) END IF
-        2.5.51    
-		2.5.52						<key is right arr>
-        2.5.53            				block.Move(win, (-30, 0), 'right')
-        2.5.54         					IF settings.effectState THEN game.mixer.Channel(0).play(moveBlockSound) END IF
-        2.5.55      
-		2.5.56						<key is left arr>	
-        2.5.57          				block.Move(win, (30, 0), 'left')
-        2.5.58           				IF settings.effectState THEN game.mixer.Channel(0).play(moveBlockSound) END IF
-		2.5.59
-		2.5.60						<default> PASS
-		2.5.61				END IF
-		2.5.62			END FOR
-		2.5.63
-		2.5.64			IF speed >= 30 THEN
-		2.5.65				block.Move(win, (0, 30), 'down')
-        2.5.66				SET speed TO 0
-		2.5.67			END IF
-		2.5.68
-		2.5.69			IF block.checkCollision() THEN
-		2.5.70				IF settings.effectState THEN game.mixer.Channel(0).play(lineClearSound) END IF
-        2.5.71 				SET block TO Game.Block.GetRandBlock()
-        2.5.72				block.DrawBlock(win.ReturnWindowSurface())
-        2.5.73				print(f'Collided')
-		2.5.74			END IF
-		2.5.75		END WHILE
-		2.5.76	END PROCEDURE
+		2.5.41		DECLARE bottomBlocks INITIALLY pygame.sprite.Group()
+		2.5.42
+		2.5.43		DECLARE grid INITIALLY Grid(((720 // 2), 100)) # Initialise New Game Grid
+		2.5.44		grid.DrawGrid(win.win)		
+		2.5.45
+		2.5.46		WHILE 1 DO # while the game is running
+		2.5.47			grid.DrawGrid(win.win)
+		2.5.48
+		2.5.49			FOR EACH event IN pygame.event.get(): # Check for keyboard input
+		2.5.50				IF event.type == pygame.QUIT THEN win.ExitWindow() END IF 
+		2.5.51
+		2.5.52				IF event.type == pygame.KEYDOWN THEN
+		2.5.53					<match event.key>
+		2.5.54						<key is esc> 
+		2.5.55							pygame.mixer.Channel(1).stop()
+		2.5.56							win.Leave()
+		2.5.57
+		2.5.58						<key is up arr> 
+		2.5.59							block.Rotate(win)
+		2.5.60							if settings.effectState THEN pygame.mixer.Channel(0).play(rotateBlockSound) END IF
+		2.5.61
+		2.5.62						<key is down arr> 
+    	2.5.63            				block.Move(win, (0, 30), 'down')
+		2.5.64	        				IF settings.effectState THEN pygame.mixer.Channel(0).play(moveBlockSound) END IF
+        2.5.65    
+		2.5.66						<key is right arr>
+		2.5.67							IF block.CheckMovable('right') THEN
+        2.5.68            					block.Move(win, (-30, 0), 'right')
+        2.5.69         						IF settings.effectState THEN pygame.mixer.Channel(0).play(moveBlockSound) END IF
+		2.5.70							END IF
+        2.5.71
+		2.5.72						<key is left arr>	
+		2.5.73							IF block.CheckMovable('left') THEN
+        2.5.74          					block.Move(win, (30, 0), 'left')
+        2.5.75           					IF settings.effectState THEN pygame.mixer.Channel(0).play(moveBlockSound) END IF
+		2.5.76							END IF
+		2.5.77						
+		2.5.78						<default> PASS
+		2.5.79				END IF
+		2.5.80			END FOR
+		2.5.81
+		2.5.82			IF speed*mult >= 30 THEN
+		2.5.83				block.Move(win, (0, 30), 'down')
+        2.5.84				SET speed TO 0
+		2.5.85			END IF
+		2.5.86
+		2.5.87			IF block.CheckCollision(bottomBlocks) THEN
+		2.5.88				bottomBlocks.add(block)
+        2.5.89 				IF settings.effectState THEN pygame.mixer.Channel(2).play(scoreSound) END IF
+		2.5.90				
+		2.5.91				SET score TO score + 50
+		2.5.92				IF score >= limit THEN
+		2.5.93					SET mult TO mult + 1
+		2.5.94					SET limit TO limit + 500
+		2.5.95				END IF
+		2.5.96				
+		2.5.97				IF block.reachedTop(bottomBlocks) THEN
+		2.5.98					Color.prints('Reached Top of Screen')
+		2.5.109					<from scoreInput import InputRun>
+		2.5.110					IF settings.effectState THEN pygame.mixer.Channel(0).play(failSound) END IF
+		2.5.111					pygame.mixer.Channel(1).stop()
+		2.5.112					InputRun(score)
+		2.5.113				ELSE
+		2.5.114					SET block TO Game.Block.GetRandBlock()
+		2.5.115					block.draw(win.win)
+		2.5.118				END IF
+		2.5.117			END IF
+		2.5.118
+		2.5.119			pygame.display.update()
+		2.5.120			clock.tick(30)
+		2.5.121			SET speed TO speed + 1
+		2.5.122		END WHILE
+		2.5.129 END PROCEDURE
 
+	# Not Done
 	2.6 ScoreInput
 		2.6.1
 
