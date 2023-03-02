@@ -10,7 +10,8 @@ game.event.set_allowed([game.KEYDOWN, game.TEXTINPUT]) # Limit event checks
 # Create the games clock and settings objects
 clock, settings = (game.time.Clock(), Settings())
 
-disallowedKeys = [chr(i) for i in range(32, 47)]
+# create list of illegal characters
+disallowedKeys = [chr(key) for key in range(0, 255) if not chr(key).isalpha()]
 
 # List of GUI Objects
 GUIObjects = [
@@ -29,7 +30,7 @@ def InputRun(score:int=0):
     allowedClick = False
 
     # Create new window obj & set title & background color
-    win = Window('Netris - Main Menu', (0, 0, 0))
+    win = Window('Netris - Score Input', (0, 0, 0))
     # Create the window
     win.CreateNewWindow()
 
@@ -69,8 +70,8 @@ def InputRun(score:int=0):
                     if allowedClick: RunHighscore(GUIObjects[2].caption[:3], score[0])
             
             if event.type == game.TEXTINPUT:
-                if event.text not in disallowedKeys:
-                    GUIObjects[2].UpdateText((0, 0, 0), GUIObjects[2].caption + event.text) # Add char to name
+                if event.text not in disallowedKeys: GUIObjects[2].UpdateText((0, 0, 0), GUIObjects[2].caption + event.text) # Add char to name
+                else: Color.printe(f'Error: Illegal Character "{event.text}"')
                   
         game.display.update() # Update the display
         clock.tick(30) # Set the game's frame rate to 30 FPS

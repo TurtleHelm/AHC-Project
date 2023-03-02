@@ -2,7 +2,7 @@
 
 ## Description
 
-### This project will be a game called Netris. This game is about stacking blocks to create a full horizontal line and get points, the game gets harder as you continue as the blocks move faster towards the bottom of the window, giving you less time to make a decision on how to rotate and place the block. You lose when the blocks make it to the top of the screen and there's no more space. This game will be modelled to be similar to the original depiction of Tetris but some things may be altered to avoid copyright infringement
+This project will be a game called Netris. This game is about stacking blocks to create a full horizontal line and get points, the game gets harder as you continue as the blocks start moving faster towards the bottom of the window, giving you less time to make a decision on how to rotate and place the block. You lose when the blocks make it to the top of the screen and there's no more space. This game will be modelled to be similar to the original depiction of Tetris but some things may be altered to avoid copyright infringement
 
 ## Target Audience
 
@@ -55,15 +55,15 @@
     - But due to this project not being a commercial product, this is not applicable to myself as there is no monetary gain involved, however, I will still follow these guidelines to the best of my ability
 
   - Schedule
-    - This project is complex enough to be created within the timeframe allowed, including holidays & unforeseen events such as illness
+    - This project is complex enough to be created within the time frame allowed, including holidays & unforeseen events such as illness
 
-## Survey: [Data](Analysis/Tetris%20End-User%20Survey.json)
+## Survey: [data.json](Analysis/Tetris%20End-User%20Survey.json)
 
 ## Analysis
 
 ### Video Games
 
-- Knowlege of Tetris
+- Knowledge of Tetris
   - 100% of the respondents knew about Tetris & how to play it
 
 - Playing Video Games
@@ -126,15 +126,15 @@ do not have the time to do.
 
 ## Project Plan
 
-![Gannt Chart](Analysis/Gantt%20Chart.png)
+![Gantt Chart](Analysis/Gantt%20Chart.png)
 
 ### Resources
 
 - Pen/Pencil & Paper for design Prototyping
-- SQA Project Specification & Any other apropriate SQA documents
+- SQA Project Specification & Any other appropriate SQA documents
 - Computer with Mouse, Monitor & Keyboard
 - Computer Software
-  - [Gannt Project (Gannt Chart Creation)](https://www.ganttproject.biz/)
+  - [Gantt Project (Gantt Chart Creation)](https://www.ganttproject.biz/)
   - [SSMS (Microsoft SQL Server Management Studio)](https://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver16#download-ssms) (Optional)
   - [Microsoft SQL Server](https://www.microsoft.com/en-GB/sql-server/sql-server-downloads)
   - [VS Code (Implementation IDE)](https://code.visualstudio.com/)
@@ -194,3 +194,5 @@ do not have the time to do.
 ### Cosmobobak Battleship AH Project [Github](https://github.com/cosmobobak/AH-project-battleship)
 
 ### Pyodbc Docs: [Github](https://github.com/mkleehammer/pyodbc/wiki/Getting-started)
+
+### ASCII Table: [ASCII-Code](https://www.ascii-code.com/)

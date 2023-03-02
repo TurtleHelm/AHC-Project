@@ -130,8 +130,9 @@ class Text(game.sprite.Sprite):
         self.ChangeColor(color) # change color to another color
         self.ChangeText(text)
         self.ChangeColor((255, 255, 255)) # change color back to white
-
-    def __name__(self): return 'Text'
+    
+    @staticmethod
+    def __name__(): return 'Text'
     def ReturnText(self): return self.caption # Returns Text Content Of Instance of the class
 
 class Btn(game.sprite.Sprite):
@@ -232,7 +233,8 @@ class Btn(game.sprite.Sprite):
         game.draw.rect(game.display.get_surface(), (0, 0, 0), self.face) # Render button rect
         self.text.RenderText() # Render button text
 
-    def __name__(self): return 'Btn' # Returns name of class (Button)
+    @staticmethod
+    def __name__(): return 'Btn' # Returns name of class (Button)
 
 class Game: 
     '''Game Class'''
@@ -605,7 +607,7 @@ class Settings:
         self.musicState = musicBool if musicBool != None else self.musicState # ternary operation
         self.effectState = effectsBool if effectsBool != None else self.effectState # ternary operation
         self.WriteSettings(True)
-        
+
 class Highscore:
     '''Highscore Class'''
     
