@@ -272,7 +272,7 @@ class Game:
             self.blockSize = 30
             self.group = game.sprite.Group()
 
-        def draw(self, screen):
+        def draw(self, screen) -> None:
             '''Draws a block to the screen at the appropriate coordinates'''
             posX, posY = self.realPos
             
@@ -290,7 +290,7 @@ class Game:
                     
             self.group.draw(screen) # draw all rectangle sprites to the screen at once
 
-        def Move(self, screen, dir, dirName):
+        def Move(self, screen, dir, dirName) -> None:
             '''Moves Block in one direction one space
 
             Args:
@@ -307,11 +307,10 @@ class Game:
                 case 'left': self.realPos[0] -= 30
                 case 'right': self.realPos[0] += 30
                 case 'down': self.realPos[1] += 30
-                case 'up': self.realPos[1] -= 30
                 
             Game.Block.draw(self, screen) # draw new block to screen
 
-        def CheckCollision(self, blockGroup):
+        def CheckCollision(self, blockGroup) -> bool:
             '''Checks for Block Collisions between the ground & other blocks
 
             Args:
@@ -334,7 +333,7 @@ class Game:
             return False
 
         @staticmethod
-        def WillCollide(sprite, group):
+        def WillCollide(sprite, group) -> bool:
             '''Checks for Collision to determine whether a sprite is about to collide with a group
 
             Args:
@@ -355,7 +354,7 @@ class Game:
                 
             return False
 
-        def CheckMovable(self, dir):
+        def CheckMovable(self, dir:str) -> bool:
             '''Checks to see if the current sprite is movable
 
             Args:
@@ -375,7 +374,7 @@ class Game:
                     if self.group.sprites()[i].posX == 360: return False
                 return True
                     
-        def UpdateColor(self, color, screen): # Temp fix for screen flashing
+        def UpdateColor(self, color, screen) -> None: # Temp fix for screen flashing
             '''Update Color of Sprite
 
             Args:
@@ -388,7 +387,7 @@ class Game:
             self.draw(screen) # draw new colored block to screen
             self.color = originalColor # set color back to original color
 
-        def Rotate(self, screen, effectState, sound):
+        def Rotate(self, screen, effectState, sound) -> None:
             '''Rotate Blocks clockwise 90 degrees
 
             Args:
@@ -407,7 +406,7 @@ class Game:
                     self.draw(screen) # redraw new block positions
 
         @staticmethod
-        def reachedTop(blockGroup):
+        def reachedTop(blockGroup) -> bool:
             '''Check to see if the blockGroup has reached the top of the grid
 
             Args:
@@ -448,8 +447,7 @@ class Game:
             self.image = game.Surface([self.size, self.size])
             self.image.fill(self.color) # fill rect with appropriate color
             
-        def update(self, dir): self.rect.move_ip(dir) # update position of rect     
-        def hasCollided(self, sprite): return self.rect.colliderect(sprite.rect) # return if rect has been collided with
+        def update(self, dir): self.rect.move_ip(dir) # update position of rect
 
     class LBlock(Block):
         def __init__(self): super().__init__(((0, 0, 0), (1, 0, 0), (1, 1, 1)), (255, 165, 0)) # initialise values for class
@@ -709,8 +707,7 @@ class Highscore:
         
         topScores = []
         
-        scores = scores[0]
-        print(scores)
+        scores = scores[0] # Remove from args tuple
         
         try:
             # Connection string for SQL Server
@@ -749,7 +746,7 @@ class Highscore:
                 
                 conn.close() # closes connection to db
                 
-                print(topScores)
+                Color.prints(f'Data: {topScores}')
                 return topScores # return the top scores that were retrieved (if any)
             
             # If there was an error retrieving the data, print an error message

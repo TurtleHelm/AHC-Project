@@ -106,7 +106,7 @@ do not have the time to do.
 
 ## UML Case Diagram
 
-### [Diagram](AHC%20Project%20Proposal.pdf)
+![Diagram](Analysis/UML%20Case%20Diagram.png)
 
 ## Requirements Specification
 
@@ -135,7 +135,7 @@ do not have the time to do.
 - Computer with Mouse, Monitor & Keyboard
 - Computer Software
   - [Gannt Project (Gannt Chart Creation)](https://www.ganttproject.biz/)
-  - [SSMS (Microsoft SQL Server Management Studio)](https://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver16#download-ssms)
+  - [SSMS (Microsoft SQL Server Management Studio)](https://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver16#download-ssms) (Optional)
   - [Microsoft SQL Server](https://www.microsoft.com/en-GB/sql-server/sql-server-downloads)
   - [VS Code (Implementation IDE)](https://code.visualstudio.com/)
   - Python & Libraries (Pygame, Pyodbc, Pip)
@@ -146,6 +146,38 @@ do not have the time to do.
 ## Design
 
 ### UI Wireframes
+
+#### Home
+
+![Home](Design/Wireframes/raw/Home.png)
+
+#### Instructions
+
+![Instructions](Design/Wireframes/raw/Instructions.png)
+
+#### Settings
+
+![Settings](Design/Wireframes/raw/Settings.png)
+
+#### Game
+
+![Game](Design/Wireframes/raw/Game.png)
+
+#### Name Input
+
+![Name Input](Design/Wireframes/raw/inputScore.png)
+
+#### Highscore
+
+![Highscore](Design/Wireframes/raw/Highscore.png)
+
+### Pseudocode
+
+#### Standard Algorithm
+
+```Python
+
+```
 
 ---
 

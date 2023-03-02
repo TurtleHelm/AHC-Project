@@ -11,9 +11,11 @@
 		1.5.5 TBlock Class
 		1.5.6 SBlock Class
 		1.5.7 ZBlock Class
-		1.5.8 LineBloc Class
+		1.5.8 LineBlock Class
+		1.5.9 JBlock Class
 	1.6 GridRect Class
 	1.7 Grid Class
+	1.8 Highscore Class
 
 # Solo Files
 	2.1 Main
@@ -21,6 +23,8 @@
 	2.3 Instructions
 	2.4 Settings
 	2.5 Game
+	2.6 ScoreInput
+	2.7 Highscore
 
 # Utilities
 	3.1 ClrTerminal
@@ -46,34 +50,34 @@
 		1.1.16				pygame.display.flip() # Used to Show Background Color
 		1.1.17			END PROCEDURE
 		1.1.18
-		1.1.19		# Used to get Window Title
-		1.1.20		FUNCTION ReturnWindowSurface(THIS): RETURNS STRING
-		1.1.21			THIS.win
-		1.1.22		END FUNCTION
-		1.1.23
-		1.1.24		# Exit Game & Window
-		1.1.25		PROCEDURE ExitWindow(THIS) RETURNS NONE
-		1.1.26			pygame.display.quit()
-		1.1.27			quit(0)
-		1.1.28		END PROCEDURE
-		1.1.29
-		1.1.30		PROCEDURE drawGUIObjs(THIS, LIST GUIObjects INITIALLY NONE) RETURNS NONE
-		1.1.31			IF GUIObjects == None THEN PASS 
-		1.1.32			ELSE
-		1.1.33				FOR EACH GUIObj IN GUIObjects DO
-		1.1.34					<match GUIObj type> # Check if the object in the list is a render-able object
-		1.1.35						<type Text> GUIObj.RenderText() # If Object in list is text, render text
-		1.1.36						<type Btn> GUIObj.RenderBtn() # If Object in list is a button, render button
-		1.1.37						<type default> PASS # Defaults to this if all other cases = False
-		1.1.38				END FOR
-		1.1.39			END IF
-		1.1.40			game.display.flip()
-		1.1.41
-		1.1.42		END PROCEDURE
-		1.1.43
-		1.1.44		FUNCTION __repr__(THIS) RETURNS STRING
-		1.1.45			RETURN __qualname__
-		1.1.46		END FUNCTION
+		1.1.19
+		1.1.20
+		1.1.21		<@staticmethod>
+		1.1.22		PROCEDURE ExitWindow(THIS) RETURNS NONE
+		1.1.23			pygame.display.quit()
+		1.1.24			Color.printd('Exiting Window...')
+		1.1.25			pygame.quit()
+		1.1.26			quit(0)
+		1.1.27		END PROCEDURE
+		1.1.28
+		1.1.29		PROCEDURE drawGUIObjs(THIS, LIST GUIObjects INITIALLY NONE) RETURNS NONE
+		1.1.30			IF GUIObjects == None THEN PASS 
+		1.1.31			ELSE
+		1.1.32				FOR EACH GUIObj IN GUIObjects DO
+		1.1.33					<match GUIObj type> # Check if the object in the list is a render-able object
+		1.1.34						<type Text> GUIObj.RenderText() # If Object in list is text, render text
+		1.1.35						<type Btn> GUIObj.RenderBtn() # If Object in list is a button, render button
+		1.1.36						<type default> PASS # Defaults to this if all other cases = False
+		1.1.37				END FOR
+		1.1.38			END IF
+		1.1.39			game.display.flip()
+		1.1.40
+		1.1.41		END PROCEDURE
+		1.1.42
+		1.1.43		<@staticmethod>
+		1.1.44		PROCEDURE Leave RETURNS NONE
+		1.1.45			<from .home import run>
+		1.1.46			run()
 		1.1.47 END CLASS
 
 	1.2 Text Class
@@ -81,55 +85,58 @@
 		1.2.2	
 		1.2.3	METHODS
 		1.2.4
-		1.2.5		CONSTRUCTOR(THIS, ARRAY OF INTEGER pos, STRING text, INTEGER fontsize, TUPLE color)
+		1.2.5		CONSTRUCTOR(THIS, ARRAY OF INTEGER pos INITIALLY [0, 0], STRING text INITIALLY 'Text', INTEGER fontsize INITIALLY 20, TUPLE color INITIALLY (255, 255, 255))
 		1.2.6			# Initialisation of the Text Class
 		1.2.7			IF NOT pygame.font.get_init THEN pygame.font.init() END IF # Initialise font
 		1.2.7			DECLARE THIS.surface INIITALLY pygame.display.get_surface() # Get Window Surface
-		1.2.8			DECLARE THIS.givenPos INIITIALLY TUPLE (pos[0], pos[1]) # Give Position of Text
+		1.2.8			DECLARE THIS.givenPos INIITIALLY pos # Give Position of Text
 		1.2.9			DECLARE THIS.color INITIALLY color
 		1.2.10			DECLARE THIS.fontsize INITIALLY fontsize
 		1.2.11			DECLARE THIS.text INITIALLY pygame.font.Font('src/resources/fonts/font.ttf', THIS.fontsize).render(text, FALSE, THIS.color) # Creates Font
-		1.2.12			DECLARE THIS.caption INITIALLY text
-		1.2.13		END CONSTRUCTOR
-		1.2.14	
-		1.2.15		PROCEDURE RenderText(THIS) RETURNS NONE
-		1.2.16			pygame.display.flip()
+		1.2.12			DECLARE THIS.pos INITIALLY [THIS.givenPos[0] - (THIS.text.get_width() // 2), THIS.givenPos[1] - (THIS.text.get_height() // 2)]
+		1.2.13			DECLARE THIS.caption INITIALLY text
+		1.2.14		END CONSTRUCTOR
+		1.2.15
+		1.2.16		PROCEDURE RenderText(THIS) RETURNS NONE
 		1.2.17			pygame.display.get_surface().blit(THIS.text, THIS.pos)
-		1.2.18		END PROCEDURE
-		1.2.19
-		1.2.20		PROCEDURE ChangeText(THIS, STRING text, PROCEDURE draw) RETURNS NONE
-		1.2.21			SET THIS.text AS pygame.font.Font('src/resources/fonts/font.ttf', THIS.fontsize).render(text, FALSE, THIS.COLOR) # Sets New Text
-		1.2.22			SET THIS.pos AS ARRAY [THIS.givenPos[0] - (THIS.text.get_width() // 2), THIS.givenPos[1] - (THIS.text.get_height() // 2)]
-		1.2.23			draw()
-		1.2.24		END PROCEDURE
-		1.2.25
-		1.2.26		PROCEDURE ChangeColor(THIS, TUPLE color) RETURNS NONE
-		1.2.27			SET THIS.color AS color
-		1.2.28			SET THIS.text AS pygame.font.Font('src/resources/fonts/font.ttf', THIS.fontsize).render(THIS.caption, FALSE, color)
-		1.2.29			SET THIS.pos AS [self.givenPos[0] - (self.text.get_width() // 2), self.givenPos[1] - (self.text.get_height() // 2)] # update position
-		1.2.30			THIS.RenderText()
-		1.2.31		END PROCEDURE
-		1.2.32
-		1.2.33		FUNCTION __str__(THIS) RETURNS STRING
-		1.2.34			RETURN 'Text'
-		1.2.35		END FUNCTION
-		1.2.36
-		1.2.37		FUNCTION __name__(THIS) RETURNS STRING
-		1.2.38			RETURN 'Text'
-		1.2.39		END FUNCTION
-		1.2.40		
-		1.2.41		FUNCTION ReturnText(THIS) RETURNS STRING
-		1.2.42			return THIS.caption
-		1.2.43		END FUNCTION
-		1.2.44 END CLASS
+		1.2.18			pygame.display.flip()
+		1.2.19		END PROCEDURE
+		1.2.20
+		1.2.21		PROCEDURE ChangeText(THIS, STRING text, PROCEDURE draw) RETURNS NONE
+		1.2.22			SET THIS.text AS pygame.font.Font('src/resources/fonts/font.ttf', THIS.fontsize).render(text, FALSE, THIS.COLOR) # Sets New Text
+		1.2.23			SET THIS.pos AS ARRAY [THIS.givenPos[0] - (THIS.text.get_width() // 2), THIS.givenPos[1] - (THIS.text.get_height() // 2)]
+		1.2.24			draw() IF draw IS NOT NONE ELSE self.RenderText() END IF
+		1.2.25		END PROCEDURE
+		1.2.26
+		1.2.27		PROCEDURE ChangeColor(THIS, TUPLE color) RETURNS NONE
+		1.2.28			SET THIS.color AS color
+		1.2.29			SET THIS.text AS pygame.font.Font('src/resources/fonts/font.ttf', THIS.fontsize).render(THIS.caption, FALSE, color)
+		1.2.30			SET THIS.pos AS [self.givenPos[0] - (self.text.get_width() // 2), self.givenPos[1] - (self.text.get_height() // 2)] # update position
+		1.2.31			THIS.RenderText()
+		1.2.32		END PROCEDURE
+		1.2.33
+		1.2.34		PROCEDURE UpdateText(THIS, TUPLE color INITIALLY (255, 255, 255), STRING text INITIALLY '') RETURNS NONE
+		1.2.35			THIS.ChangeColor(color)
+		1.3.36			THIS.ChangeText(text)
+		1.3.37			THIS.ChangeColor((255, 255, 255))
+		1.3.38		END PROCEDURE
+		1.2.39
+		1.2.40		FUNCTION __name__(THIS) RETURNS STRING
+		1.2.41			RETURN 'Text'
+		1.2.42		END FUNCTION
+		1.2.43		
+		1.2.44		FUNCTION ReturnText(THIS) RETURNS STRING
+		1.2.45			return THIS.caption
+		1.2.46		END FUNCTION
+		1.2.47 END CLASS
 
 	1.3 Btn Class
 		1.3.1 CLASS Btn INHERITS pygame.sprite.Sprite WITH {STRING text, ARRAY OF INTEGER pos, INTEGER width, INTEGER height, INTEGER fontsize}
 		1.3.2
 		1.3.3 	METHODS
 		1.3.4
-		1.3.5		CONSTRUCTOR(THIS, STRING text, ARRAY OF INTEGER pos, INTEGER width, INTEGER height, INTEGER fontsize)
-		1.3.6			DECLARE THIS.pos INITIALLY [0, 0] OR pos
+		1.3.5		CONSTRUCTOR(THIS, STRING text, ARRAY OF INTEGER pos INITIALLY [0, 0], INTEGER width INITIALLY 113, INTEGER height INITIALLY 41, INTEGER fontsize INITIALLY 16)
+		1.3.6			DECLARE THIS.pos INITIALLY pos
 		1.3.7			DECLARE THIS.surf INITIALLY pygame.display.get_surface() # Get Window Surface
 		1.3.8			DECLARE THIS.face = pygame.Rect(THIS.pos, (width, height)) # Create Rect
 		1.3.9			DECLARE THIS.face.center INITIALLY THIS.pos
@@ -144,38 +151,38 @@
 		1.3.18		END CONSTRUCTOR
 		1.3.19
 		1.3.20
-		1.3.21		PROCEDURE ChangeState(THIS, STRING txt, BOOLEAN bool, PROCEDURE draw) RETURNS NONE
+		1.3.21		PROCEDURE ChangeState(THIS, STRING txt, BOOLEAN bool) RETURNS NONE
 		1.3.22			SET THIS.state AS bool
-		1.3.23			THIS.text.ChangeText(txt, draw)
+		1.3.23			THIS.text.ChangeText(txt, THIS.RenderBtn)
 		1.3.24		END PROCEDURE
 		1.3.25
-		1.3.26		PROCEDURE isHovering(THIS, PROCEDURE draw, PROCEDURE click, BOOLEAN effectState) RETURNS NONE # If mouse is hovering
+		1.3.26		PROCEDURE isHovering(THIS, PROCEDURE click, BOOLEAN effectState, TUPLE color INITIALLY (255, 0, 0), TUPLE *args) RETURNS NONE # If mouse is hovering
 		1.3.27			# Checks to see if the mouse is hovering over a button
 		1.3.28			IF THIS.face.collidepoint(pygame.mouse.get_pos()) THEN # If the button is not already being hovered
 		1.3.29				IF NOT THIS.hovering # Sets button being hovered to true
 		1.3.30					SET THIS.hovering AS TRUE
-		1.3.31					THIS.text.ChangeColor((255, 0, 0))
+		1.3.31					THIS.text.ChangeColor(color)
 		1.3.32					game.mixer.Channel(0).set_volume(.3) IF effectState ELSE game.mixer.Channel(0).set_volume(0) END IF
         1.3.33   				game.mixer.Channel(0).play(game.mixer.Sound(self.hoverSound)) IF effectState E:SE game.mixer.Channel(0).set_volume(0) END IF
-		1.3.34					THIS.DrawBtn()
+		1.3.34					THIS.RenderBtn()
 		1.3.35
 		1.3.36				ELSE # If the button is already being hovered
-		1.3.37					THIS.HasClicked(click) # Check if the button has been clicked
+		1.3.37					THIS.HasClicked(click, *args) # Check if the button has been clicked
 		1.3.38				END IF
 		1.3.39
 		1.3.40			# If mouse is not over the button but the button is still being hovered    
 		1.3.41			ELSE IF NOT THIS.face.collidepoint(pygame.mouse.get_pos()) AND THIS.hovering THEN
 		1.3.42				SET THIS.hovering AS FALSE
 		1.3.43				SET THIS.text.ChangeColor((255, 255, 255))
-		1.3.44				THIS.DrawBtn()
+		1.3.44				THIS.RenderBtn()
 		1.3.45			END IF
 		1.3.46
-		1.3.47		PROCEDURE HasClicked(THIS, PROCEDURE click) RETURNS NONE
+		1.3.47		PROCEDURE HasClicked(THIS, PROCEDURE click, TUPLE *args) RETURNS NONE
 		1.3.48			# Check if a button has been clicked
 		1.3.49			IF pygame.mouse.get_pressed()[0] THEN
 		1.3.50				pygame.mixer.Channel(0).play(pygame.mixer.Sound(THIS.selectSound))
-		1.3.51				click()
-		1.3.52				time.sleep(.2) # Stop multiple clicks being allowed
+		1.3.51				click() IF NOT args ELSE click(args) END IF
+		1.3.52				time.sleep(.3) # Stop multiple clicks being allowed
 		1.3.53			END IF
 		1.3.54			
 		1.3.55		PROCEDURE RenderBtn(THIS) RETURNS NONE
@@ -183,18 +190,9 @@
 		1.3.57			THIS.text.RenderText()
 		1.3.58		END PROCEDURE
 		1.3.59
-		1.3.60		PROCEDURE DrawBtn(THIS) RETURNS NONE
-		1.3.61			THIS.RenderBtn() # Render Button
-		1.3.62			game.display.flip() # update display
-		1.3.63		END PROCEDURE
-		1.3.64
-		1.3.65		FUNCTION __str__(THIS) RETURNS STRING
-		1.3.66			RETURN 'Btn' # Returns only when str() function called
-		1.3.67		END FUNCTION
-		1.3.68
-		1.3.69		FUNCTION __name__(THIS) RETURNS STRING
-		1.3.70			RETURN 'Btn' # Returns name of class (Button)
-		1.3.71		END FUNCTION
+		1.3.60		FUNCTION __name__(THIS) RETURNS STRING
+		1.3.61			RETURN 'Btn' # Returns name of class (Button)
+		1.3.62		END FUNCTION
 
 	1.4 Settings Class
 		1.4.1 CLASS Settings IS {}
@@ -204,41 +202,42 @@
 		1.4.5		CONSTRUCTOR(THIS, BOOLEAN musicState INITIALLY TRUE, BOOLEAN effectState INITIALLY TRUE)
 		1.4.6			DECLARE THIS.musicState INITIALLY musicState
 		1.4.7			DECLARE THIS.effectState INITIALLY effectState
-		1.4.8		END CONSTRUCTOR
-		1.4.9
-		1.4.10		PROCEDURE init(THIS) RETURNS NONE
-		1.4.11			# Gets Settings from File
-		1.4.12			IF NOT path.isfile('settings.txt) DO self.WriteSettings(False) # If there is no settings file, make one
-		1.4.13			
-		1.4.14			ELSE # Otherwise
-		1.4.15				<open settings file as f> # Open the file
-		1.4.16					DECLARE settings INITIALLY ARRAY OF STRING f.read().split(',') # Split values by comma
-		1.4.17					f.close() # Close file
-		1.4.18			
-		1.4.19				SET THIS.musicState AS TRUE IF settings[0] == 'True' ELSE FALSE END IF
-		1.4.20				SET THIS.effectState AS TRUE IF settings[0] == 'True' ELSE FALSE END IF
-		1.4.21		END PROCEDURE
-		1.4.22
-		1.4.23		PROCEDURE WriteSettings(THIS, BOOLEAN rem) RETURNS NONE
-		1.4.24			IF rem DO remove('settings.txt')
-		1.4.25			
-		1.4.26			<with open('settings.txt', 'w') as f>
-		1.4.27				f.write(f'{str(THIS.musicState)}')
-		1.4.28				f.write(f'{str(THIS>effectState)}')
-		1.4.29				f.close()
-		1.4.30			THIS.init()
-		1.4.31		END PROCEDURE
-		1.4.32
-		1.4.33		PROCEDURE ChangeSettings(THIS, BOOLEAN musicBool INITIALLY NONE, BOOLEAN effectsBool INITIALLY NONE) RETURNS NONE
-		1.4.34			SET THIS.musicState AS musicBool IF musicBool != NONE ELSE THIS.musicState END IF
-		1.4.35			SET THIS.effectState AS effectsBool IF effectsBool != NONE ELSE THIS.effectState
-		1.4.36			THIS.WriteSettings(True)
-		1.4.37		END PROCEDURE
-		1.4.38
-		1.4.39		FUNCTION ReturnStates(THIS) RETURNS STRING
-		1.4.40			RETURN f'Music: {THIS.musicState}\nEffects: {THIS.effectState}'
-		1.4.41		END FUNCTION
-		1.4.42	END CLASS
+		1.4.8			DECLARE THIS.filePath INITIALLY 'Implementation/settings.txt'
+		1.4.9		END CONSTRUCTOR
+		1.4.10
+		1.4.11		PROCEDURE init(THIS) RETURNS NONE
+		1.4.12			# Gets Settings from File
+		1.4.13			IF NOT os.path.isfile(THIS.filePath) DO self.WriteSettings(False) # If there is no settings file, make one
+		1.4.14			
+		1.4.15			ELSE # Otherwise
+		1.4.16				<open settings file as f> # Open the file
+		1.4.17					DECLARE settings INITIALLY ARRAY OF STRING f.read().split(',') # Split values by comma
+		1.4.18					f.close() # Close file
+		1.4.19			
+		1.4.20				SET THIS.musicState AS TRUE IF settings[0] == 'True' ELSE FALSE END IF
+		1.4.21				SET THIS.effectState AS TRUE IF settings[0] == 'True' ELSE FALSE END IF
+		1.4.22		END PROCEDURE
+		1.4.23
+		1.4.24		PROCEDURE WriteSettings(THIS, BOOLEAN rem) RETURNS NONE
+		1.4.25			IF rem DO remove('settings.txt')
+		1.4.26			
+		1.4.27			<open filePath in write mode as f>
+		1.4.28				f.write(f'{str(THIS.musicState)}')
+		1.4.29				f.write(f'{str(THIS>effectState)}')
+		1.4.30				f.close()
+		1.4.31			THIS.init()
+		1.4.32		END PROCEDURE
+		1.4.33
+		1.4.34		PROCEDURE ChangeSettings(THIS, BOOLEAN musicBool INITIALLY NONE, BOOLEAN effectsBool INITIALLY NONE) RETURNS NONE
+		1.4.35			SET THIS.musicState AS musicBool IF musicBool != NONE ELSE THIS.musicState END IF
+		1.4.36			SET THIS.effectState AS effectsBool IF effectsBool != NONE ELSE THIS.effectState
+		1.4.37			THIS.WriteSettings(True)
+		1.4.38		END PROCEDURE
+		1.4.39
+		1.4.40		FUNCTION ReturnStates(THIS) RETURNS STRING
+		1.4.41			RETURN f'Music: {THIS.musicState}\nEffects: {THIS.effectState}'
+		1.4.42		END FUNCTION
+		1.4.43	END CLASS
 
 	1.5 Game Class
 		1.5.1 Block Class
@@ -257,14 +256,14 @@
 			1.5.1.13			DECLARE THIS.group INITIALLY game.sprite.Group()
 			1.5.1.14		END CONSTRUCTOR
 			1.5.1.15
-			1.5.1.16		PROCEDURE DrawBlock(THIS, SURFACE screen) RETURNS NONE
+			1.5.1.16		PROCEDURE draw(THIS, SURFACE screen) RETURNS NONE
 			1.5.1.17			DECLARE posX, posY INITIALLY THIS.realPos
 			1.5.1.18			
 			1.5.1.19			FOR y IN RANGE(LENGTH THIS.struct) DO
 			1.5.1.20				FOR x IN RANGE(LENGTH THIS.struct[y]) DO
 			1.5.1.21					IF y > 0 AND x == 0 THEN 
 			1.5.1.22						SET posY TO posY + 30
-			1.5.1.23						SET posX TO posX - (30*4)
+			1.5.1.23						SET posX TO posX - (30*3)
 			1.5.1.24					END IF
 			1.5.1.25
 			1.5.1.26					IF THIS.struct[y][x] == 1 THEN
@@ -278,8 +277,8 @@
 			1.5.1.34			THIS.group.draw(screen)
 			1.5.1.35		END PROCEDURE
 			1.5.1.36	
-			1.5.1.37		PROCEDURE Move(THIS, WINDOW win, STRING dir, STRING dirName) RETURNS NONE
-			1.5.1.38			win.win.fill(0)
+			1.5.1.37		PROCEDURE Move(THIS, SURFACE screen, STRING dir, STRING dirName) RETURNS NONE
+			1.5.1.38			THIS.UpdateColor((0, 0, 0), screen)
 			1.5.1.39			THIS.group.empty()
 			1.5.1.40			game.display.update()
 			1.5.1.41			<match dirName>
@@ -287,31 +286,93 @@
 			1.5.1.43				<dirName is 'right'> SET THIS.realPos[0] TO THIS.realPos[0] + 30
 			1.5.1.44				<dirName is 'down'> SET THIS.realPos[1] TO THIS.realPos[1] + 30
 			1.5.1.45
-			1.5.1.46			Game.Block.DrawBlock(THIS, win.ReturnWindowSurface())
-			1.5.1.47			THIS.group.draw(win.ReturnWindowSurface())
+			1.5.1.46			Game.Block.draw(THIS, win.ReturnWindowSurface())
 			1.5.1.47		END PROCEDURE
 			1.5.1.48
-			1.5.1.49		FUNCTION checkCollision(THIS) RETURNS BOOLEAN
-			1.5.1.50			FOR i IN RANGE(LENGTH THIS.group.sprites()) DO
-			1.5.1.51				IF THIS.group.sprites()[i] == 670 THEN
-			1.5.1.52					THIS.group.empty()
-			1.5.1.53					RETURN TRUE
-			1.5.1.54				END IF
-			1.5.1.55			END FOR
-			1.5.1.56		END FUNCTION
-			1.5.1.57
-			1.5.1.58		PROCEDURE Rotate(THIS, WINDOW win) RETURNS NONE
-			1.5.1.59			SET THIS.struct TO (())
-			1.5.1.60			Game.Block.DrawBlock(THIS, win.ReturnWindowSurface())
-			1.5.1.61		END PROCEDURE
-			1.5.1.62	END CLASS
+			1.5.1.49		FUNCTION CheckCollision(THIS, GROUP blockGroup) RETURNS BOOLEAN
+			1.5.1.50			FOR i IN RANGE(LENGTH blockGroup.sprites()) DO
+			1.5.1.51				IF self == blockGroup.sprites()[i] THEN CONTINUE
+			1.5.1.52				ELSE
+			1.5.1.53					FOR j IN RANGE(LENGTH THIS.group.sprites()) DO
+			1.5.1.54						IF Game.Block.WillCollide(THIS.group.sprites()[j], blockGroup.sprites()[i].group) THEN RETURN TRUE END IF
+			1.5.1.55					END FOR
+			1.5.1.56				END IF
+			1.5.1.57			END FOR
+			1.5.1.58			
+			1.5.1.59			FOR i IN RANGE(LENGTH THIS.group.sprites()) DO
+			1.5.1.60				IF THIS.group.sprites()[i].posY == 670 THEN RETURN TRUE END IF
+			1.5.1.61			END FOR
+			1.5.1.62			
+			1.5.1.63			RETURN FALSE
+			1.5.1.64		END FUNCTION
+			1.5.1.65
+			1.5.1.66		<@staticmethod>
+			1.5.1.66		FUNCTION WillCollide(SPRITE sprite, GROUP group) RETURNS BOOL
+			1.5.1.67			<import copy>
+			1.5.1.68			DECLARE spriteRect INITIALLY copy.copy(sprite.rect)
+			1.5.1.69			spriteRect.move_ip((0, 30))
+			1.5.1.70
+			1.5.1.71			FOR i IN RANGE(LENGTH group) DO
+			1.5.1.72				IF spriteRect.colliderect(group.sprites()[i].rect) THEN RETURN TRUE END IF
+			1.5.1.73			END FOR
+			1.5.1.74			
+			1.5.1.75			RETURN FALSE
+			1.5.1.76		END FUNCTION
+			1.5.1.77
+			1.5.1.78		FUNCTION CheckMovable(THIS, STRING dir)
+			1.5.1.79			IF dir == 'right' THEN 
+			1.5.1.80				FOR i IN RANGE(LENGTH THIS.group.sprites()) DO
+			1.5.1.81					IF THIS.group.sprites()[i].posX == 600 THEN RETURN TRUE END IF
+			1.5.1.82				END FOR
+			1.5.1.83				
+			1.5.1.84				RETURN FALSE
+			1.5.1.85			END IF
+			1.5.1.86
+			1.5.1.87			IF dir == 'left' THEN
+			1.5.1.88				FOR i IN RANGE(LENGTH THIS.group.sprites()) DO
+			1.5.1.89					IF THIS.group.sprites()[i].posX == 360 THEN RETURN TRUE END IF
+			1.5.1.90				END FOR
+			1.5.1.91				
+			1.5.1.92				RETURN FALSE
+			1.5.1.93			END IF
+			1.5.1.94		END FUNCTION
+			1.5.1.95		
+			1.5.1.96		PROCEDURE UpdateColor(THIS, TUPLE color, SURFACE screen) RETURNS NONE
+			1.5.1.97			DECLARE originalColor INITIALLY THIS.color
+			1.5.1.98			SET THIS.color TO color
+			1.5.1.99			THIS.draw(screen)
+			1.5.1.100			SET THIS.color TO originalColor
+			1.5.1.101		END PROCEDURE
+			1.5.1.102
+			1.5.1.103		PROCEDURE Rotate(THIS, SURFACE screen, BOOL effectState, SOUND sound)
+			1.5.1.104			IF NOT isinstance(THIS, Game.SquareBlock) THEN
+			1.5.1.105				IF effectState THEN game.mixer.Channel(0).play(sound) END IF
+			1.5.1.106				THIS.UpdateColor((0, 0, 0), screen)
+			1.5.1.107				
+			1.5.1.108				<from numpy import rot90>
+			1.5.1.109				THIS.struct = rot90(THIS.struct)
+			1.5.1.110				THIS.draw(screen)
+			1.5.1.111			END IF
+			1.5.1.112		END PROCEDURE
+			1.5.1.113
+			1.5.1.114		<@staticmethod>
+			1.5.1.115		FUNCTION reachedTop(GROUP blockGroup) RETURNS BOOL
+			1.5.1.116			FOR EACH sprite IN blockGroup DO
+			1.5.1.117				FOR EACH block IN sprite.group DO
+			1.5.1.118					IF block.posY == 130 THEN RETURN TRUE END IF
+			1.5.1.119				END FOR
+			1.5.1.120			END FOR
+			1.5.1.121			
+			1.5.1.122			RETURN FALSE
+			1.5.1.123		END FUNCTION
+			1.5.1.124	END CLASS
 
 		1.5.2 Rectangle Class
 			1.5.2.1 CLASS RECTANGLE INHERITS pygame.sprite.Sprite WITH {TUPLE pos, TUPLE color, INTEGER size}
 			1.5.2.2		CONSTRUCTOR(THIS, TUPLE pos, TUPLE color, INTEGER size)
 			1.5.2.3			DECLARE THIS.posX, THIS.posY INITIALLY pos
 			1.5.2.4			DECLARE THIS.size INITIALLY size
-			1.5.2.5			DECLARE THIS.color INITIALLY pos
+			1.5.2.5			DECLARE THIS.color INITIALLY color
 			1.5.2.6			DECLARE THIS.rect INITIALLY game.Rect(THIS.posX, THIS.posY, THIS.size, THIS.size)
 			1.5.2.7			DECLARE THIS.image INITIALLY game.Surface([THIS.size, THIS.size])
 			1.5.2.8			THIS.image.fill(THIS.color)
@@ -323,52 +384,56 @@
 			1.5.2.14			THIS.rect.move_ip(dir)
 			1.5.2.15		END PROCEDURE
 			1.5.2.16
-			1.5.2.17		PROCEDURE hasCollided(THIS, SPRITE sprite) RETURNS NONE
-			1.5.2.18			RETURN THIS.rect.colliderect(sprite.rect)
-			1.5.2.19		END PROCEDURE
-			1.5.2.20 	END CLASS
+			1.5.2.17 	END CLASS
 
 		1.5.3 LBlock Class
 			1.5.3.1 CLASS LBlock INHERITS Block
 			1.5.3.2		CONSTRUCTOR(THIS)
-			1.5.3.3			<super().__init__(((1, 0, 0, 0), (1, 1, 1, 0)), (255, 165, 0))>
+			1.5.3.3			<super().__init__(((0, 0, 0), (1, 0, 0), (1, 1, 1)), (255, 165, 0))>
 			1.5.3.4 	END CONSTRUCTOR
 			1.5.3.5 END CLASS
 
 		1.5.4 SquareBlock Class
 			1.5.4.1 CLASS SquareBlock INHERITS Block
 			1.5.4.2		CONSTRUCTOR(THIS)
-			1.5.4.3			<super().__init__(((1, 1, 0, 0), (1, 1, 0, 0)), (255, 255, 0))>
+			1.5.4.3			<super().__init__(((0, 0, 0), (1, 1, 0), (1, 1, 0)), (255, 255, 0))>
 			1.5.4.4 	END CONSTRUCTOR
 			1.5.4.5 END CLASS
 
 		1.5.5 TBlock Class
 			1.5.5.1 CLASS TBlock INHERITS Block
 			1.5.5.2		CONSTRUCTOR(THIS)
-			1.5.5.3			<super().__init__(((0, 1, 0, 0), (1, 1, 1, 0)), (128, 0, 128))>
+			1.5.5.3			<super().__init__(((0, 0, 0), (0, 1, 0), (1, 1, 1)), (128, 0, 128))>
 			1.5.5.4 	END CONSTRUCTOR
 			1.5.5.5 END CLASS
 
 		1.5.6 SBlock Class
-			1.5.4.1 CLASS SBlock INHERITS Block
-			1.5.4.2		CONSTRUCTOR(THIS)
-			1.5.4.3			<super().__init__(((0, 0, 1, 1), (0, 1, 1, 0)), (0, 128, 0))>
-			1.5.4.4 	END CONSTRUCTOR
-			1.5.4.5 END CLASS
+			1.5.6.1 CLASS SBlock INHERITS Block
+			1.5.6.2		CONSTRUCTOR(THIS)
+			1.5.6.3			<super().__init__(((0, 0, 0), (0, 1, 1), (1, 1, 0)), (0, 128, 0))>
+			1.5.6.4 	END CONSTRUCTOR
+			1.5.6.5 END CLASS
 
 		1.5.7 ZBlock Class
-			1.5.4.1 CLASS ZBlock INHERITS Block
-			1.5.4.2		CONSTRUCTOR(THIS)
-			1.5.4.3			<super().__init__(((1, 1, 0, 0), (0, 1, 1, 0)), (128, 0, 0))>
-			1.5.4.4 	END CONSTRUCTOR
-			1.5.4.5 END CLASS
+			1.5.7.1 CLASS ZBlock INHERITS Block
+			1.5.7.2		CONSTRUCTOR(THIS)
+			1.5.7.3			<super().__init__(((0, 0, 0), (1, 1, 0), (0, 1, 1)), (128, 0, 0))>
+			1.5.7.4 	END CONSTRUCTOR
+			1.5.7.5 END CLASS
 
 		1.5.8 LineBlock Class
-			1.5.4.1 CLASS LineBlock INHERITS Block
-			1.5.4.2		CONSTRUCTOR(THIS)
-			1.5.4.3			<super().__init__(((1, 1, 1, 1), (0, 0, 0, 0)), (0, 255, 255))>
-			1.5.4.4 	END CONSTRUCTOR
-			1.5.4.5 END CLASS
+			1.5.9.1 CLASS LineBlock INHERITS Block
+			1.5.9.2		CONSTRUCTOR(THIS)
+			1.5.9.3			<super().__init__(((0, 0, 0, 0), (1, 1, 1, 1), (0, 0, 0, 0)), (0, 255, 255))>
+			1.5.9.4 	END CONSTRUCTOR
+			1.5.9.5 END CLASS
+
+		1.5.9 JBlock Class
+			1.5.9.1 CLASS JBlock INHERITS Block
+			1.5.9.2		CONSTRUCTOR(THIS)
+			1.5.9.3			<super().__init__(((0, 0, 0), (0, 0, 1), (1, 1, 1)), (0, 0, 255))>
+			1.5.9.4 	END CONSTRUCTOR
+			1.5.9.5 END CLASS
 
 	1.6 GridRect Class
 		1.6.1 CLASS GridRect INHERITS game.sprite.Sprite WITH {TUPLE pos, INTEGER size}
@@ -387,16 +452,16 @@
 
 	1.7 Grid Class
 		1.7.1 CLASS Grid INHERITS Game WITH {TUPLE gridSize}
-		1.7.2		CONSTRUCTOR(THIS, TUPLE gridSize)
-		1.7.3			DECLARE THIS.sizeX, THIS.sizeY INITIALLY gridSize[0]
+		1.7.2		CONSTRUCTOR(THIS, TUPLE gridPos, TUPLE totalGridSize INITIALLY (630, 700))
+		1.7.3			DECLARE THIS.posX, THIS.posY INITIALLY gridPos
 		1.7.4			DECLARE THIS.blockSize INITIALLY 30
-		1.7.5			DECLARE THIS.gridX, THIS.gridY INITIALLY (630, 700)
+		1.7.5			DECLARE THIS.gridX, THIS.gridY INITIALLY totalGridSize
 		1.7.6			DECLARE THIS.gridGroup INITIALLY game.sprite.Group()
 		1.7.7		END CONSTRUCTOR
 		1.7.8
 		1.7.9		PROCEDURE DrawGrid(THIS, SURFACE screen) RETURNS NONE
-		1.7.10			FOR x IN RANGE(THIS.sizeX, THIS.gridX, THIS.blockSize) DO
-		1.7.11				FOR y IN RANGE(THIS.sizeY, THIS.gridY, THIS.blockSize) DO
+		1.7.10			FOR x IN RANGE(THIS.posX, THIS.gridX, THIS.blockSize) DO
+		1.7.11				FOR y IN RANGE(THIS.posY, THIS.gridY, THIS.blockSize) DO
 		1.7.12					DECLARE gridBlock INTIALLY GridRect((x, y), THIS.blockSize)
 		1.7.13					THIS.gridGroup.add(gridBlock)
 		1.7.14					gridBlock.drawRect(screen)
@@ -404,6 +469,107 @@
 		1.7.16			END FOR
 		1.7.17		END PROCEDURE
 		1.7.18 END CLASS
+
+	1.8 Highscore Class
+		1.8.1 CLASS Highscore IS {}
+		1.8.2		CONSTRUCTOR(STRING name INITIALLY 'PLA', INTEGER score INITIALLY 0)
+		1.8.3			DECLARE self.name INITIALLY name
+		1.8.4			DECLARE self.score INITIALLY score
+		1.8.5		END CONSTRUCTOR
+		1.8.6
+		1.8.7 		METHODS
+		1.8.8	
+		1.8.9			FUNCTION BubbleSortScores(THIS, LIST scoresList, BOOLEAN dev INITIALLY TRUE) RETURNS LIST OF LISTS
+		1.8.10				IF THIS.name != 'PLA' AND THIS.score != 0 THEN: scoresList.append(Highscore(THIS.name, THIS.score)) END IF
+		1.8.11				
+		1.8.12				FOR i IN RANGE(LENGTH scoresList) DO
+		1.8.13					FOR j IN RANGE(LENGTH scoresList - i - 1) DO
+		1.8.14						IF scoresList[j+1].score > scoresList[j].score THEN
+		1.8.15							SET scoresList[j], scoresList[j+1] TO scoresList[j+1], scoresList[j]
+		1.8.16						END IF
+		1.8.17					END FOR
+		1.8.18				END FOR
+		1.8.19
+		1.8.20				RETURN [[score.name, score.score] FOR EACH score IN scoreList[:5] END FOR] IF NOT dev ELSE [[score.name, score.score] FOR EACH score IN scoreList END FOR] END IF
+		1.8.21			END FUNCTION
+		1.8.22
+		1.8.23			<@staticmethod>
+		1.8.24			FUNCTION GetScoresFromFile(STRING filePath) RETURNS LIST
+		1.8.25				TRY
+		1.8.26					<open score file as f>
+		1.8.27						DECLARE data INITIALLY f.read().split(',')
+		1.8.28					
+		1.8.29					DECLARE names, scores INITIALLY [], []
+		1.8.30				
+		1.8.31					FOR EACH value IN data DO
+		1.8.32						TRY
+		1.8.33							scores.append(int(value))
+		1.8.34						EXCEPT ValueError:
+		1.8.35							names.append(value)
+		1.8.36					END FOR
+		1.8.37					
+		1.8.38					DECLARE highscores INITIALLY [Highscore(name, score) FOR EACH name, score IN zip(names, scores) END FOR]
+		1.8.39
+		1.8.40					Color.prints(f'Successfully Retrieved Score data from {filePath}')
+		1.8.41					RETURN highscores
+		1.8.42
+		1.8.43				EXCEPT Exception as e
+		1.8.44					Color.printe(f'Unexpected Error Occurred during data retrieval\n{e}')
+		1.8.45					RETURN []
+		1.8.46				END TRY
+		1.8.47			END FUNCTION
+		1.8.48
+		1.8.49			<@staticmethod>
+		1.8.50			FUNCTION WriteScoresToFile(STRING filePath, LIST scores) RETURNS LIST
+		1.8.51				TRY
+		1.8.52					<open score file as f>
+		1.8.53 						FOR EACH score IN scores DO f.write(f'{score.name},{score.score},') END FOR
+		1.8.54						
+		1.8.55					Color.prints(f'Successfully written scores to {filePath}')
+		1.8.56					RETURN TRUE
+		1.8.57				EXCEPT Exception as e
+		1.8.58					Color.printe(f'Unexpected Error occurred whilt writing scores to {filePath}\n{e}')
+		1.8.59					RETURN FALSE
+		1.8.60				END TRY
+		1.8.61			END FUNCTION
+		1.8.62
+		1.8.63			<@staticmethod>
+		1.8.64 			FUNCTION CommitToDb(LIST scores) RETURNS LIST OF TUPLES
+		1.8.65				DECLARE topScores INITIALLY []
+		1.8.66				SET scores TO scores[0]
+		1.8.67
+		1.8.68				TRY
+		1.8.69					DECLARE conn_str INITIALLY f'''DRIVER=SQL SERVER;SERVER={SERVER_NAME};DATABASE=highscores;Trust_Connection=yes;'''
+		1.8.70
+		1.8.71					DECLARE conn INITIALLY dbc.connect(conn_str)
+		1.8.72					DECLARE cursor INITIALLY conn.cursor()
+		1.8.73					
+		1.8.74					cursor.execute('TRUNCATE TABLE highscore;')
+		1.8.75					
+		1.8.76					DECLARE ins_query INITIALLY f'''INSERT INTO highscore (name, score) VALUES (?, ?);'''
+		1.8.77					FOR EACH name, score IN scores DO cursor.execute(ins_query, (name, score)) END FOR
+		1.8.78				
+		1.8.79					conn.commit()
+		1.8.80					Color.prints('Committed Data to Database Successfully')
+		1.8.81				
+		1.8.82					TRY
+		1.8.83						DECLARE data INITIALLY cursor.execute('SELECT * FROM highscore;')
+		1.8.84
+		1.8.85						SET topScores TO [(name, score) FOR EACH name, score IN data END FOR]
+		1.8.86						Color.prints('Successfully retrieved score data from database')
+		1.8.87
+		1.8.88						conn.close()
+		1.8.89			
+		1.8.90						Color.prints(f'Data: {topScores}')
+		1.8.91						RETURN topScores
+		1.8.92					EXCEPT Exception as e
+		1.8.93						Color.printe(f'Error whilst trying to retrieve score data\n{e}')
+		1.8.94					END TRY
+		1.8.95				EXCEPT Exception as e
+		1.8.96					Color.printe(f'Error: There was an unexpected error whilst trying to commit data to the sql database\n{e}')
+		1.8.97				END TRY
+		1.8.98			END FUNCTION
+		1.8.99	END CLASS
 
 2. Solo Files
 
@@ -723,6 +889,12 @@
 		2.5.75		END WHILE
 		2.5.76	END PROCEDURE
 
+	2.6 ScoreInput
+		2.6.1
+
+	2.7 Highscore
+		2.6.2
+
 3. Utilities
 
 	3.1 ClrTerminal
@@ -787,68 +959,3 @@
 		3.1.59			print(f'{Color.FORE_GREEN}{txt}{Color.RESET}')
 		3.1.60		END PROCEDURE
 		3.1.46	END CLASS
-
-REMOVED
-	1.2 Block Class
-		1.2.1 CLASS BLOCK INHERITS FROM pygame.sprite.Sprite
-		1.2.2	CONSTRUCTOR()
-		1.2.3		CALL super().__init__()
-		1.2.4		DECLARE self.color AS TUPLE INITIALLY ((200, 200, 200), (215, 133, 133), (30, 145, 255), (0, 170, 0), (180, 0, 140), (200, 200, 0))
-		1.2.5		DECLARE self.current AS BOOLEAN INITIALLY TRUE
-		1.2.6		DECLARE self.struct INITIALLY CALL np.array(self.struct)
-		1.2.7		IF randint(0, 1):
-		1.2.8			DECLARE self.struct AS CALL np.rot90(self.struct)
-		1.2.9		END IF
-		1.2.10
-		1.2.11	END CONSTRUCTOR
-		1.2.12
-		1.2.13	METHODS
-		1.2.14	doesCollide()
-
-		1.2.14 doesCollide()
-			1.2.14.1 FUNCTION doesCollide() RETURNS BOOLEAN
-			1.2.14.2	FOR otherBlock IN group:
-			1.2.14.3		IF block IS EQUAL TO otherBlock: CONTINUE
-			1.2.14.4		END IF
-			1.2.14.5		IF pygame.sprite.collide_mask(block, otherBlock) IS NOT NONE: RETURN TRUE
-			1.2.14.6		END IF
-			1.2.14.7	END FOR
-			1.2.14.8
-			1.2.14.9	RETURN FALSE
-			1.2.14.10
-			1.2.14.11 END FUNCTION
-
-	1.3 Different Block Classes
-
-		1.3.1 Classes
-		1.3.2 Square
-		1.3.3 T
-		1.3.4 Line
-		1.3.5 L
-		1.3.6 Z
-
-
-		1.3.2 Square Class
-			1.3.2.1 CLASS Square INHERITS FROM Block:
-			1.3.2.2		DECLARE struct AS TUPLE INITIALLY ((1, 1), (1, 1),)
-			1.3.2.3 END CLASS
-
-		1.3.3 T Class
-			1.3.3.1 CLASS T INHERITS FROM Block:
-			1.3.3.2		DECLARE struct AS TUPLE INITIALLY ((1, 1, 1), (0, 1, 0),)
-			1.3.3.3 END CLASS
-
-		1.3.4 Line Class
-			1.3.4.1 CLASS Line INHERITS FROM Block:
-			1.3.4.2 	DECLARE struct AS TUPLE INITIALLY ((1, 0), (1, 0), (1, 0), (1, 0),)
-			1.3.4.3 END CLASS
-
-		1.3.5 L Class
-			1.3.5.1 CLASS L INHERITS FROM Block:
-			1.3.5.2 	DECLARE struct AS TUPLE INITIALLY ((1, 1), (1, 0), (1, 0),)
-			1.3.5.3 END CLASS
-
-		1.3.6 Z Class
-			1.3.6.1 CLASS Z INHERITS FROM Block:
-			1.3.6.2 	DECLARE struct AS TUPLE INITIALLY ((0, 1), (1, 1), (1, 0),)
-			1.3.6.3 END CLASS
