@@ -2,19 +2,19 @@
 
 ## Table
 
-| Classes   | Quick Search       |
-| :-------: | :----------------: |
-| Window    | [Link](#window)    |
-| Btn       | [Link](#btn)       |
-| Text      | [Link](#text)      |
-| Game      | [Link](#game)      |
-| GridRect  | [Link](#gridrect)  |
-| Grid      | [Link](#grid)      |
-| Settings  | [Link](#settings)  |
-| Highscore | [Link](#highscore) |
+| [Classes](#classes)  | Quick Search       |
+| :------------------: | :----------------: |
+| Window               | [Link](#window)    |
+| Btn                  | [Link](#btn)       |
+| Text                 | [Link](#text)      |
+| Game                 | [Link](#game)      |
+| GridRect             | [Link](#gridrect)  |
+| Grid                 | [Link](#grid)      |
+| Settings             | [Link](#settings)  |
+| Highscore            | [Link](#highscore) |
 
 | [Subclasses](#subclasses) | Quick Search         |
-| :-----------------------: | :----------------:   |
+| :-----------------------: | :------------------: |
 | Block                     | [Link](#block)       |
 | Rectangle                 | [Link](#rectangle)   |
 | LBlock                    | [Link](#lblock)      |
@@ -27,7 +27,7 @@
 
 ---
 
-## Classes
+# Classes
 
 ---
 
@@ -48,6 +48,10 @@ variable = class Window(window_title:str='Title', bg_color:tuple=(255, 255, 255)
 - window_title (string, optional): Window Title
 - bg_color (tuple, optional): Background Color of Window
 
+### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/3c5d017167fc62ba2480bae3befd9893df2d902a/Write%20Up/Design/Pseudocode%20(Extended).txt#L39-L44>
+
 ---
 
 ## Methods
@@ -62,6 +66,10 @@ variable = class Window(window_title:str='Title', bg_color:tuple=(255, 255, 255)
 variable.CreateNewWindow()
 ```
 
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/3c5d017167fc62ba2480bae3befd9893df2d902a/Write%20Up/Design/Pseudocode%20(Extended).txt#L46-L51>
+
 ---
 
 ### ExitWindow
@@ -73,6 +81,10 @@ variable.CreateNewWindow()
 ```python
 variable.ExitWindow()
 ```
+
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/3c5d017167fc62ba2480bae3befd9893df2d902a/Write%20Up/Design/Pseudocode%20(Extended).txt#L55-L61>
 
 ---
 
@@ -90,6 +102,10 @@ variable.drawGUIObjs(GUIObjects)
 
 - GUIObjects (list): List of Objects to be Drawn to Screen
 
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/3c5d017167fc62ba2480bae3befd9893df2d902a/Write%20Up/Design/Pseudocode%20(Extended).txt#L63-L75>
+
 ---
 
 ### Leave
@@ -101,6 +117,10 @@ variable.drawGUIObjs(GUIObjects)
 ```python
 variable.Leave()
 ```
+
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/3c5d017167fc62ba2480bae3befd9893df2d902a/Write%20Up/Design/Pseudocode%20(Extended).txt#L77-L80>
 
 ---
 
@@ -123,6 +143,10 @@ variable = Text(pos, text, fontsize, color)
 - fontsize (int): Size of Text
 - color (tuple): Color of Text
 
+### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/3c5d017167fc62ba2480bae3befd9893df2d902a/Write%20Up/Design/Pseudocode%20(Extended).txt#L88-L98>
+
 ---
 
 ## Methods
@@ -136,6 +160,10 @@ variable = Text(pos, text, fontsize, color)
 ```python
 variable.RenderText()
 ```
+
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/3c5d017167fc62ba2480bae3befd9893df2d902a/Write%20Up/Design/Pseudocode%20(Extended).txt#L100-L103>
 
 ---
 
@@ -154,66 +182,88 @@ variable.ChangeText(text, draw)
 - text (str): Text to be drawn
 - draw (method): Draw method
 
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/3c5d017167fc62ba2480bae3befd9893df2d902a/Write%20Up/Design/Pseudocode%20(Extended).txt#L105-L109>
+
 ---
 
-#### ChangeColor
+### ChangeColor
 
 <https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L117-L132>
 
-##### Usage
+#### Usage
 
 ```python
 variable.ChangeColor(color)
 ```
 
-##### Arguments
+#### Arguments
 
 - color (tuple): Color to Change Text to
 
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/3c5d017167fc62ba2480bae3befd9893df2d902a/Write%20Up/Design/Pseudocode%20(Extended).txt#L111-L116>
+
 ---
 
-#### UpdateText
+### UpdateText
 
 <https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L129-L132>
 
-##### Usage
+#### Usage
 
 ```python
 variable.UpdateText(color, text)
 ```
 
-##### Arguments
+#### Arguments
 
 - color (tuple): Color to Update Text With
 - text (str): Text to Update To
 
-#### __name__
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/3c5d017167fc62ba2480bae3befd9893df2d902a/Write%20Up/Design/Pseudocode%20(Extended).txt#L118-L122>
+
+### __name__
 
 <https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L134-L135>
 
-##### Usage
+#### Usage
 
 ```python
 variable.__name__()
 ```
 
-##### Returns
+#### Returns
 
 - 'Text' (str)
 
-#### ReturnText
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/3c5d017167fc62ba2480bae3befd9893df2d902a/Write%20Up/Design/Pseudocode%20(Extended).txt#L124-L126>
+
+---
+
+### ReturnText
 
 <https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L136>
 
-##### Usage
+#### Usage
 
 ```python
 variable.ReturnText()
 ```
 
-##### Returns
+#### Returns
 
 - self.caption (str): Raw Text
+
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/3c5d017167fc62ba2480bae3befd9893df2d902a/Write%20Up/Design/Pseudocode%20(Extended).txt#L128-L130>
 
 ---
 
@@ -237,68 +287,84 @@ variable = class Btn(text, pos, width, height, fontsize)
 - height (int): Height of Button
 - fontsize (int): Size of Text
 
+### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/3c5d017167fc62ba2480bae3befd9893df2d902a/Write%20Up/Design/Pseudocode%20(Extended).txt#L138-L151>
+
 ---
 
-### Methods
+## Methods
 
-#### ChangeState
+### ChangeState
 
 <https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L177-L186>
 
-##### Usage
+#### Usage
 
 ```python
 variable.ChangeState(txt, bool)
 ```
 
-##### Arguments
+#### Arguments
 
 - txt (str): Text to be drawn to screen
 - boolean (bool): has button changed state
 
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/3c5d017167fc62ba2480bae3befd9893df2d902a/Write%20Up/Design/Pseudocode%20(Extended).txt#L154-L157>
+
 ---
 
-#### isHovering
+### isHovering
 
 <https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L188-L219>
 
-##### Usage
+#### Usage
 
 ```python
 variable.isHovering(click, effectState, color, *args)
 ```
 
-##### Arguments
+#### Arguments
 
 - click (method): Click function
 - effectState (bool): Sound effect state
 - color (tuple): Color to set text to on hover
 - *args: Any other value(s) to be passed into the click method
 
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/3c5d017167fc62ba2480bae3befd9893df2d902a/Write%20Up/Design/Pseudocode%20(Extended).txt#L159-L172>
+
 ---
 
-#### HasClicked
+### HasClicked
 
-<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L221-L229>
+<https://github.com/TurtleHelm/AHC-Project/blob/3c5d017167fc62ba2480bae3befd9893df2d902a/Write%20Up/Design/Pseudocode%20(Extended).txt#L159-L179>
 
-##### Usage
+#### Usage
 
 ```python
 variable.HasClicked(click, *args)
 ```
 
-##### Arguments
+#### Arguments
 
 - click (method): Click method
 - *args: Any value(s) to send to the click method
 
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/3c5d017167fc62ba2480bae3befd9893df2d902a/Write%20Up/Design/Pseudocode%20(Extended).txt#L180-L187>
+
 ---
 
-#### RenderBtn
+### RenderBtn
 
 <https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L231-L234>
 
-##### Usage
+#### Usage
 
 ```python
 variable.RenderBtn()
@@ -306,19 +372,23 @@ variable.RenderBtn()
 
 ---
 
-#### __name__
+### __name__
 
 <https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L236-L237>
 
-##### Usage
+#### Usage
 
 ```python
 variable.__name__()
 ```
 
-##### Returns
+#### Returns
 
 - 'Btn' (str)
+
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/3c5d017167fc62ba2480bae3befd9893df2d902a/Write%20Up/Design/Pseudocode%20(Extended).txt#L193-L195>
 
 ---
 
