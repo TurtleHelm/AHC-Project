@@ -51,7 +51,7 @@
 		1.1.17		END PROCEDURE
 		1.1.18
 		1.1.19		<@staticmethod>
-		1.1.20		PROCEDURE ExitWindow(THIS) RETURNS NONE
+		1.1.20		PROCEDURE ExitWindow RETURNS NONE
 		1.1.21			pygame.display.quit()
 		1.1.22			Color.printd('Exiting Window...')
 		1.1.23			pygame.quit()

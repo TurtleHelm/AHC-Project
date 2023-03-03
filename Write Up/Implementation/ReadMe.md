@@ -5,8 +5,8 @@
 | [Classes](#classes)  | Quick Search       |
 | :------------------: | :----------------: |
 | Window               | [Link](#window)    |
-| Btn                  | [Link](#btn)       |
 | Text                 | [Link](#text)      |
+| Btn                  | [Link](#btn)       |
 | Game                 | [Link](#game)      |
 | GridRect             | [Link](#gridrect)  |
 | Grid                 | [Link](#grid)      |
@@ -68,7 +68,7 @@ variable.CreateNewWindow()
 
 #### Pseudocode
 
-<https://github.com/TurtleHelm/AHC-Project/blob/3c5d017167fc62ba2480bae3befd9893df2d902a/Write%20Up/Design/Pseudocode%20(Extended).txt#L46-L51>
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L46-L51>
 
 ---
 
@@ -120,7 +120,7 @@ variable.Leave()
 
 #### Pseudocode
 
-<https://github.com/TurtleHelm/AHC-Project/blob/3c5d017167fc62ba2480bae3befd9893df2d902a/Write%20Up/Design/Pseudocode%20(Extended).txt#L77-L80>
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L75-L79>
 
 ---
 
@@ -227,7 +227,9 @@ variable.UpdateText(color, text)
 
 <https://github.com/TurtleHelm/AHC-Project/blob/3c5d017167fc62ba2480bae3befd9893df2d902a/Write%20Up/Design/Pseudocode%20(Extended).txt#L118-L122>
 
-### __name__
+---
+
+### \_\_name__
 
 <https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L134-L135>
 
@@ -335,7 +337,7 @@ variable.isHovering(click, effectState, color, *args)
 
 #### Pseudocode
 
-<https://github.com/TurtleHelm/AHC-Project/blob/3c5d017167fc62ba2480bae3befd9893df2d902a/Write%20Up/Design/Pseudocode%20(Extended).txt#L159-L172>
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L158-L178>
 
 ---
 
@@ -356,7 +358,7 @@ variable.HasClicked(click, *args)
 
 #### Pseudocode
 
-<https://github.com/TurtleHelm/AHC-Project/blob/3c5d017167fc62ba2480bae3befd9893df2d902a/Write%20Up/Design/Pseudocode%20(Extended).txt#L180-L187>
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L180-L187>
 
 ---
 
@@ -370,9 +372,13 @@ variable.HasClicked(click, *args)
 variable.RenderBtn()
 ```
 
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L189-L192>
+
 ---
 
-### __name__
+### \_\_name__
 
 <https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L236-L237>
 
@@ -421,6 +427,10 @@ variable = class GridRect(pos, size)
 
 ---
 
+### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L440-L446>
+
 ## Methods
 
 ### drawRect
@@ -431,6 +441,10 @@ variable = class GridRect(pos, size)
 
 - self (Text): Instance of Class
 - screen (pygame.Surface): Window to Draw To
+
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L448-L450>
 
 ---
 
@@ -451,6 +465,10 @@ variable = class Grid(gridPos, totalGridSize)
 - gridPos (tuple): Position to start drawing grid from (x, y)
 - totalGridSize (tuple): Total Width & Height of the Grid
 
+### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L455-L460>
+
 ---
 
 ## Methods
@@ -462,6 +480,10 @@ variable = class Grid(gridPos, totalGridSize)
 #### Arguments
 
 - screen (pygame.Surface): Window to Draw To
+
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L462-L470>
 
 ---
 
@@ -482,6 +504,10 @@ variable = class Settings(musicState, effectState)
 - musicState (bool): Allow Music or not
 - effectState (bool): Allow Sound Effects or not
 
+### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L203-L207>
+
 ---
 
 ## Methods
@@ -495,6 +521,10 @@ variable = class Settings(musicState, effectState)
 ```python
 variable.init()
 ```
+
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L209-L220>
 
 ---
 
@@ -512,6 +542,10 @@ variable.WriteSettings(rem)
 
 - rem (bool): Remove current settings file if it exists
 
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L222-L230>
+
 ---
 
 ### ChangeSettings
@@ -528,6 +562,10 @@ variable.ChangeSettings(musicBool, effectsBool)
 
 - musicBool (bool): bool to change musicState to
 - effectsBool (bool): bool to change effectState to
+
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L232-L236>
 
 ---
 
@@ -547,6 +585,10 @@ variable = class Highscore(name, score)
 
 - name (str): Name of User
 - score (int): Score achieved by User
+
+### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L475-L478>
 
 ---
 
@@ -571,6 +613,10 @@ variableTwo = variable.BubbleSortScores(scoreList, dev)
 
 - scores (list[list]): list of scores in the form [name, score]
 
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L482-L494>
+
 ---
 
 ### GetScoresFromFile
@@ -590,6 +636,10 @@ variableTwo = variable.GetScoresFromFile(filePath)
 #### Returns
 
 - highscores (list): List of Highscore Objects in the form Highscore(name, score)
+
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L496-L520>
 
 ---
 
@@ -612,6 +662,10 @@ variable.WriteScoresToFile(filePath, scores)
 
 - bool: True if successful, False if unsuccessful
 
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L522-L534>
+
 ---
 
 ### CommitToDb
@@ -631,6 +685,10 @@ variableTwo = variable.CommitToDb(scores)
 #### Returns
 
 - list[tuple]: List of tuples containing (name, score) for each entry in database
+
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L536-L571>
 
 ---
 
@@ -654,6 +712,10 @@ variable = class Block(struct, color)
 - color (tuple): Color of Block
 - pos (list): Position to Draw Block at
 
+### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L252-L258>
+
 ---
 
 ## Methods
@@ -672,6 +734,10 @@ variableTwo = variable.GetRandBlock()
 
 - Type of Block
 
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L246-L249>
+
 ---
 
 ### draw
@@ -687,6 +753,10 @@ variable.draw(screen)
 #### Arguments
 
 - screen (pygame.Surface): Window to Draw to
+
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L260-L279>
 
 ---
 
@@ -705,6 +775,10 @@ variable.Move(screen, dir, dirName)
 - screen (pygame.Surface): Surface to be Drawn to
 - dir (tuple): How far to move block
 - dirName (str): Direction of Travel
+
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L281-L291>
 
 ---
 
@@ -725,6 +799,10 @@ variableTwo = variable.CheckCollision(blockGroup)
 #### Returns
 
 - bool: If Collided
+
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L293-L308>
 
 ---
 
@@ -747,6 +825,10 @@ variableTwo = variable.WillCollide(sprite, group)
 
 - bool: Whether or not a sprite is about to collide with a group
 
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L310-L321>
+
 ---
 
 ### CheckMovable
@@ -767,6 +849,10 @@ variableTwo = variable.CheckMovable(dir)
 
 - Bool: If the block is movable
 
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L323-L339>
+
 ---
 
 ### UpdateColor
@@ -783,6 +869,10 @@ variable.UpdateColor(color, screen)
 
 - color (tuple): Color to draw sprite with
 - screen (pygame.Surface): Surface to be drawn to
+
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L341-L346>
 
 ---
 
@@ -801,6 +891,10 @@ variable.Rotate(screen, effectState, sound)
 - screen (pygame.Surface): Surface to be drawn to
 - effectState (bool): Sound Effects Bool
 - sound (str): File Path to Sound File
+
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L348-L357>
 
 ---
 
@@ -822,6 +916,10 @@ variableTwo = variable.reachedTop(blockGroup)
 
 - bool: Whether or not the group has reached the top
 
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L359-L368>
+
 ---
 
 ## Rectangle
@@ -842,6 +940,10 @@ variable = class Rectangle(pos, color, size)
 - color (tuple): color of Rectangle
 - size (int): size of Rectangle
 
+### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L373-L380>
+
 ---
 
 ## Methods
@@ -860,6 +962,10 @@ variable.update(dir)
 
 - dir (tuple): Direction of Travel (x, y)
 
+#### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L384-L386>
+
 ---
 
 ## LBlock
@@ -873,6 +979,10 @@ variable.update(dir)
 ```python
 variable = class LBlock()
 ```
+
+### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L391-L393>
 
 ---
 
@@ -888,6 +998,10 @@ variable = class LBlock()
 variable = class SquareBlock()
 ```
 
+### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L398-L400>
+
 ---
 
 ## TBlock
@@ -901,6 +1015,10 @@ variable = class SquareBlock()
 ```python
 variable = class TBlock()
 ```
+
+### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L405-L407>
 
 ---
 
@@ -916,6 +1034,10 @@ variable = class TBlock()
 variable = class SBlock()
 ```
 
+### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L412-L414>
+
 ---
 
 ## ZBlock
@@ -929,6 +1051,10 @@ variable = class SBlock()
 ```python
 variable = class ZBlock()
 ```
+
+### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L419-L421>
 
 ---
 
@@ -944,6 +1070,10 @@ variable = class ZBlock()
 variable = class LineBlock()
 ```
 
+### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L426-L428>
+
 ---
 
 ## JBlock
@@ -957,5 +1087,9 @@ variable = class LineBlock()
 ```python
 variable = class JBlock()
 ```
+
+### Pseudocode
+
+<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L433-L435>
 
 ---

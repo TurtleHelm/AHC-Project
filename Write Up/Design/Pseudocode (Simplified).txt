@@ -24,7 +24,6 @@
 		1.1.4 create function that returns the window surface
 		1.1.5 create procedure that exits the program
 		1.1.6 create procedure that instantiates objects onto the screen and updates window (i.e text)
-		1.1.7 create function that returns the window size
 
 	1.2 Text Class
 		1.2.1 initialise Text class
