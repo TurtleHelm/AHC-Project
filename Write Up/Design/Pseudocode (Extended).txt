@@ -224,7 +224,7 @@
 		1.4.26			
 		1.4.27			<open filePath in write mode as f>
 		1.4.28				f.write(f'{str(THIS.musicState)}')
-		1.4.29				f.write(f'{str(THIS>effectState)}')
+		1.4.29				f.write(f'{str(THIS.effectState)}')
 		1.4.30				f.close()
 		1.4.31			THIS.init()
 		1.4.32		END PROCEDURE
@@ -245,7 +245,7 @@
 			1.5.1.1 CLASS BLOCK INHERITS pygame.sprite.Sprite WITH {TUPLE OF TUPLES struct, TUPLE color}
 			1.5.1.2 	<@staticmethod>
 			1.5.1.3 	FUNCTION GetRandBlock() RETURNS Game.<random block variation>
-			1.5.1.4			RETURN choice((Game.LBlock, Game.SquareBlock, Game.TBlock, Game.SBlock, Game.ZBlock, Game.LineBlock))()
+			1.5.1.4			RETURN choice((Game.LBlock, Game.SquareBlock, Game.TBlock, Game.SBlock, Game.ZBlock, Game.LineBlock, Game.JBlock))()
 			1.5.1.5 	END FUNCTION
 			1.5.1.6		
 			1.5.1.7		METHODS
@@ -287,7 +287,7 @@
 			1.5.1.43				<dirName is 'right'> SET THIS.realPos[0] TO THIS.realPos[0] + 30
 			1.5.1.44				<dirName is 'down'> SET THIS.realPos[1] TO THIS.realPos[1] + 30
 			1.5.1.45
-			1.5.1.46			Game.Block.draw(THIS, win.ReturnWindowSurface())
+			1.5.1.46			Game.Block.draw(THIS, win.win)
 			1.5.1.47		END PROCEDURE
 			1.5.1.48
 			1.5.1.49		FUNCTION CheckCollision(THIS, GROUP blockGroup) RETURNS BOOLEAN
@@ -390,7 +390,7 @@
 			1.5.3.1 CLASS LBlock INHERITS Block
 			1.5.3.2		CONSTRUCTOR(THIS)
 			1.5.3.3			<super().__init__(((0, 0, 0), (1, 0, 0), (1, 1, 1)), (255, 165, 0))>
-			1.5.3.4 	END CONSTRUCTOR
+			1.5.3.4		END CONSTRUCTOR
 			1.5.3.5 END CLASS
 
 		1.5.4 SquareBlock Class

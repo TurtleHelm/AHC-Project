@@ -84,7 +84,7 @@ variable.ExitWindow()
 
 #### Pseudocode
 
-<https://github.com/TurtleHelm/AHC-Project/blob/3c5d017167fc62ba2480bae3befd9893df2d902a/Write%20Up/Design/Pseudocode%20(Extended).txt#L55-L61>
+<https://github.com/TurtleHelm/AHC-Project/blob/51ac7f7e926e89d7920bf61820addda21c39ffe2/Write%20Up/Design/Pseudocode%20(Extended).txt#L53-L59>
 
 ---
 
@@ -204,7 +204,7 @@ variable.ChangeColor(color)
 
 #### Pseudocode
 
-<https://github.com/TurtleHelm/AHC-Project/blob/3c5d017167fc62ba2480bae3befd9893df2d902a/Write%20Up/Design/Pseudocode%20(Extended).txt#L111-L116>
+<https://github.com/TurtleHelm/AHC-Project/blob/51ac7f7e926e89d7920bf61820addda21c39ffe2/Write%20Up/Design/Pseudocode%20(Extended).txt#L110-L115>
 
 ---
 
@@ -343,7 +343,7 @@ variable.isHovering(click, effectState, color, *args)
 
 ### HasClicked
 
-<https://github.com/TurtleHelm/AHC-Project/blob/3c5d017167fc62ba2480bae3befd9893df2d902a/Write%20Up/Design/Pseudocode%20(Extended).txt#L159-L179>
+<https://github.com/TurtleHelm/AHC-Project/blob/8a832a5ce0a4073863934dddaceef6b7377126b6/Implementation/src/classes.py#L221-L229>
 
 #### Usage
 
