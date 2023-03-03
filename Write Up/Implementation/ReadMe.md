@@ -544,7 +544,7 @@ variable.WriteSettings(rem)
 
 #### Pseudocode
 
-<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L222-L230>
+<https://github.com/TurtleHelm/AHC-Project/blob/a8ea06a93f7c3fd20455e4379459213da73e791c/Write%20Up/Design/Pseudocode%20(Extended).txt#L222-L230>
 
 ---
 
@@ -736,7 +736,7 @@ variableTwo = variable.GetRandBlock()
 
 #### Pseudocode
 
-<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L246-L249>
+<https://github.com/TurtleHelm/AHC-Project/blob/a8ea06a93f7c3fd20455e4379459213da73e791c/Write%20Up/Design/Pseudocode%20(Extended).txt#L246-L249>
 
 ---
 
@@ -778,7 +778,7 @@ variable.Move(screen, dir, dirName)
 
 #### Pseudocode
 
-<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L281-L291>
+<https://github.com/TurtleHelm/AHC-Project/blob/a8ea06a93f7c3fd20455e4379459213da73e791c/Write%20Up/Design/Pseudocode%20(Extended).txt#L281-L291>
 
 ---
 
@@ -982,7 +982,7 @@ variable = class LBlock()
 
 ### Pseudocode
 
-<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L391-L393>
+<https://github.com/TurtleHelm/AHC-Project/blob/a8ea06a93f7c3fd20455e4379459213da73e791c/Write%20Up/Design/Pseudocode%20(Extended).txt#L391-L393>
 
 ---
 
