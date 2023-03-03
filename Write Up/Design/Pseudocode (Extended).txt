@@ -46,8 +46,8 @@
 		1.1.12		PROCEDURE CreateNewWindow(THIS) RETURNS NONE
 		1.1.13			DECLARE THIS.win = pygame.display.set_mode(size=self.window_size) # Set Window Size
 		1.1.14			THIS.win.fill(THIS.bg_color) # Set Background Color
-		1.1.15				pygame.display.set_caption(self.window_title) # Set Window Title
-		1.1.16				pygame.display.flip() # Used to Show Background Color
+		1.1.15			pygame.display.set_caption(self.window_title) # Set Window Title
+		1.1.16			pygame.display.flip() # Used to Show Background Color
 		1.1.17		END PROCEDURE
 		1.1.18
 		1.1.19		<@staticmethod>
