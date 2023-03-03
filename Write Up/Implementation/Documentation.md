@@ -362,7 +362,7 @@ variable.HasClicked(click, *args)
 
 ### RenderBtn
 
-<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L231-L234>
+<https://github.com/TurtleHelm/AHC-Project/blob/main/Implementation/src/classes.py#L231-L234>
 
 #### Usage
 
