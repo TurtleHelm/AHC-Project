@@ -2,28 +2,32 @@
 
 ## Table
 
-### Classes
+| Classes   | Quick Search       |
+| :-------: | :----------------: |
+| Window    | [Link](#window)    |
+| Btn       | [Link](#btn)       |
+| Text      | [Link](#text)      |
+| Game      | [Link](#game)      |
+| GridRect  | [Link](#gridrect)  |
+| Grid      | [Link](#grid)      |
+| Settings  | [Link](#settings)  |
+| Highscore | [Link](#highscore) |
 
-[Window](#window)
-[Text](#text)
-[Btn](#btn)
-[Game](#game)
-[Subclasses](#subclasses)
+| [Subclasses](#subclasses) | Quick Search         |
+| :-----------------------: | :----------------:   |
+| Block                     | [Link](#block)       |
+| Rectangle                 | [Link](#rectangle)   |
+| LBlock                    | [Link](#lblock)      |
+| SquareBlock               | [Link](#squareblock) |
+| TBlock                    | [Link](#tblock)      |
+| SBlock                    | [Link](#sblock)      |
+| ZBlock                    | [Link](#zblock)      |
+| LineBlock                 | [Link](#lineblock)   |
+| JBlock                    | [Link](#jblock)      |
 
-- [Block](#block)
-- [Rectangle](#rectangle)
-- [LBlock](#lblock)
-- [SquareBlock](#squareblock)
-- [TBlock](#tblock)
-- [SBlock](#sblock)
-- [ZBlock](#zblock)
-- [LineBlock](#lineblock)
-- [JBlock](#jblock)
+---
 
-[GridRect](#gridrect)
-[Grid](#grid)
-[Settings](#settings)
-[Highscore](#highscore)
+## Classes
 
 ---
 
@@ -31,21 +35,7 @@
 
 ## Init Method
 
-```python
-def __init__(self, ):
-    def __init__(self, window_title: str='Title', bg_color: tuple=(255, 255, 255)) -> None:
-    '''Initialisation for The Window Class
-
-    Args:
-    - window_title (str, optional): window title. Defaults to 'Title'.
-    - bg_color (tuple, optional): background color. Defaults to (255, 255, 255).
-    '''
-    
-    self.screen_size = (960, 720)
-    self.window_title = window_title
-    self.bg_color = bg_color
-    self.icon = game.image.load('Implementation/src/resources/images/icon.png')
-```
+https://github.com/TurtleHelm/AHC-Project/blob/e1bdabbde852ff1835daa4849894cce7a2c3f6c8/Implementation/src/classes.py#L7-L18
 
 ### Usage
 
