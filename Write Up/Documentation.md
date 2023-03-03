@@ -35,7 +35,7 @@
 
 ## Init Method
 
-https://github.com/TurtleHelm/AHC-Project/blob/e1bdabbde852ff1835daa4849894cce7a2c3f6c8/Implementation/src/classes.py#L7-L18
+<https://github.com/TurtleHelm/AHC-Project/blob/e1bdabbde852ff1835daa4849894cce7a2c3f6c8/Implementation/src/classes.py#L7-L18>
 
 ### Usage
 
