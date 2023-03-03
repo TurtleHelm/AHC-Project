@@ -68,7 +68,7 @@ variable.CreateNewWindow()
 
 #### Pseudocode
 
-<https://github.com/TurtleHelm/AHC-Project/blob/1b8f14e1f21d4eb1e87b48c73ebdcf632dffdef8/Write%20Up/Design/Pseudocode%20(Extended).txt#L46-L51>
+<https://github.com/TurtleHelm/AHC-Project/blob/51ac7f7e926e89d7920bf61820addda21c39ffe2/Write%20Up/Design/Pseudocode%20(Extended).txt#L46-L51>
 
 ---
 
