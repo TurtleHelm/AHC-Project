@@ -31,7 +31,7 @@
 
 ---
 
-## Window
+# Window
 
 ## Init Method
 
@@ -54,14 +54,7 @@ variable = class Window(window_title:str='Title', bg_color:tuple=(255, 255, 255)
 
 ### CreateNewWindow
 
-```python
-def CreateNewWindow(self) -> None:
-    self.win = game.display.set_mode(size=self.screen_size)
-    self.win.fill(self.bg_color)
-    game.display.set_caption(self.window_title)
-    game.display.set_icon(self.icon)
-    game.display.flip()
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L20-L27>
 
 #### Usage
 
@@ -73,17 +66,7 @@ variable.CreateNewWindow()
 
 ### ExitWindow
 
-```python
-@staticmethod
-def ExitWindow():
-    '''Exits the Game'''
-    
-    from src.utils.ClrTerminal import Color
-    game.display.quit()
-    Color.printd('Exiting Window...')
-    game.quit()
-    quit(0)
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L30-L37>
 
 #### Usage
 
@@ -95,30 +78,7 @@ variable.ExitWindow()
 
 ### drawGUIObjs
 
-```python
-def drawGUIObjs(self, GUIObjects:list=None) -> None:
-    '''Draw GUI Objects to the Screen
-
-    Args:
-    - GUIObjects (list, optional): List of Objects. Defaults to None.
-    '''
-
-    if GUIObjects == None: pass # if no GUI Objects, stop
-
-    else:
-        for GUIObj in GUIObjects: # for each gui object in the list
-
-            match GUIObj.__name__(): # Check if the object in the list is a render-able object
-                case  Text.__name__: # If Object in list is text, render text
-                    GUIObj.RenderText()
-                    
-                case Btn.__name__: # If Object in list is a button, render button
-                    GUIObj.RenderBtn()
-                    
-                case _: pass # Defaults to this if all other cases = False
-        
-    pygame.display.flip()
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L39-L60>
 
 #### Usage
 
@@ -130,16 +90,11 @@ variable.drawGUIObjs(GUIObjects)
 
 - GUIObjects (list): List of Objects to be Drawn to Screen
 
---- 
+---
 
 ### Leave
 
-```python
-@staticmethod
-def Leave() -> None:
-    from .home import run
-    run()
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L62-L65>
 
 #### Usage
 
@@ -149,34 +104,19 @@ variable.Leave()
 
 ---
 
-## Text
+# Text
 
-### Init Method
+## Init Method
 
-```python
-def __init__(self, pos:list=[0, 0], text:str='Text', fontsize:int=20, color:tuple=(255, 255, 255)):    
-    super().__init__() # Initialise the inherited class
-    if not game.font.get_init: game.font.init() # Initialise Font 
-    
-    self.surface = game.display.get_surface() # Get Window Surface
-    self.givenPos = pos
-    
-    self.color = color
-    
-    self.fontsize = fontsize
-    self.text = game.font.Font('Implementation/src/resources/fonts/font.ttf', self.fontsize).render(text, False, self.color) # Creates Font
-    
-    self.pos = [self.givenPos[0] - (self.text.get_width() // 2), self.givenPos[1] - (self.text.get_height() // 2)] # Set Position of Text
-    self.caption = text
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L70-L97>
 
-#### Usage
+### Usage
 
 ```python
 variable = Text(pos, text, fontsize, color)
 ```
 
-#### Arguments
+### Arguments
 
 - text (str): Text to be Created
 - pos (list): Position of Text on Screen
@@ -185,17 +125,13 @@ variable = Text(pos, text, fontsize, color)
 
 ---
 
-### Methods
+## Methods
 
-#### RenderText
+### RenderText
 
-```python
-def RenderText(self) -> None:
-    pygame.display.get_surface().blit(self.text, self.pos)
-    pygame.display.flip()
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L99-L102>
 
-##### Usage
+#### Usage
 
 ```python
 variable.RenderText()
@@ -203,23 +139,17 @@ variable.RenderText()
 
 ---
 
-#### ChangeText
+### ChangeText
 
-```python
-def ChangeText(self, text:str='', draw=None) -> None:    
-    self.caption = text
-    self.text = game.font.Font('Implementation/src/resources/fonts/font.ttf', self.fontsize).render(self.caption, False, self.color) # Sets new Text
-    self.pos = [self.givenPos[0] - (self.text.get_width() // 2), self.givenPos[1] - (self.text.get_height() // 2)]
-    draw() if draw is not None else self.RenderText()
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L104-L115>
 
-##### Usage
+#### Usage
 
 ```python
 variable.ChangeText(text, draw)
 ```
 
-##### Arguments
+#### Arguments
 
 - text (str): Text to be drawn
 - draw (method): Draw method
@@ -228,13 +158,7 @@ variable.ChangeText(text, draw)
 
 #### ChangeColor
 
-```python
-def ChangeColor(self, color:tuple=(255, 255, 255)) -> None:
-    self.color = color
-    self.text = game.font.Font('Implementation/src/resources/fonts/font.ttf', self.fontsize).render(self.caption, False, color) # update text
-    self.pos = [self.givenPos[0] - (self.text.get_width() // 2), self.givenPos[1] - (self.text.get_height() // 2)] # update position
-    self.RenderText() # Rerender text
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L117-L132>
 
 ##### Usage
 
@@ -250,12 +174,7 @@ variable.ChangeColor(color)
 
 #### UpdateText
 
-```python
-def UpdateText(self, color:tuple=(255, 255, 255), text:str='') -> None:
-    self.ChangeColor(color) # change color to another color
-    self.ChangeText(text)
-    self.ChangeColor((255, 255, 255)) # change color back to white
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L129-L132>
 
 ##### Usage
 
@@ -270,10 +189,7 @@ variable.UpdateText(color, text)
 
 #### __name__
 
-```python
-@staticmethod
-def __name__(): return 'Text'
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L134-L135>
 
 ##### Usage
 
@@ -287,9 +203,7 @@ variable.__name__()
 
 #### ReturnText
 
-```python
-def ReturnText(self): return self.caption
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L136>
 
 ##### Usage
 
@@ -303,35 +217,19 @@ variable.ReturnText()
 
 ---
 
-## Btn
+# Btn
 
-### Init Method
+## Init Method
 
-```python
-def __init__(self, text:str='', pos:list=[0, 0], width:int=113, height:int=41, fontsize:int=16):    
-    super().__init__() # initialises default values from inherited class
-    
-    self.pos = pos
-    self.surf = game.display.get_surface()
-    self.face = game.Rect(self.pos, (width, height))
-    self.face.center = self.pos
-    self.hovering = False
-    self.fontsize = fontsize
-    self.textColor = (255, 255, 255)
-    self.text = Text(self.pos, text, self.fontsize, self.textColor)
-    self.caption = text
-    self.state = False
-    self.hoverSound = 'Implementation/src/resources/sounds/hoverSound.wav'
-    self.selectSound = 'Implementation/src/resources/sounds/selectSound.wav'
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L141-L175>
 
-#### Usage
+### Usage
 
 ```python
 variable = class Btn(text, pos, width, height, fontsize)
 ```
 
-#### Arguments
+### Arguments
 
 - text (str): Text for Button
 - pos (list): Position of Button
@@ -345,11 +243,7 @@ variable = class Btn(text, pos, width, height, fontsize)
 
 #### ChangeState
 
-```python
-def ChangeState(self, txt:str, boolean:bool) -> None:
-    self.state = boolean # Change Clicked State
-    self.text.ChangeText(txt, self.RenderBtn) # Change color of text depending on state
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L177-L186>
 
 ##### Usage
 
@@ -366,31 +260,7 @@ variable.ChangeState(txt, bool)
 
 #### isHovering
 
-```python
-def isHovering(self, click, effectState:bool, color:tuple=(255, 0, 0), *args) -> None:    
-    # If mouse is hovering
-    if self.face.collidepoint(game.mouse.get_pos()):
-        
-        # If the button is not already being hovered
-        if not self.hovering:
-            self.hovering = True # Sets button being hovered to true
-            self.text.ChangeColor(color) # Change Text Color
-            
-            # Sound Effect Volume
-            game.mixer.Channel(0).set_volume(.3) if effectState else game.mixer.Channel(0).set_volume(0)
-            game.mixer.Channel(0).play(game.mixer.Sound(self.hoverSound)) if effectState else game.mixer.Channel(0).set_volume(0)
-            
-            self.RenderBtn() # Redraw Button
-
-        # If the button is already being hovered
-        else: self.HasClicked(click, *args) # Check if the button has been clicked
-        
-    # If mouse is not over the button but the button is still being hovered    
-    elif not self.face.collidepoint(game.mouse.get_pos()) and self.hovering:
-        self.hovering = False # Make sure when not hovered hover is set to false
-        self.text.ChangeColor((255, 255, 255)) # Changes button color to white
-        self.RenderBtn() # Redraw Button
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L188-L219>
 
 ##### Usage
 
@@ -409,15 +279,7 @@ variable.isHovering(click, effectState, color, *args)
 
 #### HasClicked
 
-```python
-def HasClicked(self, click, *args) -> None:
-    if game.mouse.get_pressed()[0]: # If button has been pressed with left click
-        game.mixer.Channel(0).play(game.mixer.Sound(self.selectSound)) # Play select sound
-        click() if not args else click(args) # Run Click Method
-        
-        from time import sleep
-        sleep(.3) # Stop multiple clicks being registered
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L221-L229>
 
 ##### Usage
 
@@ -434,12 +296,7 @@ variable.HasClicked(click, *args)
 
 #### RenderBtn
 
-```python
-def RenderBtn(self) -> None:
-    '''Render Button to Screen'''
-    game.draw.rect(game.display.get_surface(), (0, 0, 0), self.face) # Render button rect
-    self.text.RenderText() # Render button text
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L231-L234>
 
 ##### Usage
 
@@ -451,9 +308,7 @@ variable.RenderBtn()
 
 #### __name__
 
-```python
-def __name__(): return 'Btn'
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L236-L237>
 
 ##### Usage
 
@@ -469,7 +324,7 @@ variable.__name__()
 
 # Game
 
-### Usage
+## Usage
 
 ```python
 variable = class Game()
@@ -481,15 +336,7 @@ variable = class Game()
 
 ## Init Method
 
-```python
-def __init__(self, pos, size): # initialise values
-    super().__init__() # initialise default values from inherited class
-    self.posX, self.posY = pos
-    self.size = size
-    self.color = (200, 200, 200)
-    self.rect = game.Rect(self.posX, self.posY, self.size, self.size)
-    self.image = game.Surface([self.size, self.size])
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L478-L499>
 
 ### Usage
 
@@ -508,10 +355,7 @@ variable = class GridRect(pos, size)
 
 ### drawRect
 
-```python
-def drawRect(self, screen):    
-    pygame.draw.rect(screen, self.color, self.rect, 1)
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L501-L508>
 
 #### Arguments
 
@@ -524,15 +368,7 @@ def drawRect(self, screen):
 
 ## Init Method
 
-```python
-def __init__(self, gridPos:tuple, totalGridSize:tuple=(630, 700)): # initialise values           
-    self.posX = gridPos[0]
-    self.posY = gridPos[1]
-    self.blockSize = 30
-    self.gridX = totalGridSize[0]
-    self.gridY = totalGridSize[1]
-    self.gridGroup = game.sprite.Group()
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L513-L534>
 
 ### Usage
 
@@ -551,17 +387,7 @@ variable = class Grid(gridPos, totalGridSize)
 
 ### DrawGrid
 
-```python
-    def DrawGrid(self, screen) -> None:        
-        # for horizontal grid blocks, starting & ending at limits with each step being of size blockSize
-        for x in range(self.posX, self.gridX, self.blockSize): 
-            # for vertical grid blocks, starting & ending at limits with each step being of size blockSize
-            for y in range(self.posY, self.gridY, self.blockSize): 
-                # create a GridRect instance, add it to gridGroup & draw it to the screen
-                gridBlock = GridRect((x, y), self.blockSize)
-                self.gridGroup.add(gridBlock)
-                gridBlock.drawRect(screen)
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L537-L551>
 
 #### Arguments
 
@@ -573,12 +399,7 @@ variable = class Grid(gridPos, totalGridSize)
 
 ## Init Method
 
-```python
-def __init__(self, musicState:bool=True, effectState:bool=True) -> None:
-    self.musicState = musicState
-    self.effectState = effectState
-    self.filePath = 'Implementation/settings.txt'
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L556-L566>
 
 ### Usage
 
@@ -597,23 +418,10 @@ variable = class Settings(musicState, effectState)
 
 ### init
 
-```python
-def init(self) -> None:
-    '''Get Settings from File'''
-    
-    import os.path
-    
-    if not os.path.isfile(self.filePath): self.WriteSettings(False) # create the settings file if it does not exist
-
-    else: # Otherwise
-        with open(self.filePath) as f: # Open the file
-            settings = f.read().split(',') # Split values by comma
-
-        self.musicState = True if settings[0] == 'True' else False # Set the music state to true if the settings value is true
-        self.effectState = True if settings[1] == 'True' else False # Set the sound effects state to true if the settings value is true  
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L568-L580>
 
 #### Usage
+
 ```python
 variable.init()
 ```
@@ -622,24 +430,7 @@ variable.init()
 
 ### WriteSettings
 
-```python
-def WriteSettings(self, rem:bool=False) -> None:
-    '''Write Settings to Settings file
-
-    Args:
-    - rem (bool, optional): remove file if True. Defaults to False
-    '''
-    
-    from os import remove
-    if rem: remove(self.filePath) # if we set rem to True, remove settings file
-        
-    with open(self.filePath, 'w') as f: # open settings file as write
-        f.write(f'{str(self.musicState)},') # write new musicState value to file
-        f.write(f'{str(self.effectState)}') # write new effectState value to file
-        f.close() # close file
-        
-    self.init() # re-initialise settings
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L582-L595>
 
 #### Usage
 
@@ -655,12 +446,7 @@ variable.WriteSettings(rem)
 
 ### ChangeSettings
 
-```python
-def ChangeSettings(self, musicBool=None, effectsBool=None) -> None:    
-    self.musicState = musicBool if musicBool != None else self.musicState # ternary operation
-    self.effectState = effectsBool if effectsBool != None else self.effectState # ternary operation
-    self.WriteSettings(True)
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L599-L609>
 
 #### Usage
 
@@ -679,11 +465,7 @@ variable.ChangeSettings(musicBool, effectsBool)
 
 ## Init Method
 
-```python
-def __init__(self, name='PLA', score=0):    
-    self.name = name
-    self.score = score
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L614-L624>
 
 ### Usage
 
@@ -702,18 +484,7 @@ variable = class Highscore(name, score)
 
 ### BubbleSortScores
 
-```python
-def BubbleSortScores(self, scoreList:list, dev:bool=False) -> list[list]: 
-    if self.name != 'PLA' and self.score != 0:
-        scoreList.append(Highscore(self.name, self.score))
-    
-    for i in range(len(scoreList)):
-        for j in range (len(scoreList)-i-1):
-            if scoreList[j+1].score > scoreList[j].score:
-                scoreList[j], scoreList[j+1] = scoreList[j+1], scoreList[j]
-
-    return [[score.name, score.score] for score in scoreList[:5]] if not dev else [[score.name, score.score] for score in scoreList]
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L626-L644>
 
 #### Usage
 
@@ -734,33 +505,7 @@ variableTwo = variable.BubbleSortScores(scoreList, dev)
 
 ### GetScoresFromFile
 
-```python
-@staticmethod
-def GetScoresFromFile(filePath:str) -> list:    
-    from .utils.ClrTerminal import Color # Import for Color Coding Terminal Output
-    
-    try:
-        with open(filePath) as f: # open file
-            data = f.read().split(',') # read data from file and split by commas
-        
-        names, scores = [], [] # Temporary arrays for data from file
-        
-        for value in data: # for value (str | int) in file data
-            try:
-                scores.append(int(value)) # try to cast value to int
-            except ValueError: # if cast fails, assume its a name
-                names.append(value)
-            
-        highscores = [Highscore(name, score) for name, score in zip(names, scores)] # create list of Highscore objects
-
-        Color.prints(f'Successfully Retrieved Score data from {filePath}')
-        
-        return highscores
-
-    except Exception as e:
-        Color.printe(f'Unexpected Error Occurred during data retrieval\n{e}')
-        return []
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L646-L676>
 
 #### Usage
 
@@ -780,29 +525,7 @@ variableTwo = variable.GetScoresFromFile(filePath)
 
 ### WriteScoresToFile
 
-```python
-@staticmethod
-def WriteScoresToFile(filePath:str, scores:list) -> bool:
-    '''
-        Writes Scores to File Passed in\n
-        Return(s):
-            - True if Success
-            - False if Error
-    '''
-
-    from .utils.ClrTerminal import Color
-    
-    try:
-        with open(filePath, 'w') as f:
-            for score in scores: f.write(f'{score.name},{score.score},')
-            
-        Color.prints(f'Successfully written scores to {filePath}')   
-        return True
-
-    except Exception as e: 
-        Color.printe(f'Unexpected Error occurred whilst writing scores to {filePath}\n{e}')
-        return False
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L678-L698>
 
 #### Usage
 
@@ -823,62 +546,7 @@ variable.WriteScoresToFile(filePath, scores)
 
 ### CommitToDb
 
-```python
-@staticmethod
-def CommitToDb(scores:list) -> list[tuple]:
-    from .utils.ClrTerminal import Color
-    import pyodbc as dbc
-    
-    topScores = []
-    
-    scores = scores[0] # Remove from args tuple
-    
-    try:
-        # Connection string for SQL Server
-        conn_str = f'''
-        DRIVER=SQL SERVER;
-        SERVER={SERVERNAME};
-        DATABASE={DBNAME};
-        Trust_Connection=yes;
-        '''
-
-        # Establish Connection & create cursor
-        conn = dbc.connect(conn_str)
-        cursor = conn.cursor()
-        
-        cursor.execute('TRUNCATE TABLE highscore;') # Clear out existing data in 'highscore' table
-        
-        # define insert query
-        ins_query = f'''INSERT INTO highscore (name, score) VALUES (?, ?);'''
-        
-        # iterate over scores list & insert each score into database
-        for name, score in scores: cursor.execute(ins_query, (name, score))
-            
-        # commit changes to db & print success msg
-        conn.commit() 
-        Color.prints('Committed Data to Database Successfully')
-    
-        # Attempt to retrieve score data
-        try:
-            data = cursor.execute('SELECT * FROM highscore;')
-        
-            # iterate over retrieved data & append each row to topScores
-            topScores = [(name, score) for name, score in data]
-            
-            # print success msg
-            Color.prints('Successfully retrieved score data from database')
-            
-            conn.close() # closes connection to db
-            
-            Color.prints(f'Data: {topScores}')
-            return topScores # return the top scores that were retrieved (if any)
-        
-        # If there was an error retrieving the data, print an error message
-        except Exception as e: Color.printe(f'Error whilst trying to retrieve score data\n{e}')
-    
-    # If there was an error committing data to the database, print an error message
-    except Exception as e: Color.printe(f'Error: There was an unexpected error whilst trying to commit data to the sql database\n{e}')
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L700-L758>
 
 #### Usage
 
@@ -898,19 +566,11 @@ variableTwo = variable.CommitToDb(scores)
 
 # Subclasses
 
-## Block
+# Block
 
 ## Init Method
 
-```python
-def __init__(self, struct, color): # Initialise Values    
-    super().__init__()
-    self.struct = struct
-    self.color = color
-    self.realPos = [450, 100]
-    self.blockSize = 30
-    self.group = game.sprite.Group()
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L256-L275>
 
 ### Usage
 
@@ -930,12 +590,7 @@ variable = class Block(struct, color)
 
 ### GetRandBlock
 
-```python
-@staticmethod
-def GetRandBlock():    
-    from random import choice
-    return choice((Game.LBlock, Game.SquareBlock, Game.TBlock, Game.SBlock, Game.ZBlock, Game.LineBlock, Game.JBlock))() # Returns Random Block
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L245-L254>
 
 #### Usage
 
@@ -951,24 +606,7 @@ variableTwo = variable.GetRandBlock()
 
 ### draw
 
-```python
-def draw(self, screen) -> None:
-    posX, posY = self.realPos
-    
-    for y in range(len(self.struct)): # vertical
-        for x in range(len(self.struct[y])): # horizontal
-            if y > 0 and x == 0: # if reached end of row in 2d array
-                posY += 30 # move down 1 block
-                posX -= (30*3) # move left 3 blocks
-
-            if self.struct[y][x] == 1: # if block is to be drawn
-                self.group.add(Game.Rectangle((posX, posY), self.color, self.blockSize)) # draw block with appropriate attributes
-                posX += 30 # move over right a block space
-
-            else: posX += 30 # if no block to draw, move over a block space
-            
-    self.group.draw(screen) # draw all rectangle sprites to the screen at once
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L277-L293>
 
 #### Usage
 
@@ -984,19 +622,7 @@ variable.draw(screen)
 
 ### Move
 
-```python
-def Move(self, screen, dir, dirName) -> None:    
-    self.UpdateColor((0, 0, 0), screen) # Update color of previous blocks
-    self.group.empty() # empty sprite group
-    self.group.update(dir) # draw new block at new location (gives impression of movement)
-    
-    match dirName: # check for direction of travel
-        case 'left': self.realPos[0] -= 30
-        case 'right': self.realPos[0] += 30
-        case 'down': self.realPos[1] += 30
-        
-    Game.Block.draw(self, screen) # draw new block to screen
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L295-L313>
 
 #### Usage
 
@@ -1014,20 +640,7 @@ variable.Move(screen, dir, dirName)
 
 ### CheckCollision
 
-```python
-def CheckCollision(self, blockGroup) -> bool:
-    for i in range(len(blockGroup.sprites())):
-        if self == blockGroup.sprites()[i]: continue
-        else: 
-            for j in range(len(self.group.sprites())):                        
-                if Game.Block.WillCollide(self.group.sprites()[j], blockGroup.sprites()[i].group): # still causes issues with collision but it doesn't crash now
-                        return True
-
-    for i in range(len(self.group.sprites())): 
-        if self.group.sprites()[i].posY == 670: return True
-
-    return False
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L315-L335>
 
 #### Usage
 
@@ -1047,19 +660,7 @@ variableTwo = variable.CheckCollision(blockGroup)
 
 ### WillCollide
 
-```python
-@staticmethod
-def WillCollide(sprite, group) -> bool:    
-    import copy
-    spriteRect = copy.copy(sprite.rect)
-    spriteRect.move_ip((0, 30))
-    
-    for i in range(len(group)):
-        if spriteRect.colliderect(group.sprites()[i].rect):
-            return True
-        
-    return False
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L337-L357>
 
 #### Usage
 
@@ -1080,18 +681,7 @@ variableTwo = variable.WillCollide(sprite, group)
 
 ### CheckMovable
 
-```python
-def CheckMovable(self, dir:str) -> bool:    
-    if dir == 'right':
-        for i in range(len(self.group.sprites())):
-            if self.group.sprites()[i].posX == 600: return False
-        return True
-    
-    if dir == 'left':
-        for i in range(len(self.group.sprites())):
-            if self.group.sprites()[i].posX == 360: return False
-        return True
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L359-L377>
 
 #### Usage
 
@@ -1111,13 +701,7 @@ variableTwo = variable.CheckMovable(dir)
 
 ### UpdateColor
 
-```python
-def UpdateColor(self, color, screen) -> None: # Temp fix for screen flashing    
-    originalColor = self.color # store original color
-    self.color = color # set new color
-    self.draw(screen) # draw new colored block to screen
-    self.color = originalColor # set color back to original color
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L379-L390>
 
 #### Usage
 
@@ -1134,17 +718,7 @@ variable.UpdateColor(color, screen)
 
 ### Rotate
 
-```python
-def Rotate(self, screen, effectState, sound) -> None:    
-    if not isinstance(self, Game.SquareBlock): # check if the block is not square, if its not square continue
-        if self.CheckMovable('right') and self.CheckMovable('left'): # temp fix for bugging through grid walls
-            if effectState: game.mixer.Channel(0).play(sound)
-            self.UpdateColor((0, 0, 0), screen) # update color of previous block
-            
-            from numpy import rot90
-            self.struct = rot90(self.struct) # rotate array 90 degrees clockwise
-            self.draw(screen) # redraw new block positions
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L392-L408>
 
 #### Usage
 
@@ -1162,14 +736,7 @@ variable.Rotate(screen, effectState, sound)
 
 ### reachedTop
 
-```python
-@staticmethod
-def reachedTop(blockGroup) -> bool:    
-    for sprite in blockGroup:
-        for block in sprite.group:
-            if block.posY == 130: return True
-    return False
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L410-L424>
 
 #### Usage
 
@@ -1191,16 +758,7 @@ variableTwo = variable.reachedTop(blockGroup)
 
 ## Init Method
 
-```python
-def __init__(self, pos, color, size):    
-    super().__init__() # get values from inherited class
-    self.posX, self.posY = pos
-    self.size = size
-    self.color = color
-    self.rect = game.Rect(self.posX, self.posY, self.size, self.size)
-    self.image = game.Surface([self.size, self.size])
-    self.image.fill(self.color) # fill rect with appropriate color
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L429-L450>
 
 ### Usage
 
@@ -1220,9 +778,7 @@ variable = class Rectangle(pos, color, size)
 
 ### update
 
-```python
-def update(self, dir): self.rect.move_ip(dir) # update position of rect
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L452>
 
 #### Usage
 
@@ -1240,9 +796,7 @@ variable.update(dir)
 
 ## Init Method
 
-```python
-def __init__(self): super().__init__(((0, 0, 0), (1, 0, 0), (1, 1, 1)), (255, 165, 0))
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L455>
 
 ### Usage
 
@@ -1256,9 +810,7 @@ variable = class LBlock()
 
 ## Init Method
 
-```python
-def __init__(self): super().__init__(((0, 0, 0), (1, 1, 0), (1, 1, 0)), (255, 255, 0))
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L458>
 
 ### Usage
 
@@ -1272,9 +824,7 @@ variable = class SquareBlock()
 
 ## Init Method
 
-```python
-def __init__(self): super().__init__(((0, 0, 0), (0, 1, 0), (1, 1, 1)), (128, 0, 128))
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L461>
 
 ### Usage
 
@@ -1288,9 +838,7 @@ variable = class TBlock()
 
 ## Init Method
 
-```python
-def __init__(self): super().__init__(((0, 0, 0), (0, 1, 1), (1, 1, 0)), (0, 128, 0))
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L464>
 
 ### Usage
 
@@ -1304,9 +852,7 @@ variable = class SBlock()
 
 ## Init Method
 
-```python
-def __init__(self): super().__init__(((0, 0, 0), (1, 1, 0), (0, 1, 1)), (128, 0, 0))
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L467>
 
 ### Usage
 
@@ -1320,9 +866,7 @@ variable = class ZBlock()
 
 ## Init Method
 
-```python
-def __init__(self): super().__init__(((0, 0, 0, 0), (1, 1, 1, 1), (0, 0, 0, 0)), (0, 255, 255))
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L470>
 
 ### Usage
 
@@ -1336,9 +880,7 @@ variable = class LineBlock()
 
 ## Init Method
 
-```python
-def __init__(self): super().__init__(((0, 0, 0), (0, 0, 1), (1, 1, 1)), (0, 0, 255))
-```
+<https://github.com/TurtleHelm/AHC-Project/blob/81b67e66eb018a168a59b07b1ffccb465f446e85/Implementation/src/classes.py#L473>
 
 ### Usage
 
