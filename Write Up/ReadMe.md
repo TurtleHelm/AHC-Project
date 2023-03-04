@@ -175,9 +175,80 @@ do not have the time to do.
 
 #### Standard Algorithm
 
-```Python
+<https://github.com/TurtleHelm/AHC-Project/blob/a00d7f7df66ce7840d2014b9beaa2dbf96556459/Write%20Up/Design/Pseudocode%20(Extended).txt#L482-L494>
 
+#### Array of Objects
+
+<https://github.com/TurtleHelm/AHC-Project/blob/a00d7f7df66ce7840d2014b9beaa2dbf96556459/Write%20Up/Design/Pseudocode%20(Extended).txt#L652-L664>
+
+(NOTE: More than one array of objects were used within this project, to view every one of them see [Appendix B: Design](https://github.com/TurtleHelm/AHC-Project/tree/main/Write%20Up/Design))
+
+---
+
+### Database Design & Development
+
+#### Open/Close Database Connection to Execute SQL Query
+
+<https://github.com/TurtleHelm/AHC-Project/blob/a00d7f7df66ce7840d2014b9beaa2dbf96556459/Write%20Up/Design/Pseudocode%20(Extended).txt#L536-L571>
+
+#### Data Dictionary
+
+| Field Name | Constrain   | Data Type | Field Size | Description    |
+| :--------: | :---------: | :-------: | :--------: | :------------: |
+| id         | Primary Key | Integer   | N/A        | Auto Generated |
+| name       | Not Null    | String    | 3          | Users Name     |
+| score      | Not Null    | Integer   | N/A        | Users Score    |
+
+#### Structure of Table
+
+```sql
+CREATE TABLE highscore {
+    id int NOT NULL AUTO_INCREMENT,
+    name varchar(3) NOT NULL,
+    score int NOT NULL,
+    PRIMARY KEY (id)
+};
 ```
+
+## Implementation
+
+### UI Design
+
+#### Main Menu
+
+![Main Menu](Implementation/UI/Main%20Menu.png)
+
+#### Game
+
+![New Game](Implementation/UI/Game.png)
+
+#### Instructions
+
+![Instructions](Implementation/UI/Instructions.png)
+
+#### Settings
+
+![Settings](Implementation/UI/Settings.png)
+
+#### Score Input
+
+![Name Input](Implementation/UI/Score%20Input.png)
+
+#### Highscores
+
+![Highscores](Implementation/UI/Highscores.png)
+
+### Code
+
+#### Standard Algorithm
+
+<https://github.com/TurtleHelm/AHC-Project/blob/a00d7f7df66ce7840d2014b9beaa2dbf96556459/Implementation/src/classes.py#L626-L644>
+
+#### Array of Objects
+
+<https://github.com/TurtleHelm/AHC-Project/blob/a00d7f7df66ce7840d2014b9beaa2dbf96556459/Implementation/src/instructions.py#L10-L21>
+
+(NOTE: All code can be found in [Appendix C: Implementation](https://github.com/TurtleHelm/AHC-Project/tree/main/Implementation))
 
 ---
 

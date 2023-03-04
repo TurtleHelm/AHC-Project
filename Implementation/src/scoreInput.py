@@ -43,7 +43,7 @@ def InputRun(score:int=0):
         from .highscores import RunHighscore
         if allowedClick: 
             # if clicks are allowed, navigate to the highscore page, passing in the name of the user & the score
-            GUIObjects[-1].isHovering(RunHighscore, settings.effectState, (255, 0, 0), GUIObjects[2].caption[:3], score[0])   
+            GUIObjects[-1].isHovering(RunHighscore, settings.effectState, (255, 0, 0), GUIObjects[2].caption[:3], score)   
         
         else: 
             # if clicks are disallowed, navigate back to the input page & grey out Enter button

@@ -32,6 +32,29 @@ def GameRun():
     
     Color.printd('Entering Game...')
     
+    gridList = [
+        [100, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+        [130, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+        [160, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+        [190, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+        [220, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+        [250, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+        [280, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+        [310, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+        [340, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+        [370, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+        [400, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+        [430, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+        [460, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+        [490, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+        [520, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+        [550, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+        [580, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+        [610, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+        [640, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+        [670, [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+    ]
+    
     win = Window('Netris - Game', (0, 0, 0)) # Instantiate Window Object
     win.CreateNewWindow() # Create New Window
 
@@ -77,23 +100,21 @@ def GameRun():
                         win.Leave()
                     
                     case game.K_UP: # if up arrow, rotate
-                        block.Rotate(win.win, settings.effectState, rotateBlockSound)
+                        block.Rotate(win.win, settings.effectState, rotateBlockSound, bottomBlocks)
                         
                     case game.K_DOWN:  # if down arrow, move down
                         block.Move(win.win, (0, 30), 'down')
                         if settings.effectState: game.mixer.Channel(0).play(moveBlockSound)
                     
                     case game.K_RIGHT: # if right arrow, move right
-                        if block.CheckMovable('right'):
-                            # if not block.WillCollide(block, bottomBlocks, 'right'):
-                                block.Move(win.win, (-30, 0), 'right')
-                                if settings.effectState: game.mixer.Channel(0).play(moveBlockSound)
+                        if block.CheckMovable(bottomBlocks, 'right'):
+                            block.Move(win.win, (-30, 0), 'right')
+                            if settings.effectState: game.mixer.Channel(0).play(moveBlockSound)
 
                     case game.K_LEFT: # if left arrow, move left
-                        if block.CheckMovable('left'):
-                            # if not block.WillCollide(block, bottomBlocks, 'left'):
-                                block.Move(win.win, (30, 0), 'left')
-                                if settings.effectState: game.mixer.Channel(0).play(moveBlockSound)
+                        if block.CheckMovable(bottomBlocks, 'left'):
+                            block.Move(win.win, (30, 0), 'left')
+                            if settings.effectState: game.mixer.Channel(0).play(moveBlockSound)
                     
                     case _: pass # default case
         
@@ -103,7 +124,7 @@ def GameRun():
             block.Move(win.win, (0, 30), 'down') # Move the block down by 1 space on the screen
             speed = 0 # reset timer
 
-        if block.CheckCollision(bottomBlocks): # if block collision has been detected or the block has reached the bottom of the grid
+        if block.CheckCollision(bottomBlocks, 'down'): # if block collision has been detected or the block has reached the bottom of the grid
             bottomBlocks.add(block) # add current block to block group
             if settings.effectState: game.mixer.Channel(2).play(scoreSound)
             
@@ -123,13 +144,18 @@ def GameRun():
                 if settings.effectState: game.mixer.Channel(0).play(failSound) # play fail sound
                 game.mixer.Channel(1).stop() # stop music
                 InputRun(score) # exit game into highscore menu
+            
+            lineClearCheck = block.CheckCompletedRow(bottomBlocks, gridList)
+            gridList = lineClearCheck[2]
+            
+            if lineClearCheck[0]:
+                # Stop Current Block Moving once Line Clears
+                lineClearCheck = block.RemoveCompletedRow(bottomBlocks, gridList, lineClearCheck[1])
 
             else:
-                block = Game.Block.GetRandBlock()
+                block = Game.Block.GetRandBlock() # Game.Block.GetRandBlock()
                 block.draw(win.win)
 
         game.display.update()
         clock.tick(30)
         speed += 1
-          
-    # check all bottomBlock rectangles for collisions in the x axis with new block & prevent movement if collided

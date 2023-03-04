@@ -241,17 +241,6 @@ class Game:
         
     class Block(game.sprite.Sprite):
         '''Class for Blocks'''
-          
-        @staticmethod
-        def GetRandBlock():
-            '''Choose Random Block From List of Blocks
-
-            Returns:
-            - Block: Different Block Shapes 
-            '''
-            
-            from random import choice
-            return choice((Game.LBlock, Game.SquareBlock, Game.TBlock, Game.SBlock, Game.ZBlock, Game.LineBlock, Game.JBlock))() # Returns Random Block
 
         def __init__(self, struct, color): # Initialise Values
             '''Initialise Block Class
@@ -312,7 +301,7 @@ class Game:
                 
             Game.Block.draw(self, screen) # draw new block to screen
 
-        def CheckCollision(self, blockGroup) -> bool:
+        def CheckCollision(self, blockGroup, dir) -> bool:
             '''Checks for Block Collisions between the ground & other blocks
 
             Args:
@@ -324,9 +313,21 @@ class Game:
 
             for i in range(len(blockGroup.sprites())):
                 if self == blockGroup.sprites()[i]: continue
+                
                 else: 
-                    for j in range(len(self.group.sprites())):                        
-                        if Game.Block.WillCollide(self.group.sprites()[j], blockGroup.sprites()[i].group): # still causes issues with collision but it doesn't crash now
+                    for j in range(len(self.group.sprites())):
+                        if dir == 'down':
+                            if Game.Block.WillCollide(self.group.sprites()[j], blockGroup.sprites()[i].group, 'down'):
+                                return True
+                        
+                        if dir == 'right':
+                            if Game.Block.WillCollide(self.group.sprites()[j], blockGroup.sprites()[i].group, 'right'):
+                                print('Collides @R')
+                                return True
+                            
+                        if dir == 'left':
+                            if Game.Block.WillCollide(self.group.sprites()[j], blockGroup.sprites()[i].group, 'left'):
+                                print('Collides @L')
                                 return True
 
             for i in range(len(self.group.sprites())): 
@@ -334,29 +335,7 @@ class Game:
 
             return False
 
-        @staticmethod
-        def WillCollide(sprite, group) -> bool:
-            '''Checks for Collision to determine whether a sprite is about to collide with a group
-
-            Args:
-            - sprite (pygame.Sprite): Sprite to check for collision with
-            - group (pygame.sprite.Group): Group to check for collision with
-
-            Returns:
-            - Bool: If the Sprite is about to collide with the group or not
-            '''
-            
-            import copy
-            spriteRect = copy.copy(sprite.rect)
-            spriteRect.move_ip((0, 30))
-            
-            for i in range(len(group)):
-                if spriteRect.colliderect(group.sprites()[i].rect):
-                    return True
-                
-            return False
-
-        def CheckMovable(self, dir:str) -> bool:
+        def CheckMovable(self, group, dir:str) -> bool:
             '''Checks to see if the current sprite is movable
 
             Args:
@@ -366,15 +345,21 @@ class Game:
             - Bool: If the block is movable
             '''
             
+            Collides = self.CheckCollision(group, dir)
+            
             if dir == 'right':
                 for i in range(len(self.group.sprites())):
-                    if self.group.sprites()[i].posX == 600: return False
-                return True
+                    if self.group.sprites()[i].posX == 600 or Collides:
+                        print('Can\'t Move (Grid)')
+                        return False
             
             if dir == 'left':
                 for i in range(len(self.group.sprites())):
-                    if self.group.sprites()[i].posX == 360: return False
-                return True
+                    if self.group.sprites()[i].posX == 360 or Collides:
+                        print('Can\'t Move (Grid)')
+                        return False
+            
+            return True
                     
         def UpdateColor(self, color, screen) -> None: # Temp fix for screen flashing
             '''Update Color of Sprite
@@ -389,7 +374,7 @@ class Game:
             self.draw(screen) # draw new colored block to screen
             self.color = originalColor # set color back to original color
 
-        def Rotate(self, screen, effectState, sound) -> None:
+        def Rotate(self, screen, effectState, sound, group) -> None:
             '''Rotate Blocks clockwise 90 degrees
 
             Args:
@@ -399,13 +384,39 @@ class Game:
             '''
             
             if not isinstance(self, Game.SquareBlock): # check if the block is not square, if its not square continue
-                if self.CheckMovable('right') and self.CheckMovable('left'): # temp fix for bugging through grid walls
+                if self.CheckMovable(group, 'right') and self.CheckMovable(group, 'left'): # temp fix for bugging through grid walls
                     if effectState: game.mixer.Channel(0).play(sound)
                     self.UpdateColor((0, 0, 0), screen) # update color of previous block
                     
                     from numpy import rot90
                     self.struct = rot90(self.struct) # rotate array 90 degrees clockwise
                     self.draw(screen) # redraw new block positions
+
+        # TODO: check all bottomBlock rectangles for collisions in the x axis with new block & prevent movement if collided
+        @staticmethod
+        def WillCollide(sprite, group, dir) -> bool:
+            '''Checks for Collision to determine whether a sprite is about to collide with a group
+
+            Args:
+            - sprite (pygame.Sprite): Sprite to check for collision with
+            - group (pygame.sprite.Group): Group to check for collision with
+
+            Returns:
+            - Bool: If the Sprite is about to collide with the group or not
+            '''
+            
+            import copy
+            spriteRect = copy.copy(sprite.rect)
+            if dir == 'down': spriteRect.move_ip((0, 30))
+            if dir == 'right': spriteRect.move_ip((-30, 0))
+            if dir == 'left': spriteRect.move_ip((30, 0))
+            
+            for i in range(len(group)):
+                # ! Issues in this function
+                if spriteRect.colliderect(group.sprites()[i].rect):
+                    return True
+                
+            return False
 
         @staticmethod
         def reachedTop(blockGroup) -> bool:
@@ -422,6 +433,57 @@ class Game:
                 for block in sprite.group:
                     if block.posY == 130: return True
             return False
+
+        @staticmethod
+        def CheckCompletedRow(blockGroup, gridXBlockPos) -> tuple:
+            
+            # TODO Make gridXBlockPos variable within game.py instead of this function, stop array of 0's adding together instead of stacking
+            
+            for block in blockGroup.sprites():
+                for i in range(4):
+                    for j in range(20):
+                        if block.group.sprites()[i].posY == gridXBlockPos[j][0]:
+                            match block.group.sprites()[i].posX: # Check for X Position & add 1 to correct position in grid object (1 means there's a rectangle, 0 means empty)
+                                case 360: gridXBlockPos[j][1][0] += 1 if gridXBlockPos[j][1][0] != 1 else 0
+                                case 390: gridXBlockPos[j][1][1] += 1 if gridXBlockPos[j][1][1] != 1 else 0
+                                case 420: gridXBlockPos[j][1][2] += 1 if gridXBlockPos[j][1][2] != 1 else 0
+                                case 450: gridXBlockPos[j][1][3] += 1 if gridXBlockPos[j][1][3] != 1 else 0
+                                case 480: gridXBlockPos[j][1][4] += 1 if gridXBlockPos[j][1][4] != 1 else 0
+                                case 510: gridXBlockPos[j][1][5] += 1 if gridXBlockPos[j][1][5] != 1 else 0
+                                case 540: gridXBlockPos[j][1][6] += 1 if gridXBlockPos[j][1][6] != 1 else 0
+                                case 570: gridXBlockPos[j][1][7] += 1 if gridXBlockPos[j][1][7] != 1 else 0
+                                case 600: gridXBlockPos[j][1][8] += 1 if gridXBlockPos[j][1][8] != 1 else 0
+                                case _: pass
+                    
+            for i in range(len(gridXBlockPos)):
+                count = 0
+                row = 20
+                
+                for j in range(len(gridXBlockPos[i][1])):
+                    
+                    count += gridXBlockPos[i][1][j]
+                
+                    if count >= 9: return (True, row, gridXBlockPos)
+                row -= 1
+            
+            return (False, row, gridXBlockPos)
+
+        @staticmethod
+        def RemoveCompletedRow(blockGroup, gridList, rowPos):
+            # Logic Here to Remove Lines from Screen & From Array of Arrays
+            # Game.Block.CheckCompletedRow(blockGroup)
+            return ()
+
+        @staticmethod
+        def GetRandBlock():
+            '''Choose Random Block From List of Blocks
+
+            Returns:
+            - Block: Different Block Shapes 
+            '''
+            
+            from random import choice
+            return choice((Game.LBlock, Game.SquareBlock, Game.TBlock, Game.SBlock, Game.ZBlock, Game.LineBlock, Game.JBlock))() # Returns Random Block
 
     class Rectangle(game.sprite.Sprite):
         '''Rectangle Class'''
@@ -532,7 +594,6 @@ class Grid:
         self.gridX = totalGridSize[0]
         self.gridY = totalGridSize[1]
         self.gridGroup = game.sprite.Group()
-        # self.fakeGrid = [[0 for x in range(9)] for y in range(20)]
 
     def DrawGrid(self, screen) -> None:
         '''Draws Grid to Screen
@@ -544,7 +605,7 @@ class Grid:
         # for horizontal grid blocks, starting & ending at limits with each step being of size blockSize
         for x in range(self.posX, self.gridX, self.blockSize): 
             # for vertical grid blocks, starting & ending at limits with each step being of size blockSize
-            for y in range(self.posY, self.gridY, self.blockSize): 
+            for y in range(self.posY, self.gridY, self.blockSize):
                 # create a GridRect instance, add it to gridGroup & draw it to the screen
                 gridBlock = GridRect((x, y), self.blockSize)
                 self.gridGroup.add(gridBlock)
