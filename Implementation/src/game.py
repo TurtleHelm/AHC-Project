@@ -30,6 +30,8 @@ rotateBlockSound, lineClearSound, moveBlockSound, scoreSound, failSound = (
 
 def GameRun():
     
+    game.mouse.set_visible(False)
+    
     Color.printd('Entering Game...')
     
     gridList = [
@@ -97,6 +99,7 @@ def GameRun():
 
                     case game.K_ESCAPE: # if esc key, return home
                         game.mixer.Channel(1).stop()
+                        game.mouse.set_visible(True)
                         win.Leave()
                     
                     case game.K_UP: # if up arrow, rotate
@@ -110,15 +113,19 @@ def GameRun():
                         if block.CheckMovable(bottomBlocks, 'right'):
                             block.Move(win.win, (-30, 0), 'right')
                             if settings.effectState: game.mixer.Channel(0).play(moveBlockSound)
+                        else:
+                            Color.printe('Block in the way')
 
                     case game.K_LEFT: # if left arrow, move left
                         if block.CheckMovable(bottomBlocks, 'left'):
                             block.Move(win.win, (30, 0), 'left')
                             if settings.effectState: game.mixer.Channel(0).play(moveBlockSound)
+                        else:
+                            Color.printe('Block in the way')
                     
                     case _: pass # default case
         
-        # print(game.key.get_pressed()[81]) Looking for down arrow key press
+        # TODO: Stop Block movement when down arrow is pressed
         
         if speed*mult >= 30: # if 1s has passed (30 ticks per second)
             block.Move(win.win, (0, 30), 'down') # Move the block down by 1 space on the screen
@@ -137,10 +144,11 @@ def GameRun():
             GUIObjects[-1].ChangeColor((0, 0, 0)) # change color to black to hide text
             GUIObjects[-1].ChangeText(str(score)) # add to score counter
             GUIObjects[-1].ChangeColor((255, 255, 255)) # change color back to white
-                
+            
             if block.reachedTop(bottomBlocks): # check if the block group is at the top of the screen
                 Color.prints('Reached Top of Screen')
                 from .scoreInput import InputRun
+                game.mouse.set_visible(True)
                 if settings.effectState: game.mixer.Channel(0).play(failSound) # play fail sound
                 game.mixer.Channel(1).stop() # stop music
                 InputRun(score) # exit game into highscore menu
@@ -150,10 +158,12 @@ def GameRun():
             
             if lineClearCheck[0]:
                 # Stop Current Block Moving once Line Clears
-                lineClearCheck = block.RemoveCompletedRow(bottomBlocks, gridList, lineClearCheck[1])
+                lineClearCheck = block.RemoveCompletedRow(bottomBlocks, gridList, lineClearCheck[1], win.win)
+                if settings.effectState: game.mixer.Channel(0).play(lineClearSound)
+                score += 100
 
             else:
-                block = Game.Block.GetRandBlock() # Game.Block.GetRandBlock()
+                block = Game.Block.GetRandBlock()
                 block.draw(win.win)
 
         game.display.update()

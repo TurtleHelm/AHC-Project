@@ -223,7 +223,7 @@ class Btn(game.sprite.Sprite):
 
         if game.mouse.get_pressed()[0]: # If button has been pressed with left click
             game.mixer.Channel(0).play(game.mixer.Sound(self.selectSound)) # Play select sound
-            click() if not args else click(args) # Run Click Method
+            click() if not args else click(args if len(args) > 1 else args[0]) # Run Click Method
             
             from time import sleep
             sleep(.3) # Stop multiple clicks being registered
@@ -319,10 +319,10 @@ class Game:
                         if dir == 'down':
                             if Game.Block.WillCollide(self.group.sprites()[j], blockGroup.sprites()[i].group, 'down'):
                                 return True
-                        
+                            
                         if dir == 'right':
                             if Game.Block.WillCollide(self.group.sprites()[j], blockGroup.sprites()[i].group, 'right'):
-                                print('Collides @R')
+                                print('Collides @L')
                                 return True
                             
                         if dir == 'left':
@@ -335,6 +335,15 @@ class Game:
 
             return False
 
+        def CheckCollidesRight(self, group):
+            for i in range(len(group.sprites())):
+                if self == group.sprites()[i]: continue
+                else:
+                    for j in range(len(self.group.sprites())):
+                        if Game.Block.WillCollide(self.group.sprites()[j], group.sprites()[i].group, 'right'):
+                            print('Collides @R')
+                            return True
+
         def CheckMovable(self, group, dir:str) -> bool:
             '''Checks to see if the current sprite is movable
 
@@ -345,17 +354,15 @@ class Game:
             - Bool: If the block is movable
             '''
             
-            Collides = self.CheckCollision(group, dir)
-            
             if dir == 'right':
                 for i in range(len(self.group.sprites())):
-                    if self.group.sprites()[i].posX == 600 or Collides:
+                    if self.group.sprites()[i].posX == 600:
                         print('Can\'t Move (Grid)')
                         return False
             
             if dir == 'left':
                 for i in range(len(self.group.sprites())):
-                    if self.group.sprites()[i].posX == 360 or Collides:
+                    if self.group.sprites()[i].posX == 360:
                         print('Can\'t Move (Grid)')
                         return False
             
@@ -440,8 +447,8 @@ class Game:
             # TODO Make gridXBlockPos variable within game.py instead of this function, stop array of 0's adding together instead of stacking
             
             for block in blockGroup.sprites():
-                for i in range(4):
-                    for j in range(20):
+                for i in range(len(block.group.sprites())):
+                    for j in range(len(gridXBlockPos)):
                         if block.group.sprites()[i].posY == gridXBlockPos[j][0]:
                             match block.group.sprites()[i].posX: # Check for X Position & add 1 to correct position in grid object (1 means there's a rectangle, 0 means empty)
                                 case 360: gridXBlockPos[j][1][0] += 1 if gridXBlockPos[j][1][0] != 1 else 0
@@ -469,9 +476,27 @@ class Game:
             return (False, row, gridXBlockPos)
 
         @staticmethod
-        def RemoveCompletedRow(blockGroup, gridList, rowPos):
+        def RemoveCompletedRow(blockGroup, gridList, rowPos, screen):
             # Logic Here to Remove Lines from Screen & From Array of Arrays
-            # Game.Block.CheckCompletedRow(blockGroup)
+            
+            for block in blockGroup.sprites():
+                for rect in block.group.sprites():
+                    if rect.posY == gridList[rowPos-1][0]:
+                        rect.color = (0, 0, 0)
+                        rect.update((0, 30))
+                        rect.draw(screen)
+                        block.group.remove(rect)
+                        
+                block.Move(screen, (0, 30), 'down')        
+                
+                # if block.realPos[1] < gridList[rowPos-1][0]: pass
+                # else: block.Move(screen, (0, 30), 'down')
+            
+            for i in range(8):
+                if gridList[rowPos-1][1][i] == 1:
+                    gridList[rowPos-1][1][i] -= 1
+            
+            Game.Block.CheckCompletedRow(blockGroup, gridList)
             return ()
 
         @staticmethod
@@ -512,6 +537,9 @@ class Game:
             self.image.fill(self.color) # fill rect with appropriate color
             
         def update(self, dir): self.rect.move_ip(dir) # update position of rect
+
+        def draw(self, screen):
+            game.draw.rect(screen, self.color, self.rect)
 
     class LBlock(Block):
         def __init__(self): super().__init__(((0, 0, 0), (1, 0, 0), (1, 1, 1)), (255, 165, 0)) # initialise values for class
@@ -684,7 +712,7 @@ class Highscore:
         self.name = name
         self.score = score
 
-    def BubbleSortScores(self, scoreList:list, dev:bool=False) -> list[list]:
+    def BubbleSortScores(self, scoreList:list) -> list[list]:
         '''Sorts Scores in Order of Highest First, Lowest Last
 
         Args:
@@ -693,16 +721,15 @@ class Highscore:
         Returns:
             list[list]: List of lists in the form of [name, score]
         '''
-                       
-        if self.name != 'PLA' and self.score != 0:
-            scoreList.append(Highscore(self.name, self.score))
+        
+        scoreList.append(Highscore(self.name, self.score))
         
         for i in range(len(scoreList)):
             for j in range (len(scoreList)-i-1):
                 if scoreList[j+1].score > scoreList[j].score:
                     scoreList[j], scoreList[j+1] = scoreList[j+1], scoreList[j]
-    
-        return [[score.name, score.score] for score in scoreList[:5]] if not dev else [[score.name, score.score] for score in scoreList]
+        
+        return [[score.name, score.score] for score in scoreList]
 
     @staticmethod
     def GetScoresFromFile(filePath:str) -> list:
@@ -747,9 +774,15 @@ class Highscore:
 
         from .utils.ClrTerminal import Color
         
+        scores = Highscore.CheckForDupes(scores)
+        
         try:
+        
             with open(filePath, 'w') as f:
-                for score in scores: f.write(f'{score.name},{score.score},')
+                for score in scores:
+                
+                    if score == ['DEV', 10000] or score == ['PLA', 0]: pass
+                    else: f.write(f'{score[0]},{score[1]},')
                 
             Color.prints(f'Successfully written scores to {filePath}')   
             return True
@@ -757,7 +790,17 @@ class Highscore:
         except Exception as e: 
             Color.printe(f'Unexpected Error occurred whilst writing scores to {filePath}\n{e}')
             return False
+        
+    @staticmethod
+    def CheckForDupes(scores):
+        arr = []
+        
+        for i in range(len(scores)):
+            if scores[i] != scores[i-1]:
+                arr.append(scores[i])
 
+        return arr
+    
     @staticmethod
     def CommitToDb(scores:list) -> list[tuple]:
         '''

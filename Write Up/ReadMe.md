@@ -1,5 +1,16 @@
 # 'Tetris'-Like game AH Computer Science Project
 
+## Table
+
+| Section        | Link                    |
+| :------------: | :---------------------: |
+| Pre-analysis   | [Link](#description)    |
+| Analysis       | [Link](#analysis)       |
+| Design         | [Link](#design)         |
+| Implementation | [Link](#implementation) |
+| Testing        | [Link]                  |
+| Evaluation     | [Link]                  |
+
 ## Description
 
 This project will be a game called Netris. This game is about stacking blocks to create a full horizontal line and get points, the game gets harder as you continue as the blocks start moving faster towards the bottom of the window, giving you less time to make a decision on how to rotate and place the block. You lose when the blocks make it to the top of the screen and there's no more space. This game will be modelled to be similar to the original depiction of Tetris but some things may be altered to avoid copyright infringement
@@ -179,7 +190,7 @@ do not have the time to do.
 
 #### Array of Objects
 
-<https://github.com/TurtleHelm/AHC-Project/blob/a00d7f7df66ce7840d2014b9beaa2dbf96556459/Write%20Up/Design/Pseudocode%20(Extended).txt#L652-L664>
+<https://github.com/TurtleHelm/AHC-Project/blob/a00d7f7df66ce7840d2014b9beaa2dbf96556459/Write%20Up/Design/Pseudocode%20(Extended).txt#L651-L664>
 
 (NOTE: More than one array of objects were used within this project, to view every one of them see [Appendix B: Design](https://github.com/TurtleHelm/AHC-Project/tree/main/Write%20Up/Design))
 
@@ -209,6 +220,8 @@ CREATE TABLE highscore {
     PRIMARY KEY (id)
 };
 ```
+
+---
 
 ## Implementation
 

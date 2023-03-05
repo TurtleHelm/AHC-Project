@@ -37,12 +37,8 @@ GUIObjects = [
     Text([450, 400], '- Simulate DB Commit', 24)
 ]
 
-highscoreWin = []
-
-devUser = Highscore('DEV', 10000)
-scores = devUser.BubbleSortScores(devUser.GetScoresFromFile('Implementation/scores.txt'), True)
-
-def FillHighscore():
+def FillHighscore(scores, highscoreWin):
+    
     height = 450
 
     for name, score in scores:
@@ -51,13 +47,18 @@ def FillHighscore():
 
 def DevRun():
     """Change to Developer Window"""
+
+    highscoreWin = []
+
+    devUser = Highscore('DEV', 10000)
+    scores = devUser.BubbleSortScores(devUser.GetScoresFromFile('Implementation/scores.txt'))
     
     settings.init()
 
     win = Window('Netris - Dev Window', (0, 0, 0))
     win.CreateNewWindow()
     
-    FillHighscore()
+    FillHighscore(scores, highscoreWin)
     win.drawGUIObjs(highscoreWin)
     win.drawGUIObjs(GUIObjects)
 

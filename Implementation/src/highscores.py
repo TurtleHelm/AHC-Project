@@ -17,6 +17,9 @@ def InitialiseGUI(name, score) -> list:
     
     userScore = Highscore(name, score)
     scores = userScore.BubbleSortScores(userScore.GetScoresFromFile('Implementation/scores.txt'))
+    userScore.WriteScoresToFile('Implementation/scores.txt', scores)
+    
+    scores = scores[:5]
     
     height = 140
     
