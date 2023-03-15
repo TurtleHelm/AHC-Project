@@ -1,5 +1,6 @@
 # Import main library
 import pygame as game
+from pathlib import Path
 
 class Window:
     '''Window Class'''
@@ -15,7 +16,7 @@ class Window:
         self.screen_size = (960, 720)
         self.window_title = window_title
         self.bg_color = bg_color
-        self.icon = game.image.load('Implementation/src/resources/images/icon.png')
+        self.icon = game.image.load(f'{str(Path(__file__).parents[0])}\\resources\\images\\icon.png')
         
     def CreateNewWindow(self) -> None:
         '''Creates new Window using appropriate values'''
@@ -91,7 +92,7 @@ class Text(game.sprite.Sprite):
         self.color = color
         
         self.fontsize = fontsize
-        self.text = game.font.Font('Implementation/src/resources/fonts/font.ttf', self.fontsize).render(text, False, self.color) # Creates Font
+        self.text = game.font.Font(f'{str(Path(__file__).parents[0])}\\resources\\fonts\\font.ttf', self.fontsize).render(text, False, self.color) # Creates Font
         
         self.pos = [self.givenPos[0] - (self.text.get_width() // 2), self.givenPos[1] - (self.text.get_height() // 2)] # Set Position of Text
         self.caption = text
@@ -110,7 +111,7 @@ class Text(game.sprite.Sprite):
         '''
         
         self.caption = text
-        self.text = game.font.Font('Implementation/src/resources/fonts/font.ttf', self.fontsize).render(self.caption, False, self.color) # Sets new Text
+        self.text = game.font.Font(f'{str(Path(__file__).parents[0])}\\resources\\fonts\\font.ttf', self.fontsize).render(self.caption, False, self.color) # Sets new Text
         self.pos = [self.givenPos[0] - (self.text.get_width() // 2), self.givenPos[1] - (self.text.get_height() // 2)]
         draw() if draw is not None else self.RenderText()
 
@@ -122,7 +123,7 @@ class Text(game.sprite.Sprite):
         '''
         
         self.color = color
-        self.text = game.font.Font('Implementation/src/resources/fonts/font.ttf', self.fontsize).render(self.caption, False, color) # update text
+        self.text = game.font.Font(f'{str(Path(__file__).parents[0])}\\resources\\fonts\\font.ttf', self.fontsize).render(self.caption, False, color) # update text
         self.pos = [self.givenPos[0] - (self.text.get_width() // 2), self.givenPos[1] - (self.text.get_height() // 2)] # update position
         self.RenderText() # Rerender text
 
@@ -171,8 +172,8 @@ class Btn(game.sprite.Sprite):
         self.text = Text(self.pos, text, self.fontsize, self.textColor)
         self.caption = text
         self.state = False
-        self.hoverSound = 'Implementation/src/resources/sounds/hoverSound.wav'
-        self.selectSound = 'Implementation/src/resources/sounds/selectSound.wav'
+        self.hoverSound = f'{str(Path(__file__).parents[0])}\\resources\\sounds\\hoverSound.wav'
+        self.selectSound = f'{str(Path(__file__).parents[0])}\\resources\\sounds\\selectSound.wav'
 
     def ChangeState(self, txt:str, bool:bool) -> None:
         '''Changes State of Button
@@ -281,7 +282,7 @@ class Game:
                     
             self.group.draw(screen) # draw all rectangle sprites to the screen at once
 
-        def Move(self, screen, dir, dirName) -> None:
+        def Move(self, screen, dirName, effectState, sound) -> None:
             '''Moves Block in one direction one space
 
             Args:
@@ -292,13 +293,22 @@ class Game:
             
             self.UpdateColor((0, 0, 0), screen) # Update color of previous blocks
             self.group.empty() # empty sprite group
-            self.group.update(dir) # draw new block at new location (gives impression of movement)
             
             match dirName: # check for direction of travel
-                case 'left': self.realPos[0] -= 30
-                case 'right': self.realPos[0] += 30
-                case 'down': self.realPos[1] += 30
-                
+                case 'left': 
+                    self.group.update((30, 0))
+                    self.realPos[0] -= 30
+            
+                case 'right':
+                    self.group.update((-30, 0))
+                    self.realPos[0] += 30
+                        
+                case 'down': 
+                    if self.realPos[1] < 670:
+                        self.group.update((0, 30))
+                        self.realPos[1] += 30
+            
+            if effectState: game.mixer.Channel(0).play(sound)
             Game.Block.draw(self, screen) # draw new block to screen
 
         def CheckCollision(self, blockGroup, dir) -> bool:
@@ -312,39 +322,27 @@ class Game:
             '''
 
             for i in range(len(blockGroup.sprites())):
-                if self == blockGroup.sprites()[i]: continue
-                
-                else: 
-                    for j in range(len(self.group.sprites())):
-                        if dir == 'down':
-                            if Game.Block.WillCollide(self.group.sprites()[j], blockGroup.sprites()[i].group, 'down'):
-                                return True
-                            
-                        if dir == 'right':
-                            if Game.Block.WillCollide(self.group.sprites()[j], blockGroup.sprites()[i].group, 'right'):
-                                print('Collides @L')
-                                return True
-                            
-                        if dir == 'left':
-                            if Game.Block.WillCollide(self.group.sprites()[j], blockGroup.sprites()[i].group, 'left'):
-                                print('Collides @L')
-                                return True
+                # if self == blockGroup.sprites()[i]: continue
+            
+                for j in range(len(self.group.sprites())):
+                    if dir == 'down':
+                        if Game.Block.WillCollide(self.group.sprites()[j], blockGroup.sprites()[i], 'down'):
+                            return True
+                        
+                    if dir == 'right':
+                        if Game.Block.WillCollide(self.group.sprites()[j], blockGroup.sprites()[i], 'right'):
+                            return True
+                        
+                    if dir == 'left':
+                        if Game.Block.WillCollide(self.group.sprites()[j], blockGroup.sprites()[i], 'left'):
+                            return True
 
             for i in range(len(self.group.sprites())): 
                 if self.group.sprites()[i].posY == 670: return True
 
             return False
 
-        def CheckCollidesRight(self, group):
-            for i in range(len(group.sprites())):
-                if self == group.sprites()[i]: continue
-                else:
-                    for j in range(len(self.group.sprites())):
-                        if Game.Block.WillCollide(self.group.sprites()[j], group.sprites()[i].group, 'right'):
-                            print('Collides @R')
-                            return True
-
-        def CheckMovable(self, group, dir:str) -> bool:
+        def CheckMovable(self, dir:str, group) -> bool:
             '''Checks to see if the current sprite is movable
 
             Args:
@@ -354,18 +352,22 @@ class Game:
             - Bool: If the block is movable
             '''
             
-            if dir == 'right':
-                for i in range(len(self.group.sprites())):
-                    if self.group.sprites()[i].posX == 600:
-                        print('Can\'t Move (Grid)')
-                        return False
-            
-            if dir == 'left':
-                for i in range(len(self.group.sprites())):
-                    if self.group.sprites()[i].posX == 360:
-                        print('Can\'t Move (Grid)')
-                        return False
-            
+            for i in range(len(self.group.sprites())):
+                match dir:
+                    case 'right':
+                        if self.group.sprites()[i].posX == 600: return False
+                        else:
+                            for rect in self.group.sprites():
+                                for gridRect in group.sprites():
+                                    if self.WillCollide(rect, gridRect, 'right'): return False
+
+                    case 'left':
+                        if self.group.sprites()[i].posX == 360: return False
+                        else:
+                            for rect in self.group.sprites():
+                                for gridRect in group.sprites():
+                                    if self.WillCollide(rect, gridRect, 'left'): return False
+
             return True
                     
         def UpdateColor(self, color, screen) -> None: # Temp fix for screen flashing
@@ -391,7 +393,7 @@ class Game:
             '''
             
             if not isinstance(self, Game.SquareBlock): # check if the block is not square, if its not square continue
-                if self.CheckMovable(group, 'right') and self.CheckMovable(group, 'left'): # temp fix for bugging through grid walls
+                if self.CheckMovable('right', group) and self.CheckMovable('left', group):
                     if effectState: game.mixer.Channel(0).play(sound)
                     self.UpdateColor((0, 0, 0), screen) # update color of previous block
                     
@@ -401,7 +403,7 @@ class Game:
 
         # TODO: check all bottomBlock rectangles for collisions in the x axis with new block & prevent movement if collided
         @staticmethod
-        def WillCollide(sprite, group, dir) -> bool:
+        def WillCollide(sprite, groupSprite, dir) -> bool:
             '''Checks for Collision to determine whether a sprite is about to collide with a group
 
             Args:
@@ -414,14 +416,13 @@ class Game:
             
             import copy
             spriteRect = copy.copy(sprite.rect)
-            if dir == 'down': spriteRect.move_ip((0, 30))
-            if dir == 'right': spriteRect.move_ip((-30, 0))
-            if dir == 'left': spriteRect.move_ip((30, 0))
             
-            for i in range(len(group)):
-                # ! Issues in this function
-                if spriteRect.colliderect(group.sprites()[i].rect):
-                    return True
+            match dir:
+                case 'down': spriteRect.move_ip((0, 30))
+                case 'right': spriteRect.move_ip((30, 0))
+                case 'left': spriteRect.move_ip((-30, 0))
+            
+            if spriteRect.colliderect(groupSprite): return True
                 
             return False
 
@@ -437,67 +438,84 @@ class Game:
             '''
             
             for sprite in blockGroup:
-                for block in sprite.group:
-                    if block.posY == 130: return True
+                if sprite.posY == 130: return True
             return False
 
         @staticmethod
-        def CheckCompletedRow(blockGroup, gridXBlockPos) -> tuple:
-            
-            # TODO Make gridXBlockPos variable within game.py instead of this function, stop array of 0's adding together instead of stacking
+        def CheckCompletedRow(blockGroup, gridList, screen, effectState, sound) -> bool:
             
             for block in blockGroup.sprites():
-                for i in range(len(block.group.sprites())):
-                    for j in range(len(gridXBlockPos)):
-                        if block.group.sprites()[i].posY == gridXBlockPos[j][0]:
-                            match block.group.sprites()[i].posX: # Check for X Position & add 1 to correct position in grid object (1 means there's a rectangle, 0 means empty)
-                                case 360: gridXBlockPos[j][1][0] += 1 if gridXBlockPos[j][1][0] != 1 else 0
-                                case 390: gridXBlockPos[j][1][1] += 1 if gridXBlockPos[j][1][1] != 1 else 0
-                                case 420: gridXBlockPos[j][1][2] += 1 if gridXBlockPos[j][1][2] != 1 else 0
-                                case 450: gridXBlockPos[j][1][3] += 1 if gridXBlockPos[j][1][3] != 1 else 0
-                                case 480: gridXBlockPos[j][1][4] += 1 if gridXBlockPos[j][1][4] != 1 else 0
-                                case 510: gridXBlockPos[j][1][5] += 1 if gridXBlockPos[j][1][5] != 1 else 0
-                                case 540: gridXBlockPos[j][1][6] += 1 if gridXBlockPos[j][1][6] != 1 else 0
-                                case 570: gridXBlockPos[j][1][7] += 1 if gridXBlockPos[j][1][7] != 1 else 0
-                                case 600: gridXBlockPos[j][1][8] += 1 if gridXBlockPos[j][1][8] != 1 else 0
-                                case _: pass
+                for j in range(len(gridList)):
+                    if block.posY == gridList[j][0]:
+                        match block.posX: # Check for X Position & add 1 to correct position in grid object (1 means there's a rectangle, 0 means empty)
+                            case 360: gridList[j][1][0] += 1 if gridList[j][1][0] != 1 else 0
+                            case 390: gridList[j][1][1] += 1 if gridList[j][1][1] != 1 else 0
+                            case 420: gridList[j][1][2] += 1 if gridList[j][1][2] != 1 else 0
+                            case 450: gridList[j][1][3] += 1 if gridList[j][1][3] != 1 else 0
+                            case 480: gridList[j][1][4] += 1 if gridList[j][1][4] != 1 else 0
+                            case 510: gridList[j][1][5] += 1 if gridList[j][1][5] != 1 else 0
+                            case 540: gridList[j][1][6] += 1 if gridList[j][1][6] != 1 else 0
+                            case 570: gridList[j][1][7] += 1 if gridList[j][1][7] != 1 else 0
+                            case 600: gridList[j][1][8] += 1 if gridList[j][1][8] != 1 else 0
+                            case _: pass
                     
-            for i in range(len(gridXBlockPos)):
-                count = 0
-                row = 20
-                
-                for j in range(len(gridXBlockPos[i][1])):
-                    
-                    count += gridXBlockPos[i][1][j]
-                
-                    if count >= 9: return (True, row, gridXBlockPos)
-                row -= 1
+            row = 0
             
-            return (False, row, gridXBlockPos)
+            for i in range(len(gridList)):
+                count = 0
+                
+                for j in range(len(gridList[i][1])):
+                    count += gridList[i][1][j]
+                
+                if count >= 9: 
+                    return Game.Block.RemoveCompletedRow(blockGroup, gridList, row, screen, effectState, sound)
+                
+                row += 1
+            
+            return (False, gridList)
 
         @staticmethod
-        def RemoveCompletedRow(blockGroup, gridList, rowPos, screen):
-            # Logic Here to Remove Lines from Screen & From Array of Arrays
+        def RemoveCompletedRow(blockGroup, gridList, rowPos, screen, effectState, sound) -> tuple:
             
-            for block in blockGroup.sprites():
-                for rect in block.group.sprites():
-                    if rect.posY == gridList[rowPos-1][0]:
-                        rect.color = (0, 0, 0)
-                        rect.update((0, 30))
-                        rect.draw(screen)
-                        block.group.remove(rect)
-                        
-                block.Move(screen, (0, 30), 'down')        
+            for rect in blockGroup.sprites():
+                if rect.posY == gridList[rowPos][0]:
+                    rect.color = (0, 0, 0)
+                    rect.draw(screen)
+                    blockGroup.remove(rect)
+            
+            for i in range(len(gridList[rowPos][1])):
+                if gridList[rowPos][1][i] == 1:
+                    gridList[rowPos][1][i] -= 1
+            
+            if effectState: game.mixer.Channel(2).play(sound)
+            
+            for rect in blockGroup:
+                if rect.posY < gridList[rowPos][0]:
+                    rect.UpdateColor((0, 0, 0), screen)
+                    rect.update((0, 30))
+
+            blockGroup.draw(screen)
+            
+            # Make bottom of grid the top
+            gridList.reverse()
+            
+            # shift arrays in list of lists down 1 index
+            for i in range(len(list(gridList))-1): 
+                gridList[i][1], gridList[i+1][1] = gridList[i+1][1], gridList[i][1]
                 
-                # if block.realPos[1] < gridList[rowPos-1][0]: pass
-                # else: block.Move(screen, (0, 30), 'down')
+            # Put grid back to normal
+            gridList.reverse()
             
-            for i in range(8):
-                if gridList[rowPos-1][1][i] == 1:
-                    gridList[rowPos-1][1][i] -= 1
+            for row in list(gridList):
+                print(row)
             
-            Game.Block.CheckCompletedRow(blockGroup, gridList)
-            return ()
+            # for i in range(len(gridList)-1):
+            #     for j in range(len(gridList[i])):
+            #         # print((gridList[i][1], gridList[i+1][1]))
+            #         if gridList[i][0] < gridList[i+1][0]: 
+            #             gridList[i], gridList[i+1] = gridList[i+1], gridList[i]
+            
+            return (True, list(gridList))
 
         @staticmethod
         def GetRandBlock():
@@ -536,10 +554,27 @@ class Game:
             self.image = game.Surface([self.size, self.size])
             self.image.fill(self.color) # fill rect with appropriate color
             
-        def update(self, dir): self.rect.move_ip(dir) # update position of rect
+        def update(self, dir): 
+            self.rect.move_ip(dir) # update position of rect
+            self.posX = self.rect[0]
+            self.posY = self.rect[1]
+        
+        def draw(self, screen): game.draw.rect(screen, self.color, self.rect) # draw rect to screen
+            
+        def UpdateColor(self, color, screen) -> None: # Temp fix for screen flashing
+            '''Update Color of Sprite
 
-        def draw(self, screen):
-            game.draw.rect(screen, self.color, self.rect)
+            Args:
+            - color (tuple): Color to Draw Sprite with
+            - screen (pygame.Surface): Surface to be drawn to
+            '''
+            
+            originalColor = self.color # store original color
+            self.color = color # set new color
+            self.draw(screen) # draw new colored block to screen
+            self.color = originalColor # set color back to original color
+
+        def __str__(self): return f'Rectangle({(self.posX, self.posY)}, {self.color}, {self.rect})'
 
     class LBlock(Block):
         def __init__(self): super().__init__(((0, 0, 0), (1, 0, 0), (1, 1, 1)), (255, 165, 0)) # initialise values for class
@@ -652,7 +687,7 @@ class Settings:
         
         self.musicState = musicState
         self.effectState = effectState
-        self.filePath = 'Implementation/settings.txt'
+        self.filePath = f'{str(Path(__file__).parents[1])}\\settings.txt'
 
     def init(self) -> None:
         '''Get Settings from File'''
@@ -676,7 +711,11 @@ class Settings:
         '''
         
         from os import remove
-        if rem: remove(self.filePath) # if we set rem to True, remove settings file
+        from src.utils.ClrTerminal import Color
+        
+        if rem: 
+            try: remove(self.filePath) # if we set rem to True, remove settings file
+            except OSError as e: Color.printe(f'An Unexpected Error Occurred Whilst Removing {self.filePath}\n{e}') # Log Errors In File      
             
         with open(self.filePath, 'w') as f: # open settings file as write
             f.write(f'{str(self.musicState)},') # write new musicState value to file
@@ -772,7 +811,7 @@ class Highscore:
                 - False if Error
         '''
 
-        from .utils.ClrTerminal import Color
+        from src.utils.ClrTerminal import Color
         
         scores = Highscore.CheckForDupes(scores)
         
@@ -808,7 +847,7 @@ class Highscore:
             Return(s): None
         '''
         
-        from .utils.ClrTerminal import Color
+        from src.utils.ClrTerminal import Color
         import pyodbc as dbc
         
         topScores = []
@@ -859,4 +898,6 @@ class Highscore:
             except Exception as e: Color.printe(f'Error whilst trying to retrieve score data\n{e}')
         
         # If there was an error committing data to the database, print an error message
-        except Exception as e: Color.printe(f'Error: There was an unexpected error whilst trying to commit data to the sql database\n{e}')
+        except Exception as e: 
+            from src.utils.ClrTerminal import Color
+            Color.printe(f'Error: There was an unexpected error whilst trying to commit data to the sql database\n{e}')

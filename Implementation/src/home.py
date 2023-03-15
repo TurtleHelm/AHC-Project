@@ -1,9 +1,9 @@
 # Import necessary classes and modules
 from src.classes import Text, Btn, Window, Settings
-from .instructions import InstructionsRun
-from .settings import SettingsRun
-from .game import GameRun
-from .dev import DevRun
+from src.instructions import InstructionsRun
+from src.settings import SettingsRun
+from src.game import GameRun
+from src.dev import DevRun
 import pygame as game
 
 # Initialize Pygame

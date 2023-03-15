@@ -6,6 +6,7 @@ from .settings import SettingsRun
 from .scoreInput import InputRun
 from .game import GameRun
 import pygame as game
+from pathlib import Path
 
 # Initialize Pygame
 game.init()
@@ -34,7 +35,7 @@ GUIObjects = [
     Text([550, 350], '- Highscore Window', 24),
     
     Btn('SimDB', [105, 400], 180, 31, 32),
-    Text([450, 400], '- Simulate DB Commit', 24)
+    Text([450, 400], '- Simulate DB Commit', 24),
 ]
 
 def FillHighscore(scores, highscoreWin):
@@ -51,7 +52,7 @@ def DevRun():
     highscoreWin = []
 
     devUser = Highscore('DEV', 10000)
-    scores = devUser.BubbleSortScores(devUser.GetScoresFromFile('Implementation/scores.txt'))
+    scores = devUser.BubbleSortScores(devUser.GetScoresFromFile(f'{str(Path(__file__).parents[1])}\\scores.txt'))
     
     settings.init()
 

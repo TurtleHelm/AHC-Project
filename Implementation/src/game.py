@@ -2,6 +2,7 @@
 from .classes import Text, Window, Settings, Game, Grid
 from src.utils.ClrTerminal import Color
 import pygame as game
+from pathlib import Path
 
 game.init() # Initialise Pygame
 game.event.set_allowed([game.QUIT, game.KEYDOWN, game.KEYUP])
@@ -21,11 +22,11 @@ GUIObjects = [Text([495, 60], 'Netris', 40),  # Title Text
 
 # Sound Effects
 rotateBlockSound, lineClearSound, moveBlockSound, scoreSound, failSound = (
-    game.mixer.Sound('Implementation/src/resources/sounds/rotateBlock.wav'), 
-    game.mixer.Sound('Implementation/src/resources/sounds/lineClear.wav'), 
-    game.mixer.Sound('Implementation/src/resources/sounds/moveBlock.wav'),
-    game.mixer.Sound('Implementation/src/resources/sounds/scoreSound.wav'),
-    game.mixer.Sound('Implementation/src/resources/sounds/failSound.wav')
+    game.mixer.Sound(f'{str(Path(__file__).parents[0])}\\resources\\sounds\\rotateBlock.wav'), 
+    game.mixer.Sound(f'{str(Path(__file__).parents[0])}\\resources\\sounds\\lineClear.wav'), 
+    game.mixer.Sound(f'{str(Path(__file__).parents[0])}\\resources\\sounds\\moveBlock.wav'),
+    game.mixer.Sound(f'{str(Path(__file__).parents[0])}\\resources\\sounds\\scoreSound.wav'),
+    game.mixer.Sound(f'{str(Path(__file__).parents[0])}\\resources\\sounds\\failSound.wav')
 )
 
 def GameRun():
@@ -62,13 +63,13 @@ def GameRun():
 
     settings.init() # Initialise Settings with settings from settings file
 
-    game.mixer.Channel(1).play(game.mixer.Sound('Implementation/src/resources/sounds/tetris.wav'), -1) # Play music in infinite loop
+    game.mixer.Channel(1).play(game.mixer.Sound(f'{str(Path(__file__).parents[0])}\\resources\\sounds\\tetris.wav'), -1) # Play music in infinite loop
     game.mixer.Channel(1).set_volume(.2) if settings.musicState else game.mixer.Channel(1).set_volume(0) # if music settings off, then turn off the music otherwise play the music 
     
     block = Game.Block.GetRandBlock() # create initial random block
     block.draw(win.win) # draw block to screen
 
-    speed, mult, score, limit = [0, 1, 0, 0] # initialise speed value
+    speed, mult, score, limit = [0, 1, 0, 500] # initialise speed value
     # prevents overlap of text
     GUIObjects[-1].UpdateText((0, 0, 0), str(score)) # Update Score Count
     
@@ -106,44 +107,38 @@ def GameRun():
                         block.Rotate(win.win, settings.effectState, rotateBlockSound, bottomBlocks)
                         
                     case game.K_DOWN:  # if down arrow, move down
-                        block.Move(win.win, (0, 30), 'down')
-                        if settings.effectState: game.mixer.Channel(0).play(moveBlockSound)
+                        block.Move(win.win, 'down', settings.effectState, moveBlockSound)
                     
                     case game.K_RIGHT: # if right arrow, move right
-                        if block.CheckMovable(bottomBlocks, 'right'):
-                            block.Move(win.win, (-30, 0), 'right')
-                            if settings.effectState: game.mixer.Channel(0).play(moveBlockSound)
-                        else:
-                            Color.printe('Block in the way')
+                        if block.CheckMovable('right', bottomBlocks):
+                            block.Move(win.win, 'right', settings.effectState, moveBlockSound)
 
                     case game.K_LEFT: # if left arrow, move left
-                        if block.CheckMovable(bottomBlocks, 'left'):
-                            block.Move(win.win, (30, 0), 'left')
-                            if settings.effectState: game.mixer.Channel(0).play(moveBlockSound)
-                        else:
-                            Color.printe('Block in the way')
+                        if block.CheckMovable('left', bottomBlocks):
+                            block.Move(win.win, 'left', settings.effectState, moveBlockSound)
                     
                     case _: pass # default case
         
-        # TODO: Stop Block movement when down arrow is pressed
+        # TODO: Stop auto block movement when down arrow is pressed
         
         if speed*mult >= 30: # if 1s has passed (30 ticks per second)
-            block.Move(win.win, (0, 30), 'down') # Move the block down by 1 space on the screen
+            block.Move(win.win, 'down', settings.effectState, moveBlockSound) # Move the block down by 1 space on the screen
             speed = 0 # reset timer
 
         if block.CheckCollision(bottomBlocks, 'down'): # if block collision has been detected or the block has reached the bottom of the grid
-            bottomBlocks.add(block) # add current block to block group
+            bottomBlocks.add(block.group) # add current rect group to block group
+            
+            block = Game.Block.GetRandBlock()
+            block.draw(win.win)
             if settings.effectState: game.mixer.Channel(2).play(scoreSound)
             
             score += 50 # add to score value
             if score >= limit: # if score is over a specific value, change the value and increase multiplier
                 mult += 1
-                limit += 500
+                limit += 1000
 
             # prevents overlap of text
-            GUIObjects[-1].ChangeColor((0, 0, 0)) # change color to black to hide text
-            GUIObjects[-1].ChangeText(str(score)) # add to score counter
-            GUIObjects[-1].ChangeColor((255, 255, 255)) # change color back to white
+            GUIObjects[-1].UpdateText((0, 0, 0), str(score))
             
             if block.reachedTop(bottomBlocks): # check if the block group is at the top of the screen
                 Color.prints('Reached Top of Screen')
@@ -153,18 +148,17 @@ def GameRun():
                 game.mixer.Channel(1).stop() # stop music
                 InputRun(score) # exit game into highscore menu
             
-            lineClearCheck = block.CheckCompletedRow(bottomBlocks, gridList)
-            gridList = lineClearCheck[2]
+            complete, gridList = block.CheckCompletedRow(bottomBlocks, gridList, win.win, settings.effectState, lineClearSound)
             
-            if lineClearCheck[0]:
-                # Stop Current Block Moving once Line Clears
-                lineClearCheck = block.RemoveCompletedRow(bottomBlocks, gridList, lineClearCheck[1], win.win)
-                if settings.effectState: game.mixer.Channel(0).play(lineClearSound)
+            # TODO: Fix Inconsistent line clearing (it works SOMETIMES)
+            # ! 1's in grid 1 too high after moving rect's down, move all array objs down one y pos
+            # ! Flipping Grid (especially if 1's at bottom of screen) causes rows to be pushed up to the top index in a loop
+        
+            while complete:
                 score += 100
-
-            else:
-                block = Game.Block.GetRandBlock()
-                block.draw(win.win)
+                GUIObjects[-1].UpdateText((0, 0, 0), str(score))
+                
+                complete, gridList = block.CheckCompletedRow(bottomBlocks, gridList, win.win, settings.effectState, lineClearSound)
 
         game.display.update()
         clock.tick(30)
