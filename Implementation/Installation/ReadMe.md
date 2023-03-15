@@ -2,7 +2,7 @@
 
 ## Downloading File(s)
 
-1. Download the zip folder attached below
+1. Download the zip folder in the latest release
 2. Unzip the zip folder in your preferred directory
 3. Follow the steps below
 
