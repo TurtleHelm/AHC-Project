@@ -322,8 +322,6 @@ class Game:
             '''
 
             for i in range(len(blockGroup.sprites())):
-                # if self == blockGroup.sprites()[i]: continue
-            
                 for j in range(len(self.group.sprites())):
                     if dir == 'down':
                         if Game.Block.WillCollide(self.group.sprites()[j], blockGroup.sprites()[i], 'down'):
@@ -401,7 +399,6 @@ class Game:
                     self.struct = rot90(self.struct) # rotate array 90 degrees clockwise
                     self.draw(screen) # redraw new block positions
 
-        # TODO: check all bottomBlock rectangles for collisions in the x axis with new block & prevent movement if collided
         @staticmethod
         def WillCollide(sprite, groupSprite, dir) -> bool:
             '''Checks for Collision to determine whether a sprite is about to collide with a group
@@ -573,8 +570,6 @@ class Game:
             self.color = color # set new color
             self.draw(screen) # draw new colored block to screen
             self.color = originalColor # set color back to original color
-
-        def __str__(self): return f'Rectangle({(self.posX, self.posY)}, {self.color}, {self.rect})'
 
     class LBlock(Block):
         def __init__(self): super().__init__(((0, 0, 0), (1, 0, 0), (1, 1, 1)), (255, 165, 0)) # initialise values for class

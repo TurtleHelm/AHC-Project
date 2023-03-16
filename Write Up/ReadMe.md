@@ -8,7 +8,7 @@
 | Analysis       | [Link](#analysis)       |
 | Design         | [Link](#design)         |
 | Implementation | [Link](#implementation) |
-| Testing        | [Link]                  |
+| Testing        | [Link](#testing)        |
 | Evaluation     | [Link]                  |
 
 ## Description
@@ -262,6 +262,108 @@ CREATE TABLE highscore {
 <https://github.com/TurtleHelm/AHC-Project/blob/a00d7f7df66ce7840d2014b9beaa2dbf96556459/Implementation/src/instructions.py#L10-L21>
 
 (NOTE: All code can be found in [Appendix C: Implementation](https://github.com/TurtleHelm/AHC-Project/tree/main/Implementation))
+
+## Testing
+
+### Test Plan
+
+#### Home Page
+
+No Normal, Exceptional or Extreme data for this page (due to mouse input only)
+
+UI:
+
+- Cursor Visible
+- Black Background Colour
+- White Text Colour
+- UI in correct positions
+- Correct Text Usage (e.g title is the right text)
+- Correct font & font size used
+
+Usability:
+
+- Ease of Use & Ease of Understanding
+- Functionality made clear for each UI object
+- Readability
+
+Functionality
+
+- Do buttons redirect using their functions correctly
+- Do buttons turn red on hover
+- Do buttons play a sound when hovered & clicked if the settings are set
+- Does the escape key quit the program
+
+#### New Game Page
+
+Normal Input: Up, Down, Left, Right Arrows, Escape, score file
+Exceptional Input: Multiple combinations of Arrow Keys, empty score file
+Extreme Input: Alphanumeric keys, no score file
+
+UI:
+
+- Cursor Invisible
+- White Text Colour
+- Black Background
+- Grid in correct position & size
+- UI in correct positions, sizes & font
+- Display updatable score on right side of screen
+- Display controls on left side of screen
+- Draw blocks at top of screen with correct colour & orientation
+
+Usability:
+
+- Ease of Use & Ease of Understanding
+- Readability
+
+Functionality:
+
+- If music setting is True then play background music on repeat
+- If sound effect setting is True then play sound effects
+- If Up arrow pressed rotate block
+- If left or right allow is pressed move block
+- If down arrow is pressed move block down
+- Don’t move or rotate block if at grid boundary positions
+- If block reached grid base then stop moving, add to score then add block to group then draw new block
+- If block collides with block in group stop moving block, add to score then draw new block
+- If block group reaches top of grid redirect to name input page
+- If blocks fill entire row, add to score then remove row of blocks and move group down
+
+#### Instructions Page
+
+No Normal, Exceptional or Extreme data for this page (due to mouse input only)
+
+UI:
+
+- Cursor Visible
+- Black Background Colour
+- White Text Colour
+- UI in correct positions with correct size & colours
+
+Usability:
+
+- Ease of Use & ease of Understanding
+- Readability
+
+Functionality:
+
+- Do buttons turn red on hover
+- Do buttons redirect using their functions correctly
+- Do buttons play a sound when hovered & clicked if the settings are set
+
+#### Settings Page
+
+Normal Input: settings file
+Exceptional Input: empty settings file
+Extreme Input: no settings file
+
+UI:
+
+- Cursor Visible
+- Black Background Colour
+- White Text Colour
+- UI in correct positions with correct size & colours
+
+(Still to Complete)
 
 ---
 
