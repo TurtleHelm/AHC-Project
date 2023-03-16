@@ -35,29 +35,6 @@ def GameRun():
     
     Color.printd('Entering Game...')
     
-    gridList = [
-        [100, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
-        [130, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
-        [160, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
-        [190, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
-        [220, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
-        [250, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
-        [280, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
-        [310, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
-        [340, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
-        [370, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
-        [400, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
-        [430, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
-        [460, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
-        [490, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
-        [520, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
-        [550, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
-        [580, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
-        [610, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
-        [640, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
-        [670, [0, 0, 0, 0, 0, 0, 0, 0, 0]]
-    ]
-    
     win = Window('Netris - Game', (0, 0, 0)) # Instantiate Window Object
     win.CreateNewWindow() # Create New Window
 
@@ -148,17 +125,13 @@ def GameRun():
                 game.mixer.Channel(1).stop() # stop music
                 InputRun(score) # exit game into highscore menu
             
-            complete, gridList = block.CheckCompletedRow(bottomBlocks, gridList, win.win, settings.effectState, lineClearSound)
-            
-            # TODO: Fix Inconsistent line clearing (it works SOMETIMES)
-            # ! 1's in grid 1 too high after moving rect's down, move all array objs down one y pos
-            # ! Flipping Grid (especially if 1's at bottom of screen) causes rows to be pushed up to the top index in a loop
+            complete = block.CheckCompletedRow(bottomBlocks, win.win, settings.effectState, lineClearSound)
         
             while complete:
                 score += 100
                 GUIObjects[-1].UpdateText((0, 0, 0), str(score))
                 
-                complete, gridList = block.CheckCompletedRow(bottomBlocks, gridList, win.win, settings.effectState, lineClearSound)
+                complete = block.CheckCompletedRow(bottomBlocks, win.win, settings.effectState, lineClearSound)
 
         game.display.update()
         clock.tick(30)

@@ -372,7 +372,7 @@
 			1.5.1.127			THIS.draw(screen)
 			1.5.1.128		END PROCEDURE
 			1.5.1.129
-			1.5.1.129       @staticmethod
+			1.5.1.129       <@staticmethod>
         	1.5.1.130		FUNCTION WillCollide(sprite, groupSprite, dir) -> bool:
 			1.5.1.131			<import copy>
             1.5.1.132			spriteRect = copy.copy(sprite.rect)
@@ -386,7 +386,7 @@
 			1.5.1.140			RETURN FALSE
 			1.5.1.141		END FUNCTION
 			1.5.1.142
-			1.5.1.143		@staticmethod
+			1.5.1.143		<@staticmethod>
 			1.5.1.144		FUNCTION reachedTop(pygame.Sprite.Group blockGroup) RETURNS BOOLEAN
 			1.5.1.145			FOR EACH sprite IN blockGroup DO
 			1.5.1.146				IF sprite.posY == 130 THEN RETURN TRUE END IF
@@ -394,8 +394,87 @@
 			1.5.1.148			END FOR EACH
 			1.5.1.149		END FUNCTION
 			1.5.1.150
-			1.5.1.151		@staticmethod
-			1.5.1.152		FUNCTION CheckCompletedRow()
+			1.5.1.151		<@staticmethod>
+			1.5.1.152		FUNCTION CheckCompletedRow(pygame.Sprite.Group blockGroup, ARRAY OF LISTS gridList, pygame.Surface screen, BOOLEAN effectState, pygame.mixer.Sound sound) RETURNS BOOLEAN
+			1.5.1.153			FOR EACH block IN blockGroup.sprites() DO
+			1.5.1.154				FOR j IN RANGE(LENGTH gridList) DO
+			1.5.1.155					IF block.posY == gridList[j][0] THEN
+			1.5.1.156						<match block.posX>
+			1.5.1.157							<case 360> SET gridList[j][1][0] TO gridList[j][1][0] + 1 IF gridList[j][1][0] != 1 ELSE 0 END IF
+			1.5.1.158							<case 390> SET gridList[j][1][1] TO gridList[j][1][1] + 1 IF gridList[j][1][1] != 1 ELSE 0 END IF
+			1.5.1.159							<case 420> SET gridList[j][1][2] TO gridList[j][1][2] + 1 IF gridList[j][1][2] != 1 ELSE 0 END IF
+			1.5.1.160							<case 450> SET gridList[j][1][3] TO gridList[j][1][3] + 1 IF gridList[j][1][3] != 1 ELSE 0 END IF
+			1.5.1.161							<case 480> SET gridList[j][1][4] TO gridList[j][1][4] + 1 IF gridList[j][1][4] != 1 ELSE 0 END IF
+			1.5.1.161							<case 510> SET gridList[j][1][5] TO gridList[j][1][5] + 1 IF gridList[j][1][5] != 1 ELSE 0 END IF
+			1.5.1.162							<case 540> SET gridList[j][1][6] TO gridList[j][1][6] + 1 IF gridList[j][1][6] != 1 ELSE 0 END IF
+			1.5.1.163							<case 570> SET gridList[j][1][7] TO gridList[j][1][7] + 1 IF gridList[j][1][7] != 1 ELSE 0 END IF
+			1.5.1.164							<case 600> SET gridList[j][1][8] TO gridList[j][1][8] + 1 IF gridList[j][1][8] != 1 ELSE 0 END IF
+			1.5.1.165							<case _> pass
+			1.5.1.166						<end match>
+			1.5.1.167					END IF
+			1.5.1.168				END FOR 
+			1.5.1.169			END FOR EACH
+			1.5.1.170	
+			1.5.1.171			DECLARE row INITIALLY 0
+			1.5.1.172
+			1.5.1.173			FOR i IN RANGE(LENGTH gridList) DO
+			1.5.1.174				DECLARE count INITIALLY 0
+			1.5.1.175
+			1.5.1.176				FOR j IN RANGE(LENGTH gridList[i][1]) DO
+			1.5.1.177					SET count TO count + gridList[i][1][j]
+			1.5.1.178					
+			1.5.1.179					IF count >= 9 THEN
+			1.5.1.180						RETURN Game.Block.RemoveCompletedRow(blockGroup, gridList, row, screen, effectState, sound)
+			1.5.1.181					END IF
+			1.5.1.182	
+			1.5.1.183					SET row TO row + 1
+			1.5.1.184
+			1.5.1.185				END FOR
+			1.5.1.186			END FOR
+			1.5.1.187
+			1.5.1.188			RETURN (False, gridList)
+			1.5.1.189		END FUNCTION
+			1.5.1.190
+			1.5.1.191		<@staticmethod>
+			1.5.1.192		FUNCTION RemoveCompletedRow(pygame.Sprite.Group blockGroup, ARRAY OF LISTS gridList, INTEGER rowPos, pygame.Surface screen, BOOLEAN effectState, pygame.mixer.Sound sound) RETURNS TUPLE
+			1.5.1.193			FOR EACH rect IN blockGroup.sprites() DO
+			1.5.1.194				IF rect.posY == gridList[rowPos][0] THEN
+			1.5.1.195					SET rect.color TO (0, 0, 0)
+			1.5.1.196					rect.draw(screen)
+			1.5.1.197					blockGroup.remove(rect)
+			1.5.1.198				END IF
+			1.5.1.199
+			1.5.1.200			END FOR EACH
+			1.5.1.201
+			1.5.1.202			FOR i IN RANGE(LENGTH gridList[rowPos][1]) DO
+			1.5.1.203				IF gridList[rowPos][1][i] == 1 THEN
+			1.5.1.204					gridList[rowPos][1][i] -= 1
+			1.5.1.205				END IF
+			1.5.1.206			END FOR
+			1.5.1.207
+			1.5.1.208			IF effectState THEN pygame.mixer.Channel(2).play(sound)
+			1.5.1.209					
+			1.5.1.210			FOR EACH rect IN blockGroup DO
+			1.5.1.211				IF rect.posY < gridList[rowPos][0] THEN
+			1.5.1.212					rect.UpdateColor((0, 0, 0), screen)
+			1.5.1.213					rect.update((0, 30))
+			1.5.1.214				END IF
+			1.5.1.215			END FOR EACH
+			1.5.1.216
+			1.5.1.217		blockGroup.draw(screen)
+			1.5.1.218
+			1.5.1.219
+			1.5.1.220
+			1.5.1.221 
+			1.5.1.222
+			1.5.1.223
+			1.5.1.224
+			1.5.1.225
+			1.5.1.226
+			1.5.1.227
+			1.5.1.228
+			1.5.1.229
+			1.5.1.230
 
 			(CONTINUE)
 

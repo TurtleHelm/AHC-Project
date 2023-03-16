@@ -439,7 +439,30 @@ class Game:
             return False
 
         @staticmethod
-        def CheckCompletedRow(blockGroup, gridList, screen, effectState, sound) -> bool:
+        def CheckCompletedRow(blockGroup, screen, effectState, sound) -> bool:
+            
+            gridList = [
+                [100, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+                [130, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+                [160, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+                [190, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+                [220, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+                [250, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+                [280, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+                [310, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+                [340, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+                [370, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+                [400, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+                [430, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+                [460, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+                [490, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+                [520, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+                [550, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+                [580, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+                [610, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+                [640, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
+                [670, [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+            ]
             
             for block in blockGroup.sprites():
                 for j in range(len(gridList)):
@@ -469,7 +492,7 @@ class Game:
                 
                 row += 1
             
-            return (False, gridList)
+            return False
 
         @staticmethod
         def RemoveCompletedRow(blockGroup, gridList, rowPos, screen, effectState, sound) -> tuple:
@@ -493,26 +516,7 @@ class Game:
 
             blockGroup.draw(screen)
             
-            # Make bottom of grid the top
-            gridList.reverse()
-            
-            # shift arrays in list of lists down 1 index
-            for i in range(len(list(gridList))-1): 
-                gridList[i][1], gridList[i+1][1] = gridList[i+1][1], gridList[i][1]
-                
-            # Put grid back to normal
-            gridList.reverse()
-            
-            for row in list(gridList):
-                print(row)
-            
-            # for i in range(len(gridList)-1):
-            #     for j in range(len(gridList[i])):
-            #         # print((gridList[i][1], gridList[i+1][1]))
-            #         if gridList[i][0] < gridList[i+1][0]: 
-            #             gridList[i], gridList[i+1] = gridList[i+1], gridList[i]
-            
-            return (True, list(gridList))
+            return True
 
         @staticmethod
         def GetRandBlock():

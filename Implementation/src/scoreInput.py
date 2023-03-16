@@ -67,7 +67,7 @@ def InputRun(score:int=0):
                     GUIObjects[2].UpdateText((0, 0, 0), GUIObjects[2].caption[:-1]) # Remove char from name
             
                 if event.key == game.K_RETURN or event.key == game.K_KP_ENTER:
-                    if allowedClick: RunHighscore(GUIObjects[2].caption[:3], score[0])
+                    if allowedClick: RunHighscore((GUIObjects[2].caption[:3], score))
             
             if event.type == game.TEXTINPUT:
                 if event.text not in disallowedKeys: GUIObjects[2].UpdateText((0, 0, 0), GUIObjects[2].caption + event.text) # Add char to name
