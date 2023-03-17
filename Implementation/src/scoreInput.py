@@ -1,14 +1,14 @@
 # Import necessary classes and modules
 from src.classes import Text, Btn, Window, Settings
 from .utils.ClrTerminal import Color
-import pygame as game
+import pygame
 
 # Initialize Pygame
-game.init()
-game.event.set_allowed([game.KEYDOWN, game.TEXTINPUT]) # Limit event checks
+pygame.init()
+pygame.event.set_allowed([pygame.KEYDOWN, pygame.TEXTINPUT]) # Limit event checks
 
 # Create the games clock and settings objects
-clock, settings = (game.time.Clock(), Settings())
+clock, settings = (pygame.time.Clock(), Settings())
 
 # create list of illegal characters
 disallowedKeys = [chr(key) for key in range(0, 255) if not chr(key).isalpha()]
@@ -17,7 +17,7 @@ disallowedKeys = [chr(key) for key in range(0, 255) if not chr(key).isalpha()]
 GUIObjects = [
     Text([480, 90], 'Netris', 106), # Game Title
     Text([480, 210], 'Enter Name', 48), 
-    Text([480, 320], 'PLA', 48), # Users name Input
+    Text([480, 320], 'PLA', 48), # Name Input Display
     Btn('Enter', [480, 440], 300, 48, 48) # Enter Button
 ]
 
@@ -49,9 +49,7 @@ def InputRun(score:int=0):
             # if clicks are disallowed, navigate back to the input page & grey out Enter button
             GUIObjects[-1].isHovering(InputRun, settings.effectState, (128, 128, 128))
 
-        if len(GUIObjects[2].caption) == 3: # Only if name is 3 can you move on
-            allowedClick = True # allow clicks
-
+        if len(GUIObjects[2].caption) == 3: allowedClick = True # Only if name is 3 can you move on
         if len(GUIObjects[2].caption) < 3: allowedClick = False # if name is less than 3 do not allow click 
         
         if len(GUIObjects[2].caption) > 3: # if name is over 3, disallow click & set name to 3
@@ -60,18 +58,21 @@ def InputRun(score:int=0):
             GUIObjects[2].UpdateText((0, 0, 0), GUIObjects[2].caption[:3])
         
         # Check for keyboard input
-        for event in game.event.get():
+        for event in pygame.event.get():
             
-            if event.type == game.KEYDOWN:
-                if event.key == game.K_BACKSPACE: # if backspace pressed
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_BACKSPACE: # if backspace pressed
                     GUIObjects[2].UpdateText((0, 0, 0), GUIObjects[2].caption[:-1]) # Remove char from name
             
-                if event.key == game.K_RETURN or event.key == game.K_KP_ENTER:
+                if event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:
                     if allowedClick: RunHighscore((GUIObjects[2].caption[:3], score))
             
-            if event.type == game.TEXTINPUT:
-                if event.text not in disallowedKeys: GUIObjects[2].UpdateText((0, 0, 0), GUIObjects[2].caption + event.text) # Add char to name
+            if event.type == pygame.TEXTINPUT:
+                if event.text not in disallowedKeys: 
+                    if GUIObjects[2].caption == 'PLA': GUIObjects[2].UpdateText((0, 0, 0), event.text)
+                    else: GUIObjects[2].UpdateText((0, 0, 0), GUIObjects[2].caption + event.text) # Add char to name
+                
                 else: Color.printe(f'Error: Illegal Character "{event.text}"')
                   
-        game.display.update() # Update the display
+        pygame.display.update() # Update the display
         clock.tick(30) # Set the game's frame rate to 30 FPS

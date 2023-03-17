@@ -77,7 +77,7 @@ def DevRun():
         GUIObjects[3].isHovering(InstructionsRun, settings.effectState)
         GUIObjects[5].isHovering(SettingsRun, settings.effectState)
         GUIObjects[7].isHovering(InputRun, settings.effectState, (255, 0, 0), 0)
-        GUIObjects[9].isHovering(RunHighscore, settings.effectState, (255, 0, 0), 'DEV', 10000)
+        GUIObjects[9].isHovering(RunHighscore, settings.effectState, (255, 0, 0), 'DEV', 1000000)
         GUIObjects[11].isHovering(devUser.CommitToDb, settings.effectState, (255, 0, 0), scores)
 
         # Check for keyboard input

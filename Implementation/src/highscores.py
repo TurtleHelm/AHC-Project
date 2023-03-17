@@ -1,20 +1,22 @@
 # Import necessary classes and modules
 from .classes import Window, Text, Highscore, Btn, Settings
 from .game import GameRun
-import pygame as game
 from pathlib import Path
+import pygame
 
-game.init()
-game.event.set_allowed([game.QUIT])
+pygame.init()
+pygame.event.set_allowed([pygame.QUIT])
 
-clock, settings = (game.time.Clock(), Settings()) # Games Clock (Frames Per Second)
+clock, settings = (pygame.time.Clock(), Settings()) # Games Clock (Frames Per Second)
 
 def InitialiseGUI(name, score) -> list:
     scores = []
     
-    GUIObjects = [Text([480, 90], 'Netris', 106),
-                  Btn('Main Menu', [720, 600], 300, 48, 32),
-                  Btn('New Game', [240, 600], 300, 48, 32)]
+    GUIObjects = [
+        Text([480, 90], 'Netris', 106),
+        Btn('Main Menu', [720, 600], 300, 48, 32),
+        Btn('New Game', [240, 600], 300, 48, 32)
+    ]
     
     userScore = Highscore(name, score)
     scores = userScore.BubbleSortScores(userScore.GetScoresFromFile(f'{str(Path(__file__).parents[1])}\\scores.txt'))
@@ -55,11 +57,7 @@ def RunHighscore(user=('PLA', 0)):
         GUIObjects[1].isHovering(win.Leave, settings.effectState) # Check if the exit game button is clicked & exit the game
         GUIObjects[2].isHovering(GameRun, settings.effectState) # Check if the exit game button is clicked & exit the game
         
-        # Check for keyboard input
-        for event in game.event.get():
-            
-            # If exit button is clicked (top right of window), exit
-            if event.type == game.QUIT: win.ExitWindow()
+        if pygame.event.get(pygame.QUIT): win.ExitWindow() # Exit Window if Top Right X clicked
                     
-        game.display.update() # Update the display
+        pygame.display.update() # Update the display
         clock.tick(30) # Set the game's frame rate to 30 FPS

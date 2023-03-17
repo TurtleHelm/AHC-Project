@@ -1,10 +1,10 @@
 # Import necessary classes and modules
 from src.classes import Text, Btn, Window, Settings
-import pygame as game
+import pygame
 
-game.init() # initialise pygame library
-game.event.set_allowed([game.QUIT]) # reduces lag
-clock, settings = (game.time.Clock(), Settings()) # initialise settings & game clock
+pygame.init() # initialise pygame library
+pygame.event.set_allowed([pygame.QUIT]) # reduces lag
+clock, settings = (pygame.time.Clock(), Settings()) # initialise settings & game clock
 
 # List of GUI Objects
 GUIObjects = [Text([480, 40], 'Instructions', 48),
@@ -34,11 +34,7 @@ def InstructionsRun():
 
         GUIObjects[-1].isHovering(win.Leave, settings.effectState) # Used to navigate to a New Game Page
 
-        # Check keyboard input
-        for event in game.event.get():
-            
-            # If exit button clicked (top right of window), exit
-            if event.type == game.QUIT: win.Leave()
+        if pygame.event.get(pygame.QUIT): win.ExitWindow() # Exit Window if Top Right X clicked
 
-        game.display.update()
+        pygame.display.update()
         clock.tick(30)

@@ -4,14 +4,14 @@ from src.instructions import InstructionsRun
 from src.settings import SettingsRun
 from src.game import GameRun
 from src.dev import DevRun
-import pygame as game
+import pygame
 
 # Initialize Pygame
-game.init()
-game.event.set_allowed([game.QUIT]) # limit event checks
+pygame.init()
+pygame.event.set_allowed([pygame.QUIT]) # limit event checks
 
 # Create the games clock and settings objects
-clock, settings = (game.time.Clock(), Settings())
+clock, settings = (pygame.time.Clock(), Settings())
 
 # List of GUI Objects
 GUIObjects = [
@@ -19,7 +19,7 @@ GUIObjects = [
     Btn('New Game', [480, 310], 260, 41, 32), # New Game Button
     Btn('Instructions', [480, 360], 400, 41, 32), # Instructions Button
     Btn('Settings', [480, 410], 260, 41, 32), # Settings Button
-    Btn('Developer Mode', [480, 600], 210, 41, 16),
+    Btn('Developer Mode', [480, 650], 210, 41, 16),
     Btn('Exit Game', [480, 460], 300, 41, 32) # Exit Button
 ]
 
@@ -40,17 +40,15 @@ def run():
     # While the game is running
     while 1:
         
-        GUIObjects[1].isHovering(GameRun, settings.effectState) # Check if the new game button is clicked & navigate to the new game page
+        GUIObjects[1].isHovering(GameRun, settings.effectState) # Check if the new pygame button is clicked & navigate to the new pygame page
         GUIObjects[2].isHovering(InstructionsRun, settings.effectState) # Check if the instructions button is clicked & navigate to the instructions page
         GUIObjects[3].isHovering(SettingsRun, settings.effectState) # Check if the settings button is clicked & navigate to the settings page
         GUIObjects[4].isHovering(DevRun, settings.effectState)
-        GUIObjects[-1].isHovering(win.ExitWindow, settings.effectState) # Check if the exit game button is clicked & exit the game
+        GUIObjects[-1].isHovering(win.ExitWindow, settings.effectState) # Check if the exit pygame button is clicked & exit the pygame
 
         # Check for keyboard input
-        for event in game.event.get():
-            
-            if event.type == game.QUIT: win.ExitWindow() # If the exit button is clicked (top right of window), exit
-            if event.type == game.KEYDOWN and event.key == game.K_ESCAPE: win.ExitWindow() # If escape key is pressed, exit
+        for event in pygame.event.get():
+            if (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE) or event.type == pygame.QUIT: win.ExitWindow() # If escape key is pressed, exit
 
-        game.display.update() # Update the display
-        clock.tick(30) # Set the game's frame rate to 30 FPS
+        pygame.display.update() # Update the display
+        clock.tick(30) # Set the pygame's frame rate to 30 FPS

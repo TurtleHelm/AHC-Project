@@ -1,12 +1,12 @@
 # Import necessary classes and modules
 from .classes import Text, Window, Settings, Game, Grid
 from src.utils.ClrTerminal import Color
-import pygame as game
 from pathlib import Path
+import pygame
 
-game.init() # Initialise Pygame
-game.event.set_allowed([game.QUIT, game.KEYDOWN, game.KEYUP])
-clock, settings = (game.time.Clock(), Settings()) # Games Clock (Frames Per Second) & Initialise Settings Object
+pygame.init() # Initialise Pygame
+pygame.event.set_allowed([pygame.QUIT, pygame.KEYDOWN])
+clock, settings = (pygame.time.Clock(), Settings()) # Games Clock (Frames Per Second) & Initialise Settings Object
 
 # GUI Objects
 GUIObjects = [Text([495, 60], 'Netris', 40),  # Title Text
@@ -22,16 +22,16 @@ GUIObjects = [Text([495, 60], 'Netris', 40),  # Title Text
 
 # Sound Effects
 rotateBlockSound, lineClearSound, moveBlockSound, scoreSound, failSound = (
-    game.mixer.Sound(f'{str(Path(__file__).parents[0])}\\resources\\sounds\\rotateBlock.wav'), 
-    game.mixer.Sound(f'{str(Path(__file__).parents[0])}\\resources\\sounds\\lineClear.wav'), 
-    game.mixer.Sound(f'{str(Path(__file__).parents[0])}\\resources\\sounds\\moveBlock.wav'),
-    game.mixer.Sound(f'{str(Path(__file__).parents[0])}\\resources\\sounds\\scoreSound.wav'),
-    game.mixer.Sound(f'{str(Path(__file__).parents[0])}\\resources\\sounds\\failSound.wav')
+    pygame.mixer.Sound(f'{str(Path(__file__).parents[0])}\\resources\\sounds\\rotateBlock.wav'), 
+    pygame.mixer.Sound(f'{str(Path(__file__).parents[0])}\\resources\\sounds\\lineClear.wav'), 
+    pygame.mixer.Sound(f'{str(Path(__file__).parents[0])}\\resources\\sounds\\moveBlock.wav'),
+    pygame.mixer.Sound(f'{str(Path(__file__).parents[0])}\\resources\\sounds\\scoreSound.wav'),
+    pygame.mixer.Sound(f'{str(Path(__file__).parents[0])}\\resources\\sounds\\failSound.wav')
 )
 
 def GameRun():
     
-    game.mouse.set_visible(False)
+    pygame.mouse.set_visible(False)
     
     Color.printd('Entering Game...')
     
@@ -40,17 +40,18 @@ def GameRun():
 
     settings.init() # Initialise Settings with settings from settings file
 
-    game.mixer.Channel(1).play(game.mixer.Sound(f'{str(Path(__file__).parents[0])}\\resources\\sounds\\tetris.wav'), -1) # Play music in infinite loop
-    game.mixer.Channel(1).set_volume(.2) if settings.musicState else game.mixer.Channel(1).set_volume(0) # if music settings off, then turn off the music otherwise play the music 
+    pygame.mixer.Channel(0).set_volume(.1)
+    pygame.mixer.Channel(1).play(pygame.mixer.Sound(f'{str(Path(__file__).parents[0])}\\resources\\sounds\\tetris.mp3'), -1) # Play music in infinite loop
+    pygame.mixer.Channel(1).set_volume(.2) if settings.musicState else pygame.mixer.Channel(1).set_volume(0) # if music settings off, then turn off the music otherwise play the music 
     
     block = Game.Block.GetRandBlock() # create initial random block
     block.draw(win.win) # draw block to screen
 
-    speed, mult, score, limit = [0, 1, 0, 500] # initialise speed value
+    speed, mult, score, limit, delay = [0, 1, 0, 500, 0] # initialise speed value
     # prevents overlap of text
     GUIObjects[-1].UpdateText((0, 0, 0), str(score)) # Update Score Count
     
-    bottomBlocks = game.sprite.Group() # initialise block group
+    bottomBlocks = pygame.sprite.Group() # initialise block group
 
     # Initialise New Game Grid
     grid = Grid(((720 // 2), 100))
@@ -58,47 +59,62 @@ def GameRun():
     
     win.drawGUIObjs(GUIObjects) # Draw the GUI
 
+    keys = pygame.key.get_pressed() # List of Pressed Keys
+
     # While the game is running
     while 1: # 1 & not True due to weirdness with True taking up another operation unlike 1
 
         grid.DrawGrid(win.win) # continually draw grid to screen (stops screen flickering)
+        
+        match keys:
+            case pygame.K_DOWN:
+                if delay*mult >= 5:
+                    block.Move(win.win, 'down', settings.effectState, moveBlockSound)
+                    delay = 0
+                    
+            case pygame.K_RIGHT:
+                if delay >= 5:
+                    block.Move(win.win, 'right', settings.effectState, moveBlockSound)
+                    delay = 0
+                    
+            case pygame.K_LEFT:
+                if delay >= 5:
+                    block.Move(win.win, 'left', settings.effectState, moveBlockSound)
+                    delay = 0
 
         # Check for keyboard input
-        for event in game.event.get():
+        for event in pygame.event.get():
             
             # If exit button is clicked (top right of window), exit
-            if event.type == game.QUIT: win.ExitWindow()
+            if event.type == pygame.QUIT: win.ExitWindow()
             
             # all keydown events
-            if event.type == game.KEYDOWN:
+            if event.type == pygame.KEYDOWN:
                 
                 # Check for any matches in the key down events
                 match event.key:
 
-                    case game.K_ESCAPE: # if esc key, return home
-                        game.mixer.Channel(1).stop()
-                        game.mouse.set_visible(True)
+                    case pygame.K_ESCAPE: # if esc key, return home
+                        pygame.mixer.Channel(1).stop()
+                        pygame.mouse.set_visible(True)
                         win.Leave()
                     
-                    case game.K_UP: # if up arrow, rotate
+                    case pygame.K_UP: # if up arrow, rotate
                         block.Rotate(win.win, settings.effectState, rotateBlockSound, bottomBlocks)
-                        
-                    case game.K_DOWN:  # if down arrow, move down
-                        block.Move(win.win, 'down', settings.effectState, moveBlockSound)
                     
-                    case game.K_RIGHT: # if right arrow, move right
-                        if block.CheckMovable('right', bottomBlocks):
-                            block.Move(win.win, 'right', settings.effectState, moveBlockSound)
+                    # case pygame.K_RIGHT: # if right arrow, move right
+                    #     # if block.CheckMovable('right', bottomBlocks):
+                    #     #     block.Move(win.win, 'right', settings.effectState, moveBlockSound)
 
-                    case game.K_LEFT: # if left arrow, move left
-                        if block.CheckMovable('left', bottomBlocks):
-                            block.Move(win.win, 'left', settings.effectState, moveBlockSound)
+                    # case pygame.K_LEFT: # if left arrow, move left
+                    #     if block.CheckMovable('left', bottomBlocks):
+                    #         block.Move(win.win, 'left', settings.effectState, moveBlockSound)
                     
                     case _: pass # default case
         
         # TODO: Stop auto block movement when down arrow is pressed
         
-        if speed*mult >= 30: # if 1s has passed (30 ticks per second)
+        if speed*mult >= 30 and not keys[pygame.K_DOWN]: # if 1s has passed (30 ticks per second)
             block.Move(win.win, 'down', settings.effectState, moveBlockSound) # Move the block down by 1 space on the screen
             speed = 0 # reset timer
 
@@ -107,7 +123,9 @@ def GameRun():
             
             block = Game.Block.GetRandBlock()
             block.draw(win.win)
-            if settings.effectState: game.mixer.Channel(2).play(scoreSound)
+            if settings.effectState: 
+                pygame.mixer.Channel(2).set_volume(.2)
+                pygame.mixer.Channel(2).play(scoreSound)
             
             score += 50 # add to score value
             if score >= limit: # if score is over a specific value, change the value and increase multiplier
@@ -120,10 +138,10 @@ def GameRun():
             if block.reachedTop(bottomBlocks): # check if the block group is at the top of the screen
                 Color.prints('Reached Top of Screen')
                 from .scoreInput import InputRun
-                game.mouse.set_visible(True)
-                if settings.effectState: game.mixer.Channel(0).play(failSound) # play fail sound
-                game.mixer.Channel(1).stop() # stop music
-                InputRun(score) # exit game into highscore menu
+                pygame.mouse.set_visible(True)
+                if settings.effectState: pygame.mixer.Channel(0).play(failSound) # play fail sound
+                pygame.mixer.Channel(1).stop() # stop music
+                InputRun(score) # exit pygame into highscore menu
             
             complete = block.CheckCompletedRow(bottomBlocks, win.win, settings.effectState, lineClearSound)
         
@@ -133,6 +151,7 @@ def GameRun():
                 
                 complete = block.CheckCompletedRow(bottomBlocks, win.win, settings.effectState, lineClearSound)
 
-        game.display.update()
+        pygame.display.update()
         clock.tick(30)
         speed += 1
+        delay += 1

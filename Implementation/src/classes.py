@@ -1,6 +1,6 @@
-# Import main library
-import pygame as game
+# Import main libraries
 from pathlib import Path
+import pygame
 
 class Window:
     '''Window Class'''
@@ -16,25 +16,25 @@ class Window:
         self.screen_size = (960, 720)
         self.window_title = window_title
         self.bg_color = bg_color
-        self.icon = game.image.load(f'{str(Path(__file__).parents[0])}\\resources\\images\\icon.png')
+        self.icon = pygame.image.load(f'{str(Path(__file__).parents[0])}\\resources\\images\\icon.png')
         
     def CreateNewWindow(self) -> None:
         '''Creates new Window using appropriate values'''
         
-        self.win = game.display.set_mode(size=self.screen_size)
+        self.win = pygame.display.set_mode(size=self.screen_size)
         self.win.fill(self.bg_color)
-        game.display.set_caption(self.window_title)
-        game.display.set_icon(self.icon)
-        game.display.flip()
+        pygame.display.set_caption(self.window_title)
+        pygame.display.set_icon(self.icon)
+        pygame.display.flip()
 
     @staticmethod
     def ExitWindow():
         '''Exits the Game'''
         
         from src.utils.ClrTerminal import Color
-        game.display.quit()
+        pygame.display.quit()
         Color.printd('Exiting Window...')
-        game.quit()
+        pygame.quit()
         quit(0)
 
     def drawGUIObjs(self, GUIObjects:list=None) -> None:
@@ -58,14 +58,14 @@ class Window:
                         
                     case _: pass # Defaults to this if all other cases = False
             
-        game.display.flip()
+        pygame.display.flip()
 
     @staticmethod
     def Leave() -> None:
         from .home import run
         run()
 
-class Text(game.sprite.Sprite):
+class Text(pygame.sprite.Sprite):
     '''Text Class (GUI)'''
 
     def __init__(self, pos:list=[0, 0], text:str='Text', fontsize:int=20, color:tuple=(255, 255, 255)):
@@ -84,23 +84,23 @@ class Text(game.sprite.Sprite):
         '''
         
         super().__init__() # Initialise the inherited class
-        if not game.font.get_init: game.font.init() # Initialise Font 
+        if not pygame.font.get_init: pygame.font.init() # Initialise Font 
         
-        self.surface = game.display.get_surface() # Get Window Surface
+        self.surface = pygame.display.get_surface() # Get Window Surface
         self.givenPos = pos
         
         self.color = color
         
         self.fontsize = fontsize
-        self.text = game.font.Font(f'{str(Path(__file__).parents[0])}\\resources\\fonts\\font.ttf', self.fontsize).render(text, False, self.color) # Creates Font
+        self.text = pygame.font.Font(f'{str(Path(__file__).parents[0])}\\resources\\fonts\\font.ttf', self.fontsize).render(text, False, self.color) # Creates Font
         
         self.pos = [self.givenPos[0] - (self.text.get_width() // 2), self.givenPos[1] - (self.text.get_height() // 2)] # Set Position of Text
         self.caption = text
 
     def RenderText(self) -> None:
         '''Render Text to Screen'''
-        game.display.get_surface().blit(self.text, self.pos)
-        game.display.flip()
+        pygame.display.get_surface().blit(self.text, self.pos)
+        pygame.display.flip()
     
     def ChangeText(self, text:str='', draw=None) -> None:
         '''Change Currently Displayed Text
@@ -111,7 +111,7 @@ class Text(game.sprite.Sprite):
         '''
         
         self.caption = text
-        self.text = game.font.Font(f'{str(Path(__file__).parents[0])}\\resources\\fonts\\font.ttf', self.fontsize).render(self.caption, False, self.color) # Sets new Text
+        self.text = pygame.font.Font(f'{str(Path(__file__).parents[0])}\\resources\\fonts\\font.ttf', self.fontsize).render(self.caption, False, self.color) # Sets new Text
         self.pos = [self.givenPos[0] - (self.text.get_width() // 2), self.givenPos[1] - (self.text.get_height() // 2)]
         draw() if draw is not None else self.RenderText()
 
@@ -123,7 +123,7 @@ class Text(game.sprite.Sprite):
         '''
         
         self.color = color
-        self.text = game.font.Font(f'{str(Path(__file__).parents[0])}\\resources\\fonts\\font.ttf', self.fontsize).render(self.caption, False, color) # update text
+        self.text = pygame.font.Font(f'{str(Path(__file__).parents[0])}\\resources\\fonts\\font.ttf', self.fontsize).render(self.caption, False, color) # update text
         self.pos = [self.givenPos[0] - (self.text.get_width() // 2), self.givenPos[1] - (self.text.get_height() // 2)] # update position
         self.RenderText() # Rerender text
 
@@ -136,7 +136,7 @@ class Text(game.sprite.Sprite):
     def __name__(): return 'Text'
     def ReturnText(self): return self.caption # Returns Text Content Of Instance of the class
 
-class Btn(game.sprite.Sprite):
+class Btn(pygame.sprite.Sprite):
     '''Btn Class (GUI)'''
     
     def __init__(self, text:str='', pos:list=[0, 0], width:int=113, height:int=41, fontsize:int=16):
@@ -163,8 +163,8 @@ class Btn(game.sprite.Sprite):
         super().__init__() # initialises default values from inherited class
         
         self.pos = pos
-        self.surf = game.display.get_surface()
-        self.face = game.Rect(self.pos, (width, height))
+        self.surf = pygame.display.get_surface()
+        self.face = pygame.Rect(self.pos, (width, height))
         self.face.center = self.pos
         self.hovering = False
         self.fontsize = fontsize
@@ -175,7 +175,7 @@ class Btn(game.sprite.Sprite):
         self.hoverSound = f'{str(Path(__file__).parents[0])}\\resources\\sounds\\hoverSound.wav'
         self.selectSound = f'{str(Path(__file__).parents[0])}\\resources\\sounds\\selectSound.wav'
 
-    def ChangeState(self, txt:str, bool:bool) -> None:
+    def ChangeState(self, txt:str, state:bool) -> None:
         '''Changes State of Button
 
         Args:
@@ -183,7 +183,7 @@ class Btn(game.sprite.Sprite):
         - bool (bool): has button changed state
         '''
         
-        self.state = bool # Change Clicked State
+        self.state = state # Change Clicked State
         self.text.ChangeText(txt, self.RenderBtn) # Change color of text depending on state
 
     def isHovering(self, click, effectState:bool, color:tuple=(255, 0, 0), *args) -> None:
@@ -197,7 +197,7 @@ class Btn(game.sprite.Sprite):
         '''
         
         # If mouse is hovering
-        if self.face.collidepoint(game.mouse.get_pos()):
+        if self.face.collidepoint(pygame.mouse.get_pos()):
             
             # If the button is not already being hovered
             if not self.hovering:
@@ -205,8 +205,8 @@ class Btn(game.sprite.Sprite):
                 self.text.ChangeColor(color) # Change Text Color
                 
                 # Sound Effect Volume
-                game.mixer.Channel(0).set_volume(.3) if effectState else game.mixer.Channel(0).set_volume(0)
-                game.mixer.Channel(0).play(game.mixer.Sound(self.hoverSound)) if effectState else game.mixer.Channel(0).set_volume(0)
+                pygame.mixer.Channel(0).set_volume(.3) if effectState else pygame.mixer.Channel(0).set_volume(0)
+                pygame.mixer.Channel(0).play(pygame.mixer.Sound(self.hoverSound)) if effectState else pygame.mixer.Channel(0).set_volume(0)
                 
                 self.RenderBtn() # Redraw Button
 
@@ -214,7 +214,7 @@ class Btn(game.sprite.Sprite):
             else: self.HasClicked(click, *args) # Check if the button has been clicked
             
         # If mouse is not over the button but the button is still being hovered    
-        elif not self.face.collidepoint(game.mouse.get_pos()) and self.hovering:
+        elif not self.face.collidepoint(pygame.mouse.get_pos()) and self.hovering:
             self.hovering = False # Make sure when not hovered hover is set to false
             self.text.ChangeColor((255, 255, 255)) # Changes button color to white
             self.RenderBtn() # Redraw Button
@@ -222,8 +222,8 @@ class Btn(game.sprite.Sprite):
     def HasClicked(self, click, *args) -> None:
         '''Check if a button has been clicked'''
 
-        if game.mouse.get_pressed()[0]: # If button has been pressed with left click
-            game.mixer.Channel(0).play(game.mixer.Sound(self.selectSound)) # Play select sound
+        if pygame.mouse.get_pressed()[0]: # If button has been pressed with left click
+            pygame.mixer.Channel(0).play(pygame.mixer.Sound(self.selectSound)) # Play select sound
             click() if not args else click(args if len(args) > 1 else args[0]) # Run Click Method
             
             from time import sleep
@@ -231,7 +231,7 @@ class Btn(game.sprite.Sprite):
     
     def RenderBtn(self) -> None:
         '''Render Button to Screen'''
-        game.draw.rect(game.display.get_surface(), (0, 0, 0), self.face) # Render button rect
+        pygame.draw.rect(pygame.display.get_surface(), (0, 0, 0), self.face) # Render button rect
         self.text.RenderText() # Render button text
 
     @staticmethod
@@ -240,7 +240,7 @@ class Btn(game.sprite.Sprite):
 class Game: 
     '''Game Class'''
         
-    class Block(game.sprite.Sprite):
+    class Block(pygame.sprite.Sprite):
         '''Class for Blocks'''
 
         def __init__(self, struct, color): # Initialise Values
@@ -262,7 +262,7 @@ class Game:
             self.color = color
             self.realPos = [450, 100]
             self.blockSize = 30
-            self.group = game.sprite.Group()
+            self.group = pygame.sprite.Group()
 
         def draw(self, screen) -> None:
             '''Draws a block to the screen at the appropriate coordinates'''
@@ -308,7 +308,7 @@ class Game:
                         self.group.update((0, 30))
                         self.realPos[1] += 30
             
-            if effectState: game.mixer.Channel(0).play(sound)
+            if effectState: pygame.mixer.Channel(0).play(sound)
             Game.Block.draw(self, screen) # draw new block to screen
 
         def CheckCollision(self, blockGroup, dir) -> bool:
@@ -392,7 +392,7 @@ class Game:
             
             if not isinstance(self, Game.SquareBlock): # check if the block is not square, if its not square continue
                 if self.CheckMovable('right', group) and self.CheckMovable('left', group):
-                    if effectState: game.mixer.Channel(0).play(sound)
+                    if effectState: pygame.mixer.Channel(0).play(sound)
                     self.UpdateColor((0, 0, 0), screen) # update color of previous block
                     
                     from numpy import rot90
@@ -507,7 +507,9 @@ class Game:
                 if gridList[rowPos][1][i] == 1:
                     gridList[rowPos][1][i] -= 1
             
-            if effectState: game.mixer.Channel(2).play(sound)
+            if effectState: 
+                pygame.mixer.Channel(3).set_volume(.2)
+                pygame.mixer.Channel(3).play(sound)
             
             for rect in blockGroup:
                 if rect.posY < gridList[rowPos][0]:
@@ -529,10 +531,10 @@ class Game:
             from random import choice
             return choice((Game.LBlock, Game.SquareBlock, Game.TBlock, Game.SBlock, Game.ZBlock, Game.LineBlock, Game.JBlock))() # Returns Random Block
 
-    class Rectangle(game.sprite.Sprite):
+    class Rectangle(pygame.sprite.Sprite):
         '''Rectangle Class'''
         
-        def __init__(self, pos, color, size):
+        def __init__(self, pos:tuple, color:tuple, size:int):
             '''Initialises Rectangle Class
 
             Args:
@@ -551,18 +553,17 @@ class Game:
             self.posX, self.posY = pos
             self.size = size
             self.color = color
-            self.rect = game.Rect(self.posX, self.posY, self.size, self.size)
-            self.image = game.Surface([self.size, self.size])
+            self.rect = pygame.Rect(self.posX, self.posY, self.size, self.size)
+            self.image = pygame.Surface([self.size, self.size])
             self.image.fill(self.color) # fill rect with appropriate color
             
         def update(self, dir): 
             self.rect.move_ip(dir) # update position of rect
-            self.posX = self.rect[0]
-            self.posY = self.rect[1]
+            self.posX, self.posY = self.rect[0], self.rect[1]
         
-        def draw(self, screen): game.draw.rect(screen, self.color, self.rect) # draw rect to screen
+        def draw(self, screen:pygame.Surface): pygame.draw.rect(screen, self.color, self.rect) # draw rect to screen
             
-        def UpdateColor(self, color, screen) -> None: # Temp fix for screen flashing
+        def UpdateColor(self, color:tuple, screen:pygame.Surface) -> None: # Temp fix for screen flashing
             '''Update Color of Sprite
 
             Args:
@@ -596,7 +597,7 @@ class Game:
     class JBlock(Block):
         def __init__(self): super().__init__(((0, 0, 0), (0, 0, 1), (1, 1, 1)), (0, 0, 255)) # initialise values for class
 
-class GridRect(game.sprite.Sprite):
+class GridRect(pygame.sprite.Sprite):
     '''GridRect Class'''
     
     def __init__(self, pos, size): # initialise values
@@ -619,8 +620,8 @@ class GridRect(game.sprite.Sprite):
         self.posX, self.posY = pos
         self.size = size
         self.color = (200, 200, 200)
-        self.rect = game.Rect(self.posX, self.posY, self.size, self.size)
-        self.image = game.Surface([self.size, self.size])
+        self.rect = pygame.Rect(self.posX, self.posY, self.size, self.size)
+        self.image = pygame.Surface([self.size, self.size])
 
     def drawRect(self, screen):
         '''Draw Rect Object of GridRect to screen
@@ -629,7 +630,7 @@ class GridRect(game.sprite.Sprite):
             screen (pygame.Surface): window surface to be drawn to
         '''
         
-        game.draw.rect(screen, self.color, self.rect, 1)
+        pygame.draw.rect(screen, self.color, self.rect, 1)
 
 class Grid:
     '''Grid Class'''
@@ -650,12 +651,10 @@ class Grid:
         - gridGroup (pygame.sprite.Group): A sprite group containing the grid blocks
         '''
         
-        self.posX = gridPos[0]
-        self.posY = gridPos[1]
+        self.posX, self.posY = gridPos
         self.blockSize = 30
-        self.gridX = totalGridSize[0]
-        self.gridY = totalGridSize[1]
-        self.gridGroup = game.sprite.Group()
+        self.gridX, self.gridY = totalGridSize
+        self.gridGroup = pygame.sprite.Group()
 
     def DrawGrid(self, screen) -> None:
         '''Draws Grid to Screen
@@ -691,13 +690,13 @@ class Settings:
     def init(self) -> None:
         '''Get Settings from File'''
         
-        import os.path
+        import os.path # to find file paths on device (windows only)
         
         if not os.path.isfile(self.filePath): self.WriteSettings(False) # create the settings file if it does not exist
 
         else: # Otherwise
             with open(self.filePath) as f: # Open the file
-                settings = f.read().split(',') # Split values by comma
+                settings = f.read().split(',') # Split value(s) by comma
 
             self.musicState = True if settings[0] == 'True' else False # Set the music state to true if the settings value is true
             self.effectState = True if settings[1] == 'True' else False # Set the sound effects state to true if the settings value is true            
@@ -709,17 +708,16 @@ class Settings:
         - rem (bool, optional): remove file if True. Defaults to False
         '''
         
-        from os import remove
-        from src.utils.ClrTerminal import Color
+        from src.utils.ClrTerminal import Color # Debugging Tool
+        from os import remove # Removes Files from device (windows only)
         
         if rem: 
             try: remove(self.filePath) # if we set rem to True, remove settings file
-            except OSError as e: Color.printe(f'An Unexpected Error Occurred Whilst Removing {self.filePath}\n{e}') # Log Errors In File      
+            except OSError as e: Color.printe(f'An Unexpected Error Occurred Whilst Removing {self.filePath}\n{e}') # Log Errors to Terminal
             
         with open(self.filePath, 'w') as f: # open settings file as write
             f.write(f'{str(self.musicState)},') # write new musicState value to file
             f.write(f'{str(self.effectState)}') # write new effectState value to file
-            f.close() # close file
             
         self.init() # re-initialise settings
 
@@ -819,7 +817,7 @@ class Highscore:
             with open(filePath, 'w') as f:
                 for score in scores:
                 
-                    if score == ['DEV', 10000] or score == ['PLA', 0]: pass
+                    if score == ['DEV', 100000] or score == ['PLA', 0]: pass
                     else: f.write(f'{score[0]},{score[1]},')
                 
             Color.prints(f'Successfully written scores to {filePath}')   
@@ -851,9 +849,11 @@ class Highscore:
         
         topScores = []
         
-        scores = scores[0] # Remove from args tuple
-        
         try:
+        
+            Color.printd('Please Wait Whilst The Program Attempts to connect to the database, this could take some time...')
+            Color.printd('WARNING: This May Cause an Error Message if you do not have an SQL Server Active')
+        
             # Connection string for SQL Server
             conn_str = f'''
             DRIVER=SQL SERVER;
@@ -866,6 +866,9 @@ class Highscore:
             conn = dbc.connect(conn_str)
             cursor = conn.cursor()
             
+            Color.prints('Successfully Connected to the Database!')
+            Color.printd('Attempting to Commit Data...')
+            
             cursor.execute('TRUNCATE TABLE highscore;') # Clear out existing data in 'highscore' table
             
             # define insert query
@@ -876,14 +879,16 @@ class Highscore:
                 
             # commit changes to db & print success msg
             conn.commit() 
+            
             Color.prints('Committed Data to Database Successfully')
+            Color.printd('Attempting to Retrieve Committed Data from Database...')
         
             # Attempt to retrieve score data
             try:
                 data = cursor.execute('SELECT * FROM highscore;')
             
                 # iterate over retrieved data & append each row to topScores
-                topScores = [(name, score) for name, score in data]
+                topScores = [[name, score] for name, score in data]
                 
                 # print success msg
                 Color.prints('Successfully retrieved score data from database')
@@ -897,6 +902,5 @@ class Highscore:
             except Exception as e: Color.printe(f'Error whilst trying to retrieve score data\n{e}')
         
         # If there was an error committing data to the database, print an error message
-        except Exception as e: 
-            from src.utils.ClrTerminal import Color
+        except Exception as e:
             Color.printe(f'Error: There was an unexpected error whilst trying to commit data to the sql database\n{e}')

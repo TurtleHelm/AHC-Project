@@ -1,22 +1,21 @@
 # Import necessary classes and modules
 from src.classes import Text, Btn, Window, Settings
 from src.utils.ClrTerminal import Color
-import pygame as game
+import pygame
 
-game.init() # initialise pygame library
-game.event.set_allowed([game.QUIT])
-clock, settings = (game.time.Clock(), Settings()) # initialise settings & game clock
+pygame.init() # initialise pygame library
+pygame.event.set_allowed([pygame.QUIT])
+clock, settings = (pygame.time.Clock(), Settings()) # initialise settings & game clock
 
 # List of GUI Objects
 GUIObjects = [Text([480, 90], 'Settings', 69),
               Btn('Music: Off', [480, 260], 330, 48, 32),
               Btn('Sound Effects: Off', [480, 360], 580, 48, 32),
-              Btn('Main Menu', [480, 490], 300, 48, 32)]
+              Btn('Main Menu', [480, 520], 300, 48, 32)]
 
 def ChangeMusicState() -> None:
     """Change State of Music Button"""
     
-    game.mixer.Channel(1).set_volume(0) if not settings.musicState else game.mixer.Channel(1).set_volume(.2)
     GUIObjects[1].ChangeState('Music: On', True) if not settings.musicState else GUIObjects[1].ChangeState('Music: Off', False)
     settings.ChangeSettings(True) if not settings.musicState else settings.ChangeSettings(False)
     Color.prints(f'Toggled Music ({settings.musicState})')
@@ -24,7 +23,6 @@ def ChangeMusicState() -> None:
 def ChangeEffectsState():
     """Change State of Sound Effects Button"""
     
-    game.mixer.Channel(0).set_volume(0) if not settings.effectState else game.mixer.Channel(0).set_volume(.3)
     GUIObjects[2].ChangeState('Sound Effects: On', True) if not settings.effectState else GUIObjects[2].ChangeState('Sound Effects: Off', False)
     settings.ChangeSettings(None, True) if not settings.effectState else settings.ChangeSettings(None, False) 
     Color.prints(f'Toggled SE ({settings.effectState})')
@@ -52,14 +50,10 @@ def SettingsRun():
         GUIObjects[2].isHovering(ChangeEffectsState, settings.effectState)
         GUIObjects[-1].isHovering(win.Leave, settings.effectState)
         
-        game.mixer.Channel(0).set_volume(.2) if settings.effectState else game.mixer.Channel(0).set_volume(0)
-        game.mixer.Channel(1).set_volume(.2) if settings.musicState else game.mixer.Channel(1).set_volume(0)
+        pygame.mixer.Channel(0).set_volume(.2) if settings.effectState else pygame.mixer.Channel(0).set_volume(0)
+        pygame.mixer.Channel(1).set_volume(.2) if settings.musicState else pygame.mixer.Channel(1).set_volume(0)
         
-        # Check for keyboard input
-        for event in game.event.get():
-            
-            # If exit button is clicked (top right of window), exit
-            if event.type == game.QUIT: win.Leave() # Input Validation
+        if pygame.event.get(pygame.QUIT): win.ExitWindow() # Exit Window if Top Right X clicked
 
-        game.display.update()
+        pygame.display.update()
         clock.tick(30)
