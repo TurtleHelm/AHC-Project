@@ -763,36 +763,34 @@
 		2.2.9		Btn('New Game', [480, 310], 230, 41, 32),
 		2.2.10		Btn('Instructions', [480, 360], 300, 41, 32),
 		2.2.11		Btn('Settings', [480, 410], 200, 41, 32),
-		2.2.12		Btn('Developer Mode', [480, 650], 210, 41, 16),
-		2.2.13		Btn('Exit Game', [480, 460], 235, 41, 32)
-		2.2.14 ]
-		2.2.15
-		2.2.16 PROCEDURE run() RETURNS NONE
-		2.2.17
-		2.2.18		settings.init()
-		2.2.19		DECLARE win INITIALLY Window('Netris - Main Menu', (0, 0, 0)) # Instantiate Window Object
-		2.2.20		win.CreateNewWindow() # Create New Window 
-		2.2.21		
-		2.2.22		win.drawGUIObjs(GUIObjects) # Draw the GUI
-		2.2.23
-		2.2.24 		# While the game is running
-		2.2.25		WHILE 1 DO
-		2.2.26			GUIObjects[1].isHovering(GameRun, settings.effectState) # Used to navigate to a New Game Page
-		2.2.27			GUIObjects[2].isHovering(InstructionsRun, settings.effectState) # Used to navigate to Instructions Page
-		2.2.28			GUIObjects[3].isHovering(SettingsRun, settings.effectState) # Used to navigate to Settings Page
-		2.2.29			GUIObjects[4].isHovering(DevRun, settings.effectState) # Used to Exit the game
-		2.2.30			GUIObjects[-1].isHovering(win.ExitWindow, settings.effectState)
-		2.2.31
-		2.2.32			FOR EACH event IN pygame.event.get() DO
-		2.2.33				IF (event.type == pygame.KEYDOWN AND event.type == pygame.K_ESCAPE) OR event.type == pygame.QUIT THEN
-		2.2.34					win.ExitWindow()
-		2.2.35				END IF
-		2.2.36
-		2.2.37			pygame.display.update()
-		2.2.38			clock.tick(30)
-		2.2.39		END WHILE
-		2.2.40	END PROCEDURE
-		2.2.41 END FILE
+		2.2.12		Btn('Exit Game', [480, 460], 235, 41, 32)
+		2.2.13 ]
+		2.2.14
+		2.2.15 PROCEDURE run() RETURNS NONE
+		2.2.16
+		2.2.17		settings.init()
+		2.2.18		DECLARE win INITIALLY Window('Netris - Main Menu', (0, 0, 0)) # Instantiate Window Object
+		2.2.19		win.CreateNewWindow() # Create New Window 
+		2.2.20		
+		2.2.21		win.drawGUIObjs(GUIObjects) # Draw the GUI
+		2.2.22
+		2.2.23 		# While the game is running
+		2.2.24		WHILE 1 DO
+		2.2.25			GUIObjects[1].isHovering(GameRun, settings.effectState) # Used to navigate to a New Game Page
+		2.2.26			GUIObjects[2].isHovering(InstructionsRun, settings.effectState) # Used to navigate to Instructions Page
+		2.2.27			GUIObjects[3].isHovering(SettingsRun, settings.effectState) # Used to navigate to Settings Page
+		2.2.28			GUIObjects[-1].isHovering(win.ExitWindow, settings.effectState)
+		2.2.29
+		2.2.30			FOR EACH event IN pygame.event.get() DO
+		2.2.31				IF (event.type == pygame.KEYDOWN AND event.type == pygame.K_ESCAPE) OR event.type == pygame.QUIT THEN
+		2.2.32					win.ExitWindow()
+		2.2.33				END IF
+		2.2.34
+		2.2.35			pygame.display.update()
+		2.2.36			clock.tick(30)
+		2.2.37		END WHILE
+		2.2.38	END PROCEDURE
+		2.2.39 END FILE
 
 	2.3 Instructions
 

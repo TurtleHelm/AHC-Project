@@ -411,24 +411,6 @@ class Game:
                     self.struct = self.rots[self.rotNum-1]
                     self.draw() # redraw new block positions
 
-        # def Rotate(self, effectState:bool, sound:pygame.mixer.Sound, group:pygame.sprite.Group) -> None:
-        #     '''Rotate Blocks clockwise 90 degrees
-
-        #     Args:
-        #     - effectState (Bool): Sound Effects Bool
-        #     - sound (filePath): File Path to Sound File
-        #     - group (pygame.sprite.Group): Block Group to Check Collision Against
-        #     '''
-            
-        #     if not isinstance(self, Game.SquareBlock): # check if the block is not square, if its not square continue
-        #         if self.CheckMovable('right', group) and self.CheckMovable('left', group):
-        #             if effectState: pygame.mixer.Channel(0).play(sound)
-        #             self.UpdateColor((0, 0, 0)) # update color of previous block
-                    
-        #             from numpy import rot90
-        #             self.struct = rot90(self.struct) # rotate array 90 degrees clockwise
-        #             self.draw() # redraw new block positions
-
         @staticmethod
         def WillCollide(sprite:pygame.sprite.Sprite, groupSprite:pygame.sprite.Sprite, dir:str) -> bool:
             '''Checks for Collision to determine whether a sprite is about to collide with a group
@@ -607,60 +589,61 @@ class Game:
 
     class LBlock(Block):
         def __init__(self): 
-            super().__init__(((0, 0, 0), (0, 0, 1), (1, 1, 1)), (255, 165, 0)) # initialise values for class
             self.rots = [
                 ((0, 0, 0), (0, 0, 1), (1, 1, 1)),
                 ((1, 0, 0), (1, 0, 0), (1, 1, 0)),
                 ((0, 0, 0), (1, 1, 1), (1, 0, 0)),
                 ((1, 1, 0), (0, 1, 0), (0, 1, 0))
             ]
+            super().__init__(self.rots[0], (255, 165, 0)) # initialise values for class
 
     class SquareBlock(Block):
         def __init__(self): super().__init__(((0, 0, 0), (1, 1, 0), (1, 1, 0)), (255, 255, 0)) # initialise values for class
 
     class TBlock(Block):
         def __init__(self): 
-            super().__init__(((0, 0, 0), (0, 1, 0), (1, 1, 1)), (128, 0, 128)) # initialise values for class
             self.rots = [
                 ((0, 0, 0), (0, 1, 0), (1, 1, 1)),
                 ((1, 0, 0), (1, 1, 0), (1, 0, 0)),
                 ((0, 0, 0), (1, 1, 1), (0, 1, 0)),
                 ((0, 1, 0), (1, 1, 0), (0, 1, 0))
             ]
-    
+            super().__init__(self.rots[0], (128, 0, 128)) # initialise values for class
+
     class SBlock(Block):
         def __init__(self): 
-            super().__init__(((0, 0, 0), (0, 1, 1), (1, 1, 0)), (0, 128, 0)) # initialise values for class
             self.rots = [
                 ((0, 0, 0), (0, 1, 1), (1, 1, 0)),
                 ((1, 0, 0), (1, 1, 0), (0, 1, 0)),
             ]
+            super().__init__(self.rots[0], (0, 128, 0)) # initialise values for class
     
     class ZBlock(Block):
         def __init__(self): 
-            super().__init__(((0, 0, 0), (1, 1, 0), (0, 1, 1)), (128, 0, 0)) # initialise values for class
             self.rots = [
                 ((0, 0, 0), (1, 1, 0), (0, 1, 1)),
                 ((0, 1, 0), (1, 1, 0), (1, 0, 0))
             ]
+            super().__init__(self.rots[0], (128, 0, 0)) # initialise values for class
 
-    class LineBlock(Block): # TODO: Fix
+    class LineBlock(Block):
         def __init__(self): 
-            super().__init__(((0, 0, 0, 0), (1, 1, 1, 1), (0, 0, 0, 0)), (0, 255, 255)) # initialise values for class
             self.rots = [
                 ((0, 0, 0, 0), (1, 1, 1, 1), (0, 0, 0, 0)),
                 ((0, 1, 0), (0, 1, 0), (0, 1, 0), (0, 1, 0))
             ]
+            super().__init__(self.rots[0], (0, 255, 255)) # initialise values for class
+            self.realPos = [420, 130]
 
     class JBlock(Block):
         def __init__(self): 
-            super().__init__(((0, 0, 0), (1, 0, 0), (1, 1, 1)), (0, 0, 255)) # initialise values for class
             self.rots = [
                 ((0, 0, 0), (1, 0, 0), (1, 1, 1)),
                 ((1, 1, 0), (1, 0, 0), (1, 0, 0)),
                 ((0, 0, 0), (1, 1, 1), (0, 0, 1)),
                 ((0, 1, 0), (0, 1, 0), (1, 1, 0))
             ]
+            super().__init__(self.rots[0], (0, 0, 255)) # initialise values for class
 
 class GridRect(pygame.sprite.Sprite):
     '''GridRect Class'''
@@ -725,9 +708,8 @@ class Grid:
             # for vertical grid blocks, starting & ending at limits with each step being of size blockSize
             for y in range(self.posY, self.gridY, self.blockSize):
                 # create a GridRect instance, add it to gridGroup & draw it to the screen
-                if y != 160 or x != 300: gridBlock = GridRect((x, y), self.blockSize)
+                if y != 160: gridBlock = GridRect((x, y), self.blockSize)
                 if y == 160: gridBlock = GridRect((x, y), self.blockSize, (255, 0, 0)) # Draw Height Limit of Grid in Diff Color
-                if x == 420: gridBlock = GridRect((x, y), self.blockSize, (255, 0, 0))
                 self.gridGroup.add(gridBlock)
                 gridBlock.drawRect()
 
@@ -854,9 +836,11 @@ class Highscore:
             
             return highscores
 
-        except Exception as e:
+        except OSError as e: # If No File, make one
             Color.printe(f'Unexpected Error Occurred during data retrieval\n{e}')
-            return []
+            with open(filePath, 'w') as f: f.write('BEN,6900,')
+            
+            return [Highscore('BEN', 6900)]
 
     @staticmethod
     def WriteScoresToFile(filePath:str, scores:list) -> bool:
@@ -872,11 +856,10 @@ class Highscore:
         scores = Highscore.CheckForDupes(scores)
         
         try:
-        
             with open(filePath, 'w') as f:
                 for score in scores:
                 
-                    if score == ['DEV', 100000] or score == ['PLA', 0]: pass
+                    if score[0] == 'DEV' or score[0] == 'PLA': pass
                     else: f.write(f'{score[0]},{score[1]},')
                 
             Color.prints(f'Successfully written scores to {filePath}')   

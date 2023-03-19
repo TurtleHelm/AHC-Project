@@ -65,11 +65,11 @@ def DevRun():
 
     blockTest = Game.Block.GetRandBlock()
     blockTest.realPos = [500, 630]
-    blockTest.draw(win.win)
+    blockTest.draw()
 
     
     gridTest = Grid((500, 630))
-    gridTest.DrawGrid(win.win)    
+    gridTest.DrawGrid()    
 
     while 1:
         

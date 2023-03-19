@@ -117,7 +117,7 @@ do not have the time to do.
 
 ## UML Case Diagram
 
-![Diagram](Analysis/UML%20Case%20Diagram.png)
+![Diagram](Analysis/UML%20Use%20Case%20Diagram%20Revised.png)
 
 ## Requirements Specification
 
@@ -382,3 +382,5 @@ UI:
 ### Pyodbc Docs: [Github](https://github.com/mkleehammer/pyodbc/wiki/Getting-started)
 
 ### ASCII Table: [ASCII-Code](https://www.ascii-code.com/)
+
+### UML Case Diagram Rules [Link](https://www.bing.com/images/blob?bcid=qMhZS47b02AFni6O.AQir330aXRi.....4Y)

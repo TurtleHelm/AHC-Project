@@ -32,7 +32,6 @@ rotateBlockSound, lineClearSound, moveBlockSound, scoreSound, failSound = (
 def GameRun():
     
     pygame.mouse.set_visible(False)
-    
     Color.printd('Entering Game...')
     
     win = Window('Netris - Game', (0, 0, 0)) # Instantiate Window Object
@@ -51,7 +50,7 @@ def GameRun():
     pygame.mixer.Channel(1).set_volume(.2) if settings.musicState else pygame.mixer.Channel(1).set_volume(0)
     pygame.mixer.Channel(1).play(pygame.mixer.Sound(f'{str(Path(__file__).parents[0])}\\resources\\sounds\\tetris.mp3'), -1) # Play music in infinite loop
     
-    block = Game.LineBlock() # create initial random block
+    block = Game.Block.GetRandBlock() # create initial random block
     block.draw() # draw block to screen
     
     bottomBlocks = pygame.sprite.Group() # initialise block group
@@ -85,10 +84,6 @@ def GameRun():
                 if block.CheckMovable('left', bottomBlocks):
                     block.Move('left', settings.effectState, moveBlockSound)
                     delay = 0       
-        
-            elif keys[pygame.K_UP]:
-                block.Rotate(settings.effectState, rotateBlockSound, bottomBlocks)               
-                delay = 0
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT: win.ExitWindow() # Quit of screen exited
@@ -96,9 +91,11 @@ def GameRun():
                 pygame.mixer.Channel(1).stop()
                 pygame.mouse.set_visible(True)
                 win.Leave()
+            if (event.type == pygame.KEYDOWN and event.key == pygame.K_UP):
+                block.Rotate(settings.effectState, rotateBlockSound, bottomBlocks)
 
         if speed*mult >= 30 and not keys[pygame.K_DOWN]: # if 1s has passed (30 ticks per second) & down key not held (Stops Phasing through other blocks)
-            # block.Move('down', settings.effectState, moveBlockSound) # Move the block down by 1 space on the screen
+            block.Move('down', settings.effectState, moveBlockSound) # Move the block down by 1 space on the screen
             speed = 0 # reset timer
 
         if block.CheckCollision(bottomBlocks, 'down'): # if block collision has been detected or the block has reached the bottom of the grid
