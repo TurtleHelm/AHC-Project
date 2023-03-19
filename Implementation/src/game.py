@@ -40,97 +40,79 @@ def GameRun():
 
     settings.init() # Initialise Settings with settings from settings file
 
-    pygame.mixer.Channel(0).set_volume(.1)
-    pygame.mixer.Channel(1).play(pygame.mixer.Sound(f'{str(Path(__file__).parents[0])}\\resources\\sounds\\tetris.mp3'), -1) # Play music in infinite loop
-    pygame.mixer.Channel(1).set_volume(.2) if settings.musicState else pygame.mixer.Channel(1).set_volume(0) # if music settings off, then turn off the music otherwise play the music 
+    # Music Settings
+    if settings.effectState:
+        pygame.mixer.Channel(0).set_volume(.1)
+        pygame.mixer.Channel(2).set_volume(.2)
+    else:
+        pygame.mixer.Channel(0).set_volume(0)
+        pygame.mixer.Channel(2).set_volume(0)
     
-    block = Game.Block.GetRandBlock() # create initial random block
-    block.draw(win.win) # draw block to screen
-
-    speed, mult, score, limit, delay = [0, 1, 0, 500, 0] # initialise speed value
-    # prevents overlap of text
-    GUIObjects[-1].UpdateText((0, 0, 0), str(score)) # Update Score Count
+    pygame.mixer.Channel(1).set_volume(.2) if settings.musicState else pygame.mixer.Channel(1).set_volume(0)
+    pygame.mixer.Channel(1).play(pygame.mixer.Sound(f'{str(Path(__file__).parents[0])}\\resources\\sounds\\tetris.mp3'), -1) # Play music in infinite loop
+    
+    block = Game.LineBlock() # create initial random block
+    block.draw() # draw block to screen
     
     bottomBlocks = pygame.sprite.Group() # initialise block group
 
-    # Initialise New Game Grid
-    grid = Grid(((720 // 2), 100))
-    grid.DrawGrid(win.win) # draw grid
+    speed, mult, score, limit, delay = [0, 1, 0, 500, 0] # initialise game values (block speed, speed multiplier, score, limit before speed increase, delay for block movement)
+    GUIObjects[-1].UpdateText((0, 0, 0), str(score)) # Update Score Count
+
+    grid = Grid(((720 // 2), 100)) # Initialise New Game Grid
+    grid.DrawGrid() # draw grid
     
     win.drawGUIObjs(GUIObjects) # Draw the GUI
 
-    keys = pygame.key.get_pressed() # List of Pressed Keys
+    while 1: # While the game is running
 
-    # While the game is running
-    while 1: # 1 & not True due to weirdness with True taking up another operation unlike 1
-
-        grid.DrawGrid(win.win) # continually draw grid to screen (stops screen flickering)
+        keys = pygame.key.get_pressed() # List of Pressed Keys
+        grid.DrawGrid() # continually draw grid to screen (stops whole screen flickering) 
         
-        match keys:
-            case pygame.K_DOWN:
-                if delay*mult >= 5:
-                    block.Move(win.win, 'down', settings.effectState, moveBlockSound)
+        # Move Block Automatically for held keys (as long as delay is over)
+        if delay >= 5:
+            if keys[pygame.K_DOWN]:
+                if delay*mult >= 5: # Speeds up as game speeds up
+                    block.Move('down', settings.effectState, moveBlockSound)
+                    delay = 0
+        
+            elif keys[pygame.K_RIGHT]:
+               if block.CheckMovable('right', bottomBlocks):
+                    block.Move('right', settings.effectState, moveBlockSound)
                     delay = 0
                     
-            case pygame.K_RIGHT:
-                if delay >= 5:
-                    block.Move(win.win, 'right', settings.effectState, moveBlockSound)
-                    delay = 0
-                    
-            case pygame.K_LEFT:
-                if delay >= 5:
-                    block.Move(win.win, 'left', settings.effectState, moveBlockSound)
-                    delay = 0
+            elif keys[pygame.K_LEFT]:
+                if block.CheckMovable('left', bottomBlocks):
+                    block.Move('left', settings.effectState, moveBlockSound)
+                    delay = 0       
+        
+            elif keys[pygame.K_UP]:
+                block.Rotate(settings.effectState, rotateBlockSound, bottomBlocks)               
+                delay = 0
 
-        # Check for keyboard input
         for event in pygame.event.get():
-            
-            # If exit button is clicked (top right of window), exit
-            if event.type == pygame.QUIT: win.ExitWindow()
-            
-            # all keydown events
-            if event.type == pygame.KEYDOWN:
-                
-                # Check for any matches in the key down events
-                match event.key:
+            if event.type == pygame.QUIT: win.ExitWindow() # Quit of screen exited
+            if (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE): # Check for Quit event
+                pygame.mixer.Channel(1).stop()
+                pygame.mouse.set_visible(True)
+                win.Leave()
 
-                    case pygame.K_ESCAPE: # if esc key, return home
-                        pygame.mixer.Channel(1).stop()
-                        pygame.mouse.set_visible(True)
-                        win.Leave()
-                    
-                    case pygame.K_UP: # if up arrow, rotate
-                        block.Rotate(win.win, settings.effectState, rotateBlockSound, bottomBlocks)
-                    
-                    # case pygame.K_RIGHT: # if right arrow, move right
-                    #     # if block.CheckMovable('right', bottomBlocks):
-                    #     #     block.Move(win.win, 'right', settings.effectState, moveBlockSound)
-
-                    # case pygame.K_LEFT: # if left arrow, move left
-                    #     if block.CheckMovable('left', bottomBlocks):
-                    #         block.Move(win.win, 'left', settings.effectState, moveBlockSound)
-                    
-                    case _: pass # default case
-        
-        # TODO: Stop auto block movement when down arrow is pressed
-        
-        if speed*mult >= 30 and not keys[pygame.K_DOWN]: # if 1s has passed (30 ticks per second)
-            block.Move(win.win, 'down', settings.effectState, moveBlockSound) # Move the block down by 1 space on the screen
+        if speed*mult >= 30 and not keys[pygame.K_DOWN]: # if 1s has passed (30 ticks per second) & down key not held (Stops Phasing through other blocks)
+            # block.Move('down', settings.effectState, moveBlockSound) # Move the block down by 1 space on the screen
             speed = 0 # reset timer
 
         if block.CheckCollision(bottomBlocks, 'down'): # if block collision has been detected or the block has reached the bottom of the grid
             bottomBlocks.add(block.group) # add current rect group to block group
             
             block = Game.Block.GetRandBlock()
-            block.draw(win.win)
-            if settings.effectState: 
-                pygame.mixer.Channel(2).set_volume(.2)
-                pygame.mixer.Channel(2).play(scoreSound)
+            block.draw()
+            
+            if settings.effectState: pygame.mixer.Channel(2).play(scoreSound)
             
             score += 50 # add to score value
             if score >= limit: # if score is over a specific value, change the value and increase multiplier
-                mult += 1
-                limit += 1000
+                mult += 1 # Increase Speed
+                limit += 1000 # Increase Score Limit to 
 
             # prevents overlap of text
             GUIObjects[-1].UpdateText((0, 0, 0), str(score))
@@ -143,13 +125,13 @@ def GameRun():
                 pygame.mixer.Channel(1).stop() # stop music
                 InputRun(score) # exit pygame into highscore menu
             
-            complete = block.CheckCompletedRow(bottomBlocks, win.win, settings.effectState, lineClearSound)
+            complete = block.CheckCompletedRow(bottomBlocks, settings.effectState, lineClearSound)
         
             while complete:
                 score += 100
                 GUIObjects[-1].UpdateText((0, 0, 0), str(score))
                 
-                complete = block.CheckCompletedRow(bottomBlocks, win.win, settings.effectState, lineClearSound)
+                complete = block.CheckCompletedRow(bottomBlocks, settings.effectState, lineClearSound)
 
         pygame.display.update()
         clock.tick(30)

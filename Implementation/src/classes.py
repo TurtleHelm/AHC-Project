@@ -5,8 +5,8 @@ import pygame
 class Window:
     '''Window Class'''
     
-    def __init__(self, window_title: str='Title', bg_color: tuple=(255, 255, 255)) -> None:
-        '''Initialisation for The Window Class
+    def __init__(self, window_title:str='Title', bg_color:tuple=(255, 255, 255)) -> None:
+        '''Initialise Window Class
 
         Args:
         - window_title (str, optional): window title. Defaults to 'Title'.
@@ -41,7 +41,7 @@ class Window:
         '''Draw GUI Objects to the Screen
 
         Args:
-        - GUIObjects (list, optional): List of Objects. Defaults to None.
+        - GUIObjects (list): List of Objects. Defaults to None.
         '''
 
         if GUIObjects == None: pass # if no GUI Objects, stop
@@ -62,6 +62,7 @@ class Window:
 
     @staticmethod
     def Leave() -> None:
+        '''Navigate Back to the Home Page'''
         from .home import run
         run()
 
@@ -92,15 +93,15 @@ class Text(pygame.sprite.Sprite):
         self.color = color
         
         self.fontsize = fontsize
-        self.text = pygame.font.Font(f'{str(Path(__file__).parents[0])}\\resources\\fonts\\font.ttf', self.fontsize).render(text, False, self.color) # Creates Font
+        self.text = pygame.font.Font(f'{str(Path(__file__).parents[0])}\\resources\\fonts\\font.ttf', self.fontsize).render(text, False, self.color) # Creates Font Object
         
         self.pos = [self.givenPos[0] - (self.text.get_width() // 2), self.givenPos[1] - (self.text.get_height() // 2)] # Set Position of Text
         self.caption = text
 
     def RenderText(self) -> None:
         '''Render Text to Screen'''
-        pygame.display.get_surface().blit(self.text, self.pos)
-        pygame.display.flip()
+        pygame.display.get_surface().blit(self.text, self.pos) # Render Text to current Surface
+        pygame.display.flip() # Update Screen
     
     def ChangeText(self, text:str='', draw=None) -> None:
         '''Change Currently Displayed Text
@@ -110,10 +111,10 @@ class Text(pygame.sprite.Sprite):
         - draw (method, optional): Draw method. Defaults to None.
         '''
         
-        self.caption = text
+        self.caption = text # Change Caption Contents
         self.text = pygame.font.Font(f'{str(Path(__file__).parents[0])}\\resources\\fonts\\font.ttf', self.fontsize).render(self.caption, False, self.color) # Sets new Text
-        self.pos = [self.givenPos[0] - (self.text.get_width() // 2), self.givenPos[1] - (self.text.get_height() // 2)]
-        draw() if draw is not None else self.RenderText()
+        self.pos = [self.givenPos[0] - (self.text.get_width() // 2), self.givenPos[1] - (self.text.get_height() // 2)] # Set Position Again
+        draw() if draw is not None else self.RenderText() # Draw only if the draw procedure exists, otherwise use default draw procedure
 
     def ChangeColor(self, color:tuple=(255, 255, 255)) -> None:
         '''Change Color of Currently Displayed Text
@@ -128,8 +129,15 @@ class Text(pygame.sprite.Sprite):
         self.RenderText() # Rerender text
 
     def UpdateText(self, color:tuple=(255, 255, 255), text:str='') -> None:
+        '''Update the Text on the screen
+        
+        Args:
+        - color (tuple, optional): Color to Shift to whilst changing text, Defaults to (255, 255, 255)
+        - text (string, optional): Text to Shift to,  Defaults to ''
+        '''
+        
         self.ChangeColor(color) # change color to another color
-        self.ChangeText(text)
+        self.ChangeText(text) # Change Text Contents
         self.ChangeColor((255, 255, 255)) # change color back to white
     
     @staticmethod
@@ -237,13 +245,13 @@ class Btn(pygame.sprite.Sprite):
     @staticmethod
     def __name__(): return 'Btn' # Returns name of class (Button)
 
-class Game: 
+class Game:
     '''Game Class'''
         
     class Block(pygame.sprite.Sprite):
         '''Class for Blocks'''
 
-        def __init__(self, struct, color): # Initialise Values
+        def __init__(self, struct:tuple[tuple], color:tuple): # Initialise Values
             '''Initialise Block Class
 
             Args:
@@ -262,9 +270,10 @@ class Game:
             self.color = color
             self.realPos = [450, 100]
             self.blockSize = 30
+            self.rotNum = 1
             self.group = pygame.sprite.Group()
 
-        def draw(self, screen) -> None:
+        def draw(self) -> None:
             '''Draws a block to the screen at the appropriate coordinates'''
             posX, posY = self.realPos
             
@@ -280,18 +289,18 @@ class Game:
 
                     else: posX += 30 # if no block to draw, move over a block space
                     
-            self.group.draw(screen) # draw all rectangle sprites to the screen at once
+            self.group.draw(pygame.display.get_surface()) # draw all rectangle sprites to the screen at once
 
-        def Move(self, screen, dirName, effectState, sound) -> None:
+        def Move(self, dirName:str, effectState:bool, sound:pygame.mixer.Sound) -> None:
             '''Moves Block in one direction one space
 
             Args:
-                screen (Surface): Surface to be drawn to
-                dir (tuple): How far to move block
+                effectState (bool): Should SE play
                 dirName (str): Direction of travel
+                sound (pygame.mixer.Sound): Sound Object to Play
             '''
             
-            self.UpdateColor((0, 0, 0), screen) # Update color of previous blocks
+            self.UpdateColor((0, 0, 0)) # Update color of previous blocks
             self.group.empty() # empty sprite group
             
             match dirName: # check for direction of travel
@@ -309,13 +318,14 @@ class Game:
                         self.realPos[1] += 30
             
             if effectState: pygame.mixer.Channel(0).play(sound)
-            Game.Block.draw(self, screen) # draw new block to screen
+            Game.Block.draw(self) # draw new block to screen
 
-        def CheckCollision(self, blockGroup, dir) -> bool:
+        def CheckCollision(self, blockGroup:pygame.sprite.Group, dir:str) -> bool:
             '''Checks for Block Collisions between the ground & other blocks
 
             Args:
             - blockGroup (pygame.sprite.Group): group of blocks to check for collision with
+            - dir (string): Direction to Check for Collision Against
 
             Returns:
             - Bool: Whether or not the current block is about to collide 
@@ -340,11 +350,12 @@ class Game:
 
             return False
 
-        def CheckMovable(self, dir:str, group) -> bool:
+        def CheckMovable(self, dir:str, group:pygame.sprite.Group) -> bool:
             '''Checks to see if the current sprite is movable
 
             Args:
             - dir (str): Direction of Travel
+            - group (pygame.sprite.Group): Block Group to Check For Collision Against
 
             Returns:
             - Bool: If the block is movable
@@ -368,39 +379,58 @@ class Game:
 
             return True
                     
-        def UpdateColor(self, color, screen) -> None: # Temp fix for screen flashing
+        def UpdateColor(self, color:tuple) -> None: # Temp fix for screen flashing
             '''Update Color of Sprite
 
             Args:
             - color (tuple): Color to Draw Sprite with
-            - screen (pygame.Surface): Surface to be drawn to
             '''
             
             originalColor = self.color # store original color
             self.color = color # set new color
-            self.draw(screen) # draw new colored block to screen
+            self.draw() # draw new colored block to screen
             self.color = originalColor # set color back to original color
 
-        def Rotate(self, screen, effectState, sound, group) -> None:
+        def Rotate(self, effectState:bool, sound:pygame.mixer.Sound, group:pygame.sprite.Group) -> None:
             '''Rotate Blocks clockwise 90 degrees
 
             Args:
-            - screen (pygame.Surface): Surface to be drawn to
             - effectState (Bool): Sound Effects Bool
             - sound (filePath): File Path to Sound File
+            - group (pygame.sprite.Group): Block Group to Check Collision Against
             '''
             
             if not isinstance(self, Game.SquareBlock): # check if the block is not square, if its not square continue
                 if self.CheckMovable('right', group) and self.CheckMovable('left', group):
                     if effectState: pygame.mixer.Channel(0).play(sound)
-                    self.UpdateColor((0, 0, 0), screen) # update color of previous block
+                    self.UpdateColor((0, 0, 0)) # update color of previous block
                     
-                    from numpy import rot90
-                    self.struct = rot90(self.struct) # rotate array 90 degrees clockwise
-                    self.draw(screen) # redraw new block positions
+                    if self.rotNum != len(self.rots)-1: self.rotNum += 1
+                    else: self.rotNum = 0
+                    
+                    self.struct = self.rots[self.rotNum-1]
+                    self.draw() # redraw new block positions
+
+        # def Rotate(self, effectState:bool, sound:pygame.mixer.Sound, group:pygame.sprite.Group) -> None:
+        #     '''Rotate Blocks clockwise 90 degrees
+
+        #     Args:
+        #     - effectState (Bool): Sound Effects Bool
+        #     - sound (filePath): File Path to Sound File
+        #     - group (pygame.sprite.Group): Block Group to Check Collision Against
+        #     '''
+            
+        #     if not isinstance(self, Game.SquareBlock): # check if the block is not square, if its not square continue
+        #         if self.CheckMovable('right', group) and self.CheckMovable('left', group):
+        #             if effectState: pygame.mixer.Channel(0).play(sound)
+        #             self.UpdateColor((0, 0, 0)) # update color of previous block
+                    
+        #             from numpy import rot90
+        #             self.struct = rot90(self.struct) # rotate array 90 degrees clockwise
+        #             self.draw() # redraw new block positions
 
         @staticmethod
-        def WillCollide(sprite, groupSprite, dir) -> bool:
+        def WillCollide(sprite:pygame.sprite.Sprite, groupSprite:pygame.sprite.Sprite, dir:str) -> bool:
             '''Checks for Collision to determine whether a sprite is about to collide with a group
 
             Args:
@@ -424,7 +454,7 @@ class Game:
             return False
 
         @staticmethod
-        def reachedTop(blockGroup) -> bool:
+        def reachedTop(blockGroup:pygame.sprite.Group) -> bool:
             '''Check to see if the blockGroup has reached the top of the grid
 
             Args:
@@ -439,7 +469,7 @@ class Game:
             return False
 
         @staticmethod
-        def CheckCompletedRow(blockGroup, screen, effectState, sound) -> bool:
+        def CheckCompletedRow(blockGroup:pygame.sprite.Group, effectState:bool, sound:pygame.mixer.Sound) -> bool:
             
             gridList = [
                 [100, [0, 0, 0, 0, 0, 0, 0, 0, 0]],
@@ -488,19 +518,19 @@ class Game:
                     count += gridList[i][1][j]
                 
                 if count >= 9: 
-                    return Game.Block.RemoveCompletedRow(blockGroup, gridList, row, screen, effectState, sound)
+                    return Game.Block.RemoveCompletedRow(blockGroup, gridList, row, effectState, sound)
                 
                 row += 1
             
             return False
 
         @staticmethod
-        def RemoveCompletedRow(blockGroup, gridList, rowPos, screen, effectState, sound) -> tuple:
+        def RemoveCompletedRow(blockGroup:pygame.sprite.Group, gridList:list, rowPos:int, effectState:bool, sound:pygame.mixer.Sound) -> tuple:
             
             for rect in blockGroup.sprites():
                 if rect.posY == gridList[rowPos][0]:
                     rect.color = (0, 0, 0)
-                    rect.draw(screen)
+                    rect.draw()
                     blockGroup.remove(rect)
             
             for i in range(len(gridList[rowPos][1])):
@@ -513,10 +543,10 @@ class Game:
             
             for rect in blockGroup:
                 if rect.posY < gridList[rowPos][0]:
-                    rect.UpdateColor((0, 0, 0), screen)
+                    rect.UpdateColor((0, 0, 0))
                     rect.update((0, 30))
 
-            blockGroup.draw(screen)
+            blockGroup.draw(pygame.display.get_surface())
             
             return True
 
@@ -557,50 +587,85 @@ class Game:
             self.image = pygame.Surface([self.size, self.size])
             self.image.fill(self.color) # fill rect with appropriate color
             
-        def update(self, dir): 
+        def update(self, dir:str): 
             self.rect.move_ip(dir) # update position of rect
             self.posX, self.posY = self.rect[0], self.rect[1]
         
-        def draw(self, screen:pygame.Surface): pygame.draw.rect(screen, self.color, self.rect) # draw rect to screen
+        def draw(self): pygame.draw.rect(pygame.display.get_surface(), self.color, self.rect) # draw rect to screen
             
-        def UpdateColor(self, color:tuple, screen:pygame.Surface) -> None: # Temp fix for screen flashing
+        def UpdateColor(self, color:tuple) -> None: # Temp fix for screen flashing
             '''Update Color of Sprite
 
             Args:
             - color (tuple): Color to Draw Sprite with
-            - screen (pygame.Surface): Surface to be drawn to
             '''
             
             originalColor = self.color # store original color
             self.color = color # set new color
-            self.draw(screen) # draw new colored block to screen
+            self.draw() # draw new colored block to screen
             self.color = originalColor # set color back to original color
 
     class LBlock(Block):
-        def __init__(self): super().__init__(((0, 0, 0), (1, 0, 0), (1, 1, 1)), (255, 165, 0)) # initialise values for class
+        def __init__(self): 
+            super().__init__(((0, 0, 0), (0, 0, 1), (1, 1, 1)), (255, 165, 0)) # initialise values for class
+            self.rots = [
+                ((0, 0, 0), (0, 0, 1), (1, 1, 1)),
+                ((1, 0, 0), (1, 0, 0), (1, 1, 0)),
+                ((0, 0, 0), (1, 1, 1), (1, 0, 0)),
+                ((1, 1, 0), (0, 1, 0), (0, 1, 0))
+            ]
 
     class SquareBlock(Block):
         def __init__(self): super().__init__(((0, 0, 0), (1, 1, 0), (1, 1, 0)), (255, 255, 0)) # initialise values for class
 
     class TBlock(Block):
-        def __init__(self): super().__init__(((0, 0, 0), (0, 1, 0), (1, 1, 1)), (128, 0, 128)) # initialise values for class
+        def __init__(self): 
+            super().__init__(((0, 0, 0), (0, 1, 0), (1, 1, 1)), (128, 0, 128)) # initialise values for class
+            self.rots = [
+                ((0, 0, 0), (0, 1, 0), (1, 1, 1)),
+                ((1, 0, 0), (1, 1, 0), (1, 0, 0)),
+                ((0, 0, 0), (1, 1, 1), (0, 1, 0)),
+                ((0, 1, 0), (1, 1, 0), (0, 1, 0))
+            ]
     
     class SBlock(Block):
-        def __init__(self): super().__init__(((0, 0, 0), (0, 1, 1), (1, 1, 0)), (0, 128, 0)) # initialise values for class
+        def __init__(self): 
+            super().__init__(((0, 0, 0), (0, 1, 1), (1, 1, 0)), (0, 128, 0)) # initialise values for class
+            self.rots = [
+                ((0, 0, 0), (0, 1, 1), (1, 1, 0)),
+                ((1, 0, 0), (1, 1, 0), (0, 1, 0)),
+            ]
     
     class ZBlock(Block):
-        def __init__(self): super().__init__(((0, 0, 0), (1, 1, 0), (0, 1, 1)), (128, 0, 0)) # initialise values for class
+        def __init__(self): 
+            super().__init__(((0, 0, 0), (1, 1, 0), (0, 1, 1)), (128, 0, 0)) # initialise values for class
+            self.rots = [
+                ((0, 0, 0), (1, 1, 0), (0, 1, 1)),
+                ((0, 1, 0), (1, 1, 0), (1, 0, 0))
+            ]
 
-    class LineBlock(Block):
-        def __init__(self): super().__init__(((0, 0, 0, 0), (1, 1, 1, 1), (0, 0, 0, 0)), (0, 255, 255)) # initialise values for class
+    class LineBlock(Block): # TODO: Fix
+        def __init__(self): 
+            super().__init__(((0, 0, 0, 0), (1, 1, 1, 1), (0, 0, 0, 0)), (0, 255, 255)) # initialise values for class
+            self.rots = [
+                ((0, 0, 0, 0), (1, 1, 1, 1), (0, 0, 0, 0)),
+                ((0, 1, 0), (0, 1, 0), (0, 1, 0), (0, 1, 0))
+            ]
 
     class JBlock(Block):
-        def __init__(self): super().__init__(((0, 0, 0), (0, 0, 1), (1, 1, 1)), (0, 0, 255)) # initialise values for class
+        def __init__(self): 
+            super().__init__(((0, 0, 0), (1, 0, 0), (1, 1, 1)), (0, 0, 255)) # initialise values for class
+            self.rots = [
+                ((0, 0, 0), (1, 0, 0), (1, 1, 1)),
+                ((1, 1, 0), (1, 0, 0), (1, 0, 0)),
+                ((0, 0, 0), (1, 1, 1), (0, 0, 1)),
+                ((0, 1, 0), (0, 1, 0), (1, 1, 0))
+            ]
 
 class GridRect(pygame.sprite.Sprite):
     '''GridRect Class'''
     
-    def __init__(self, pos, size): # initialise values
+    def __init__(self, pos:tuple, size:int, color:tuple=(200, 200, 200)): # initialise values
         '''Initialises GridRect Class
 
         Args:
@@ -619,18 +684,14 @@ class GridRect(pygame.sprite.Sprite):
         super().__init__() # initialise default values from inherited class
         self.posX, self.posY = pos
         self.size = size
-        self.color = (200, 200, 200)
+        self.color = color
         self.rect = pygame.Rect(self.posX, self.posY, self.size, self.size)
         self.image = pygame.Surface([self.size, self.size])
 
-    def drawRect(self, screen):
-        '''Draw Rect Object of GridRect to screen
-
-        Args:
-            screen (pygame.Surface): window surface to be drawn to
-        '''
+    def drawRect(self):
+        '''Draw Rect Object of GridRect to screen'''
         
-        pygame.draw.rect(screen, self.color, self.rect, 1)
+        pygame.draw.rect(pygame.display.get_surface(), self.color, self.rect, 1)
 
 class Grid:
     '''Grid Class'''
@@ -656,21 +717,19 @@ class Grid:
         self.gridX, self.gridY = totalGridSize
         self.gridGroup = pygame.sprite.Group()
 
-    def DrawGrid(self, screen) -> None:
-        '''Draws Grid to Screen
-
-        Args:
-        - screen (pygame.Surface): window surface to be drawn to
-        '''
+    def DrawGrid(self) -> None:
+        '''Draws Grid to Screen'''
         
         # for horizontal grid blocks, starting & ending at limits with each step being of size blockSize
         for x in range(self.posX, self.gridX, self.blockSize): 
             # for vertical grid blocks, starting & ending at limits with each step being of size blockSize
             for y in range(self.posY, self.gridY, self.blockSize):
                 # create a GridRect instance, add it to gridGroup & draw it to the screen
-                gridBlock = GridRect((x, y), self.blockSize)
+                if y != 160 or x != 300: gridBlock = GridRect((x, y), self.blockSize)
+                if y == 160: gridBlock = GridRect((x, y), self.blockSize, (255, 0, 0)) # Draw Height Limit of Grid in Diff Color
+                if x == 420: gridBlock = GridRect((x, y), self.blockSize, (255, 0, 0))
                 self.gridGroup.add(gridBlock)
-                gridBlock.drawRect(screen)
+                gridBlock.drawRect()
 
 class Settings:
     '''Class for Game Settings'''
@@ -736,7 +795,7 @@ class Settings:
 class Highscore:
     '''Highscore Class'''
     
-    def __init__(self, name='PLA', score=0):
+    def __init__(self, name:str='PLA', score:int=0):
         '''
         Initialises Highscore class
 
@@ -828,7 +887,7 @@ class Highscore:
             return False
         
     @staticmethod
-    def CheckForDupes(scores):
+    def CheckForDupes(scores:list) -> list:
         arr = []
         
         for i in range(len(scores)):

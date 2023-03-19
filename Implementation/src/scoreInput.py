@@ -37,6 +37,9 @@ def InputRun(score:int=0):
     # Draw the GUI objects on the screen
     win.drawGUIObjs(GUIObjects)
 
+    import time
+    time.sleep(.3)
+
     # While the game is running
     while 1:
 
@@ -46,8 +49,12 @@ def InputRun(score:int=0):
             GUIObjects[-1].isHovering(RunHighscore, settings.effectState, (255, 0, 0), GUIObjects[2].caption[:3], score)   
         
         else: 
-            # if clicks are disallowed, navigate back to the input page & grey out Enter button
-            GUIObjects[-1].isHovering(InputRun, settings.effectState, (128, 128, 128))
+            try:
+                # if clicks are disallowed, navigate back to the input page & grey out Enter button
+                GUIObjects[-1].isHovering(InputRun, settings.effectState, (128, 128, 128))
+            except RecursionError as e:
+                Color.printe(f'Error: Stop Pushing the Button!\n{e}')
+                win.ExitWindow()
 
         if len(GUIObjects[2].caption) == 3: allowedClick = True # Only if name is 3 can you move on
         if len(GUIObjects[2].caption) < 3: allowedClick = False # if name is less than 3 do not allow click 
