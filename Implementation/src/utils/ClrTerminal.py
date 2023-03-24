@@ -24,9 +24,9 @@ class Color:
     RESET = '\033[0m'
 
     def ClrPrint(clr:str='white'.lower(), txt:str='', isBack:bool=False, reset:bool=True) -> None:
-        '''Prints Colored Text to the Terminal & Specifies Color'''
+        '''Prints Colored Text to the Terminal & Specifies Color (EXPERIMENTAL)'''
         
-        match clr:
+        match clr: 
             case 'white': print(f'{Color.BACK_WHITE if isBack else Color.FORE_WHITE}{txt}{Color.RESET if reset else ""}')
             case 'black': print(f'{Color.BACK_BLACK if isBack else Color.FORE_BLACK}{txt}{Color.RESET if reset else ""}')
             case 'red': print(f'{Color.BACK_RED if isBack else Color.FORE_RED}{txt}{Color.RESET if reset else ""}')
@@ -36,7 +36,8 @@ class Color:
             case 'magenta': print(f'{Color.BACK_MAGENTA if isBack else Color.FORE_MAGENTA}{txt}{Color.RESET if reset else ""}')
             case 'cyan': print(f'{Color.BACK_CYAN if isBack else Color.FORE_CYAN}{txt}{Color.RESET if reset else ""}')
             case 'orange': print(f'{"" if isBack else Color.FORE_ORANGE}{txt}{Color.RESET if reset else ""}')
-        
+    
+    # For ease of use during testing
     def printd(txt:str=''): 
         '''Debug Printing'''
         print(f'{Color.FORE_ORANGE}{txt}{Color.RESET}')

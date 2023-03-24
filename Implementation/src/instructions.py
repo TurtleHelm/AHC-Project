@@ -6,8 +6,8 @@ pygame.init() # initialise pygame library
 pygame.event.set_allowed([pygame.QUIT]) # reduces lag
 clock, settings = (pygame.time.Clock(), Settings()) # initialise settings & game clock
 
-# List of GUI Objects
-GUIObjects = [Text([480, 40], 'Instructions', 48),
+GUIObjects = [ # List of GUI Objects
+              Text([480, 40], 'Instructions', 48),
               Text([480, 100], 'Stack blocks to create a full horizontal line', 20),
               Text([320, 140], 'clearing them to earn points', 20),
               Text([447, 220], 'If the blocks reach the top of the screen,', 20),
@@ -27,10 +27,9 @@ def InstructionsRun():
     win.CreateNewWindow()
     
     win.drawGUIObjs(GUIObjects) # Draw GUI
-    settings.init()
+    settings.init() # initialise settings from file
 
-    # While game is running
-    while 1:
+    while 1: # While game is running
 
         GUIObjects[-1].isHovering(win.Leave, settings.effectState) # Used to navigate to a New Game Page
 

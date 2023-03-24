@@ -2,8 +2,7 @@
 from src.utils.ClrTerminal import Color
 from src.home import run
 
-# If this file is the main file, run the startup code
-if __name__ == '__main__':
+if __name__ == '__main__': # If this file is the main file, run the startup code
 
     Color.printd('Loading Netris...')
     run() # Open New Home Window
